@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hedge Wrap Calculator</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent-color: #4caf50;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --input-bg: #2d2d2d;
+            --border-color: #3d3d3d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .calculator-card {
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .radio-label {
+            flex: 1;
+            text-align: center;
+            background-color: var(--input-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .radio-label {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .result-container {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .result-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h2>Wrap Calculator</h2>
+    
+    <div class="form-group">
+        <label for="rodLength">ROD LENGTH</label>
+        <select id="rodLength" onchange="calculateWraps()">
+            <option value="10">10 ft</option>
+            <option value="12" selected>12 ft</option>
+            <option value="13">13 ft</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>DISTANCE UNIT</label>
+        <div class="radio-group">
+            <input type="radio" id="unitMetres" name="distanceUnit" value="metres" checked onchange="calculateWraps()">
+            <label for="unitMetres" class="radio-label">Metres</label>
+
+            <input type="radio" id="unitYards" name="distanceUnit" value="yards" onchange="calculateWraps()">
+            <label for="unitYards" class="radio-label">Yards</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="distanceInput">TARGET DISTANCE</label>
+        <input type="number" id="distanceInput" placeholder="Enter distance..." value="25" min="0" step="any" oninput="calculateWraps()">
+    </div>
+
+    <div class="result-container">
+        <div class="result-title">Required Line Distance</div>
+        <div id="resultValue" class="result-value">6 wraps + 10.0 ft</div>
+        <div id="resultNote" class="result-note">On wrap 7, stop 2.0 ft short of the stick.</div>
+    </div>
+</div>
+
+<script>
+    function calculateWraps() {
+        const rodLength = parseFloat(document.getElementById('rodLength').value);
+        const distanceInput = parseFloat(document.getElementById('distanceInput').value);
+        const isMetres = document.getElementById('unitMetres').checked;
+        
+        const resultValueDiv = document.getElementById('resultValue');
+        const resultNoteDiv = document.getElementById('resultNote');
+
+        if (isNaN(distanceInput) || distanceInput <= 0) {
+            resultValueDiv.innerText = "0 wraps";
+            resultNoteDiv.innerText = "Enter a valid distance.";
+            return;
+        }
+
+        // Convert target distance to total feet
+        let totalFeet = 0;
+        if (isMetres) {
+            totalFeet = distanceInput / 0.3048; // 1 foot = 0.3048 metres
+        } else {
+            totalFeet = distanceInput * 3; // 1 yard = 3 feet
+        }
+
+        // Calculate wraps and exact remaining feet
+        const fullWraps = Math.floor(totalFeet / rodLength);
+        const remainingFeet = totalFeet % rodLength;
+
+        // Format the output string
+        let outputText = `${fullWraps} wrap${fullWraps !== 1 ? 's' : ''}`;
+        if (remainingFeet > 0.05) { // Avoid displaying tiny fractions due to rounding
+            outputText += ` + ${remainingFeet.toFixed(1)} ft`;
+        }
+        resultValueDiv.innerText = outputText;
+
+        // Calculate the handy clip-short reference note
+        if (remainingFeet > 0.05) {
+            const shortOfStick = rodLength - remainingFeet;
+            resultNoteDiv.innerText = `On wrap ${fullWraps + 1}, stop ${shortOfStick.toFixed(1)} ft short of the opposite stick.`;
+        } else {
+            resultNoteDiv.innerText = `Exactly hitting the distance stick target on wrap ${fullWraps}.`;
+        }
+    }
+
+    // Run initial calculation on page load
+    window.onload = calculateWraps;
+</script>
+
+</body>
+</html>
