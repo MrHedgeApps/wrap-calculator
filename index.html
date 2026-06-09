@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
     <title>Hedge Wrap Calculator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         :root {
             --bg-color: #0f0f0f;
@@ -46,6 +47,7 @@
             border-radius: 14px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.6);
             border: 1px solid var(--border-color);
+            position: relative;
         }
 
         h2 {
@@ -55,6 +57,81 @@
             font-size: 1.3rem;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+        }
+
+        /* Nav Tab Switches */
+        .nav-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn.active-tab {
+            border-color: var(--accent-color);
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #fff;
+        }
+
+        /* Search & Geolocation Row */
+        .search-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .geo-btn, .save-loc-btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .save-loc-btn {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .controls-grid {
@@ -143,37 +220,105 @@
             color: var(--spot-color);
         }
 
+        /* Map Window Container */
         .map-viewport {
             position: relative;
             width: 100%;
             height: 400px;
-            overflow: hidden;
             border-radius: 10px;
             border: 1px solid var(--border-color);
             background: #111111;
-            touch-action: pan-y;
+            overflow: hidden;
         }
 
-        .zoom-content {
+        #satelliteMap {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Saved Locations Overlay Panel */
+        .saved-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: 0 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: rgba(15, 15, 15, 0.92);
+            z-index: 10;
+            display: none;
+            flex-direction: column;
+            padding: 16px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
-        #mapSvg {
-            width: 100%;
-            height: 100%;
-            max-height: 400px;
-            z-index: 5;
-            box-sizing: border-box;
+        .saved-overlay-title {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .location-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .location-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .location-item:hover {
+            border-color: var(--text-muted);
+        }
+
+        .location-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .location-name {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .location-coords {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .delete-loc-btn {
             background: transparent;
-            display: block;
+            border: none;
+            color: var(--spot-color);
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 4px 8px;
+        }
+
+        .no-locations-msg {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            font-style: italic;
+            margin-top: 20px;
         }
 
         .result-container {
@@ -205,13 +350,10 @@
             font-style: italic;
         }
 
-        .precision-tip {
-            font-size: 0.7rem;
-            color: var(--accent-color);
-            text-align: center;
-            margin-top: 5px;
-            opacity: 0.7;
-            font-weight: 600;
+        /* Override Leaflet Marker Styles to keep clean look and minimize collision footprints */
+        .leaflet-div-icon {
+            background: transparent !important;
+            border: none !important;
         }
     </style>
 </head>
@@ -220,17 +362,22 @@
 <div class="container">
     <div class="card">
         <h2>Hedge Wraps</h2>
+
+        <div class="nav-container">
+            <button id="navFindBtn" class="nav-btn active-tab" onclick="switchNavMode('find')">🗺️ Find Location</button>
+            <button id="navSavedBtn" class="nav-btn" onclick="switchNavMode('saved')">⭐ Saved Locations</button>
+        </div>
         
-        <div class="controls-grid">
-            <div>
-                <label for="lakeSelect">CHOOSE LAKE</label>
-                <select id="lakeSelect" onchange="handleLakeChange()">
-                    <option value="Astral.png">Astral Park Lake</option>
-                    <option value="Tiddenfoot.png">Tiddenfoot Lake</option>
-                    <option value="Rackley Hills.png">Rackley Hills</option>
-                </select>
+        <div id="searchControlsRow" class="search-row">
+            <div class="search-input-wrapper">
+                <input id="searchInput" type="text" class="search-input" placeholder="Search lake, venue, postcode..." onkeydown="if(event.key==='Enter') executeLocationSearch()">
             </div>
-            <div>
+            <button class="geo-btn" onclick="fetchDeviceLocation()" title="Find My Location">🛰️ GPS</button>
+            <button class="save-loc-btn" onclick="promptSaveCurrentLocation()" title="Save Current View">⭐ Save</button>
+        </div>
+
+        <div class="controls-grid">
+            <div style="grid-template-columns: 1fr; grid-column: span 2;">
                 <label for="rodLength">ROD LENGTH</label>
                 <select id="rodLength" onchange="calculateWraps()">
                     <option value="9">9 ft</option>
@@ -255,16 +402,14 @@
         </div>
 
         <div class="map-viewport" id="mapViewport">
-            <div class="zoom-content" id="zoomContent">
-                <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg">
-                    <image id="svgMapImage" href="Astral.png" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
-                    <g id="lineGroup"></g>
-                    <g id="dotGroup"></g>
-                </svg>
+            <div id="satelliteMap"></div>
+
+            <div id="savedOverlayPanel" class="saved-overlay">
+                <div class="saved-overlay-title">Your Saved Venues</div>
+                <div id="locationListContainer" class="location-list"></div>
             </div>
         </div>
         
-        <div class="precision-tip">💡 Markers are precision calibrated to roughly 1m x 1m at max zoom.</div>
         <div class="instructions" id="instructionText">Map is safety-locked. Unlock above to drop markers.</div>
     </div>
 
@@ -276,219 +421,161 @@
     </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
+    let map = null;
     let isMapLocked = true; 
     let activePlacementMode = 'none'; 
-    let pegPoint = null; 
-    let spotPoint = null;
+    
+    // Core Geographic Objects
+    let pegLatLng = null; 
+    let spotLatLng = null;
+    let pegMarker = null;
+    let spotMarker = null;
+    let flightPathLine = null;
 
-    let scale = 1; let panX = 0; let panY = 0;
-    let isDragging = false; let startX, startY; let initialPinchDist = null;
+    // Navigation and State Cache arrays
+    let currentNavMode = 'find'; 
+    let savedLocations = [];
 
-    const viewport = document.getElementById('mapViewport');
-    const content = document.getElementById('zoomContent');
-    const svgCanvas = document.getElementById('mapSvg');
+    // Initialize components
+    initSatelliteMap();
+    loadSavedLocationsFromCache();
 
-    const LAKE_CONFIGS = {
-        "Astral.png": { 
-            originalWidth: 960,  
-            originalHeight: 816, 
-            scaleLinePixels: 262, 
-            scaleRealMetres: 200
-        },
-        "Tiddenfoot.png": { 
-            originalWidth: 960,  
-            originalHeight: 684, 
-            scaleLinePixels: 176, 
-            scaleRealMetres: 100 
-        },
-        "Rackley Hills.png": { 
-            originalWidth: 960,  
-            originalHeight: 684, 
-            scaleLinePixels: 236, 
-            scaleRealMetres: 100 
-        }
-    };
-
-    setupPanZoomEvents();
-    syncCanvasGeometry();
-
-    function setupPanZoomEvents() {
-        viewport.addEventListener('pointerdown', (e) => {
-            if (isMapLocked) return; 
-            isDragging = true;
-            startX = e.clientX - panX; startY = e.clientY - panY;
-            viewport.setPointerCapture(e.pointerId);
+    function initSatelliteMap() {
+        // Fallback view safely centered on Dunstable context area
+        const defaultLat = 51.884;
+        const defaultLng = -0.520;
+        
+        map = L.map('satelliteMap', {
+            center: [defaultLat, defaultLng],
+            zoom: 16,
+            zoomControl: false,
+            attributionControl: false
         });
 
-        viewport.addEventListener('pointermove', (e) => {
-            if (!isDragging || isMapLocked) return; 
-            if (e.pointerType === 'touch' && initialPinchDist !== null) return;
-            panX = e.clientX - startX;
-            panY = e.clientY - startY;
-            applyTransform();
+        // Pull pristine Esri World Imagery Satellite Tiles directly
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            maxNativeZoom: 19
+        }).addTo(map);
+
+        // Map Click Entry Hook
+        map.on('click', (e) => {
+            if (isMapLocked || activePlacementMode === 'none') return;
+            handleMapInteraction(e.latlng);
         });
 
-        viewport.addEventListener('pointerup', (e) => {
-            if (isMapLocked) {
-                handleMapTap(e);
-                return;
-            }
-            if (!isDragging) return;
-            isDragging = false;
-            viewport.releasePointerCapture(e.pointerId);
-
-            const deltaX = Math.abs(e.clientX - (startX + panX));
-            const deltaY = Math.abs(e.clientY - (startY + panY));
-            if (deltaX < 5 && deltaY < 5) {
-                handleMapTap(e);
-            }
-        });
-
-        viewport.addEventListener('pointercancel', () => { isDragging = false; });
-
-        viewport.addEventListener('wheel', (e) => {
-            if (isMapLocked) return; 
-            e.preventDefault();
-            const zoomFactor = 1.1;
-            const rect = viewport.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-
-            const contentX = (mouseX - panX) / scale;
-            const contentY = (mouseY - panY) / scale;
-
-            if (e.deltaY < 0) {
-                scale = Math.min(scale * zoomFactor, 6); 
-            } else {
-                scale = Math.max(scale / zoomFactor, 1); 
-            }
-
-            panX = mouseX - contentX * scale;
-            panY = mouseY - contentY * scale;
-            applyTransform();
-        }, { passive: false });
-
-        viewport.addEventListener('touchstart', (e) => {
-            if (isMapLocked) return; 
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            }
-        }, { passive: false });
-
-        viewport.addEventListener('touchmove', (e) => {
-            if (isMapLocked) return; 
-            e.preventDefault(); 
-            if (e.touches.length === 2 && initialPinchDist !== null) {
-                const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                
-                const rect = viewport.getBoundingClientRect();
-                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-
-                const contentX = (midX - panX) / scale;
-                const contentY = (midY - panY) / scale;
-
-                const zoomRatio = currentDist / initialPinchDist;
-                scale = Math.max(1, Math.min(scale * zoomRatio, 6));
-
-                panX = midX - contentX * scale;
-                panY = midY - contentY * scale;
-
-                initialPinchDist = currentDist;
-                applyTransform();
-            }
-        }, { passive: false });
-
-        viewport.addEventListener('touchend', () => { initialPinchDist = null; });
+        // Initialize UI lock rules
+        lockMapInteractions();
     }
 
-    function syncCanvasGeometry() {
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
-        
-        svgCanvas.setAttribute('viewBox', '0 0 100 100');
-        document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
-        
-        renderGraphicsLayer();
+    function lockMapInteractions() {
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+        map.keyboard.disable();
+        if (map.tap) map.tap.disable();
     }
 
-    function applyTransform() {
-        const maxPanX = viewport.clientWidth * (scale - 1);
-        const maxPanY = viewport.clientHeight * (scale - 1);
-        
-        if (panX > 0) panX = 0; if (panY > 0) panY = 0;
-        if (panX < -maxPanX) panX = -maxPanX; if (panY < -maxPanY) panY = -maxPanY;
+    function unlockMapInteractions() {
+        map.dragging.enable();
+        map.touchZoom.enable();
+        map.doubleClickZoom.enable();
+        map.scrollWheelZoom.enable();
+        map.boxZoom.enable();
+        map.keyboard.enable();
+        if (map.tap) map.tap.enable();
+    }
 
-        content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-        
-        const connectingLine = document.querySelector('#lineGroup line');
-        if (connectingLine) {
-            connectingLine.setAttribute('stroke-width', Math.max(0.3, 0.6 / scale));
+    function switchNavMode(targetMode) {
+        currentNavMode = targetMode;
+        const findBtn = document.getElementById('navFindBtn');
+        const savedBtn = document.getElementById('navSavedBtn');
+        const overlay = document.getElementById('savedOverlayPanel');
+
+        if (targetMode === 'find') {
+            findBtn.className = "nav-btn active-tab";
+            savedBtn.className = "nav-btn";
+            overlay.style.display = 'none';
+        } else {
+            findBtn.className = "nav-btn";
+            savedBtn.className = "nav-btn active-tab";
+            overlay.style.display = 'flex';
+            
+            // Force safe lock transition when switching windows to prevent background map shifts
+            if (!isMapLocked) toggleSafetyLock();
+            renderSavedLocationItems();
         }
     }
 
-    function handleMapTap(e) {
-        if (activePlacementMode === 'none' || initialPinchDist !== null) return;
-
-        const rect = svgCanvas.getBoundingClientRect();
-        const clickXPercentage = (e.clientX - rect.left) / rect.width;
-        const clickYPercentage = (e.clientY - rect.top) / rect.height;
-
-        if (clickXPercentage < 0 || clickXPercentage > 1 || clickYPercentage < 0 || clickYPercentage > 1) return;
-
+    function handleMapInteraction(latlng) {
         if (activePlacementMode === 'peg') {
-            pegPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
+            pegLatLng = latlng;
         } else if (activePlacementMode === 'spot') {
-            spotPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
+            spotLatLng = latlng;
         }
 
-        renderGraphicsLayer(); 
+        renderMapGraphicsLayers();
         calculateWraps();
         resetPlacementState();
     }
 
-    function renderGraphicsLayer() {
+    function renderMapGraphicsLayers() {
         const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim();
         const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 
-        const lineGroup = document.getElementById('lineGroup');
-        if (pegPoint && spotPoint) {
-            lineGroup.innerHTML = `<line x1="${pegPoint.x}" y1="${pegPoint.y}" x2="${spotPoint.x}" y2="${spotPoint.y}" stroke="${accentColor}" stroke-width="0.6" stroke-linecap="round" />`;
-        } else {
-            lineGroup.innerHTML = '';
+        // Clear existing vector components safely
+        if (pegMarker) map.removeLayer(pegMarker);
+        if (spotMarker) map.removeLayer(spotMarker);
+        if (flightPathLine) map.removeLayer(flightPathLine);
+
+        // Render Peg Element via clean dynamic inline HTML icons
+        if (pegLatLng) {
+            const pegHtml = `<div style="background-color: ${pegColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
+            pegMarker = L.marker(pegLatLng, {
+                icon: L.divIcon({ html: pegHtml, iconSize: [12, 12], iconAnchor: [6, 6] })
+            }).addTo(map);
         }
 
-        const dotGroup = document.getElementById('dotGroup');
-        dotGroup.innerHTML = ''; 
-        
-        const rMaster = 0.45;
-
-        if (pegPoint) {
-            dotGroup.innerHTML += `<circle cx="${pegPoint.x}" cy="${pegPoint.y}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="0.1" />`;
-        }
-        if (spotPoint) {
-            dotGroup.innerHTML += `<circle cx="${spotPoint.x}" cy="${spotPoint.y}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="0.1" />`;
+        // Render Spot Element
+        if (spotLatLng) {
+            const spotHtml = `<div style="background-color: ${spotColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
+            spotMarker = L.marker(spotLatLng, {
+                icon: L.divIcon({ html: spotHtml, iconSize: [12, 12], iconAnchor: [6, 6] })
+            }).addTo(map);
         }
 
-        applyTransform(); 
+        // Render Connection Vector Line Rule
+        if (pegLatLng && spotLatLng) {
+            flightPathLine = L.polyline([pegLatLng, spotLatLng], {
+                color: accentColor,
+                weight: 3,
+                opacity: 0.9,
+                lineCap: 'round'
+            }).addTo(map);
+        }
     }
 
     function calculateWraps() {
-        if (!pegPoint || !spotPoint) return;
+        if (!pegLatLng || !spotLatLng) return;
 
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        const distancePercentageOfWidth = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
-
-        const pixelDistanceOnNaturalImage = (distancePercentageOfWidth / 100) * config.originalWidth;
-        const pixelsPerMetreMasterRule = config.scaleLinePixels / config.scaleRealMetres;
-        const calculatedMetres = pixelDistanceOnNaturalImage / pixelsPerMetreMasterRule;
+        // Haversine Precise Formula Computation Path
+        const R = 6371000; // Earth radius rule in metres
+        const dLat = (spotLatLng.lat - pegLatLng.lat) * Math.PI / 180;
+        const dLon = (spotLatLng.lng - pegLatLng.lng) * Math.PI / 180;
         
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(pegLatLng.lat * Math.PI / 180) * Math.cos(spotLatLng.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                  
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const calculatedMetres = R * c; // Absolute horizontal distance line
+
         const calculatedTotalFeet = calculatedMetres / 0.3048;
         const fullWraps = Math.floor(calculatedTotalFeet / rodLength);
         const remainingFeet = calculatedTotalFeet % rodLength;
@@ -509,6 +596,138 @@
         }
     }
 
+    function fetchDeviceLocation() {
+        if (!navigator.geolocation) {
+            alert("Geolocation services are not supported by this browser client.");
+            return;
+        }
+
+        document.getElementById('instructionText').innerText = "🛰️ Querying system satellite arrays...";
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                map.setView([lat, lng], 18);
+                document.getElementById('instructionText').innerText = "Location locked via GPS array telemetry.";
+                setTimeout(resetPlacementState, 2000);
+            },
+            (error) => {
+                alert("GPS connection failed: " + error.message);
+                resetPlacementState();
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    }
+
+    async function executeLocationSearch() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) return;
+
+        document.getElementById('instructionText').innerText = "Searching global index logs...";
+
+        try {
+            // Safe fallback open OSM Geocoding lookup configuration
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                const lat = parseFloat(data[0].lat);
+                const lon = parseFloat(data[0].lon);
+                map.setView([lat, lon], 17);
+                document.getElementById('instructionText').innerText = `Moved layout directly onto coordinate vector targets.`;
+                setTimeout(resetPlacementState, 2000);
+            } else {
+                alert("No coordinate points matching location name found.");
+                resetPlacementState();
+            }
+        } catch (err) {
+            alert("Index server communication failure.");
+            resetPlacementState();
+        }
+    }
+
+    function promptSaveCurrentLocation() {
+        const currentCenter = map.getCenter();
+        const currentZoom = map.getZoom();
+        
+        const locationName = prompt("Enter a memorable tag name for this venue position:");
+        if (!locationName || !locationName.trim()) return;
+
+        const record = {
+            id: 'loc_' + Date.now(),
+            name: locationName.trim(),
+            lat: currentCenter.lat,
+            lng: currentCenter.lng,
+            zoom: currentZoom,
+            pegLatLng: pegLatLng,
+            spotLatLng: spotLatLng
+        };
+
+        savedLocations.push(record);
+        localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations));
+        alert("Venue profile cached safely into storage matrices.");
+    }
+
+    function loadSavedLocationsFromCache() {
+        const cached = localStorage.getItem('hedge_saved_maps_cache');
+        if (cached) {
+            try {
+                savedLocations = JSON.parse(cached);
+            } catch(e) {
+                savedLocations = [];
+            }
+        }
+    }
+
+    function renderSavedLocationItems() {
+        const container = document.getElementById('locationListContainer');
+        container.innerHTML = '';
+
+        if (savedLocations.length === 0) {
+            container.innerHTML = '<div class="no-locations-msg">No custom coordinate records saved yet. Navigate onto a venue and hit Save.</div>';
+            return;
+        }
+
+        savedLocations.forEach(loc => {
+            const row = document.createElement('div');
+            row.className = 'location-item';
+            row.onclick = () => selectAndFlyToSavedLocation(loc.id);
+
+            row.innerHTML = `
+                <div class="location-info">
+                    <div class="location-name">${loc.name}</div>
+                    <div class="location-coords">Lat: ${loc.lat.toFixed(4)}, Lng: ${loc.lng.toFixed(4)}</div>
+                </div>
+                <button class="delete-loc-btn" onclick="event.stopPropagation(); deleteSavedLocationItem('${loc.id}')" title="Delete Location">✕</button>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function selectAndFlyToSavedLocation(locationId) {
+        const loc = savedLocations.find(l => l.id === locationId);
+        if (!loc) return;
+
+        // Restore venue viewport map perspective configuration
+        map.setView([loc.lat, loc.lng], loc.zoom || 17);
+
+        // Restore markers if they existed for this venue instance
+        pegLatLng = loc.pegLatLng ? L.latLng(loc.pegLatLng.lat, loc.pegLatLng.lng) : null;
+        spotLatLng = loc.spotLatLng ? L.latLng(loc.spotLatLng.lat, loc.spotLatLng.lng) : null;
+
+        renderMapGraphicsLayers();
+        calculateWraps();
+        switchNavMode('find');
+    }
+
+    function deleteSavedLocationItem(locationId) {
+        if (!confirm("Are you certain you wish to delete this saved location record?")) return;
+        savedLocations = savedLocations.filter(l => l.id !== locationId);
+        localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations));
+        renderSavedLocationItems();
+    }
+
     function toggleSafetyLock() {
         isMapLocked = !isMapLocked;
         const lockBtn = document.getElementById('btnLockToggle');
@@ -520,12 +739,12 @@
             pegBtn.disabled = true; targetBtn.disabled = true;
             activePlacementMode = 'none';
             resetPlacementState();
-            document.getElementById('instructionText').innerText = "Pins are locked. Page scrolling enabled over map area.";
-            applyTransform();
+            lockMapInteractions();
         } else {
             lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔓 MAP UNLOCKED";
             pegBtn.disabled = false; targetBtn.disabled = false;
             resetPlacementState(); 
+            unlockMapInteractions();
         }
     }
 
@@ -546,10 +765,10 @@
 
         if (mode === 'peg') {
             pegBtn.className = "mode-btn active-peg"; targetBtn.className = "mode-btn";
-            text.innerText = "Armed: Placing Peg (Orange). Tap map to place or adjust.";
+            text.innerText = "Armed: Placing Peg (Orange). Tap satellite to mark your swim.";
         } else {
             pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn active-spot";
-            text.innerText = "Armed: Placing Target (Red). Tap map to place or adjust.";
+            text.innerText = "Armed: Placing Target (Red). Tap satellite to mark your spot.";
         }
     }
 
@@ -569,23 +788,11 @@
         }
     }
 
-    function handleLakeChange() {
-        scale = 1; panX = 0; panY = 0; applyTransform();
-        if (!isMapLocked) toggleSafetyLock();
-        resetMarkers(); 
-    }
-
-    function resetMarkers() {
-        pegPoint = null; spotPoint = null;
+    function clearResultsDisplay() {
         document.getElementById('resultValue').innerText = "0 wraps";
         document.getElementById('resultDistance').innerText = "Distance: --";
-        document.getElementById('resultNote').innerText = "Target distance reporting.";
-        syncCanvasGeometry(); 
+        document.getElementById('resultNote').innerText = "Ensure both Peg and Target positions are marked on the map layout.";
     }
-
-    window.addEventListener('resize', () => {
-        syncCanvasGeometry();
-    });
 </script>
 
 </body>
