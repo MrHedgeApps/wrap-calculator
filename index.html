@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
-    <title>Hedge Wrap Calculator: PRECISION</title>
+    <title>Hedge Wrap Calculator</title>
     <style>
         :root {
             --bg-color: #0f0f0f;
@@ -143,6 +143,7 @@
             color: var(--spot-color);
         }
 
+        /* Fixed viewport bounding box container */
         .map-viewport {
             position: relative;
             width: 100%;
@@ -151,9 +152,9 @@
             border-radius: 10px;
             border: 1px solid var(--border-color);
             background: #111111;
-            touch-action: none;
         }
 
+        /* Fixed structural canvas container layout handles scaling matrices perfectly */
         .zoom-content {
             position: absolute;
             top: 0;
@@ -161,20 +162,35 @@
             width: 100%;
             height: 100%;
             transform-origin: 0 0;
-            cursor: grab;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .zoom-content:active { cursor: grabbing; }
+        /* Wrapper that matches the image dimensions natively */
+        .image-container-frame {
+            position: relative;
+            display: inline-block;
+            line-height: 0;
+        }
 
+        .map-image {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* SVG layer overlays image directly for perfect alignment */
         #mapSvg {
             position: absolute;
-            pointer-events: none;
-            z-index: 5;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            z-index: 5;
         }
 
         .result-container {
@@ -257,16 +273,13 @@
 
         <div class="map-viewport" id="mapViewport">
             <div class="zoom-content" id="zoomContent">
-                <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <pattern id="lakePattern" patternUnits="userSpaceOnUse" width="100%" height="100%">
-                            <image id="svgImageElement" href="Astral.png" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
-                        </pattern>
-                    </defs>
-                    <rect id="mapRect" width="100%" height="100%" fill="url(#lakePattern)" />
-                    <g id="lineGroup"></g>
-                    <g id="dotGroup"></g>
-                </svg>
+                <div class="image-container-frame" id="imgFrame">
+                    <img src="Astral.png" alt="Lake Map" class="map-image" id="lakeMap">
+                    <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg">
+                        <g id="lineGroup"></g>
+                        <g id="dotGroup"></g>
+                    </svg>
+                </div>
             </div>
         </div>
         
@@ -294,6 +307,7 @@
     const viewport = document.getElementById('mapViewport');
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
+    const mapImage = document.getElementById('lakeMap');
 
     const LAKE_CONFIGS = {
         "Astral.png": { 
@@ -301,100 +315,109 @@
             originalHeight: 816, 
             scaleLinePixels: 262, 
             scaleRealMetres: 200,
-            precisionMarkerPercent: 0.05
+            precisionMarkerPercent: 0.45
         },
-        "Lake2.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100, precisionMarkerPercent: 0.1 },
-        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100, precisionMarkerPercent: 0.1 }
+        "Lake2.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100, precisionMarkerPercent: 0.5 },
+        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100, precisionMarkerPercent: 0.5 }
     };
 
     setupPanZoomEvents();
-    syncSvgToImageGeometry();
 
     function setupPanZoomEvents() {
+        // Core interaction handling using explicit pointer events
         viewport.addEventListener('pointerdown', (e) => {
+            // Guard rule: If map locked down, ignore drag mechanics to let page scroll freely
+            if (isMapLocked) return;
             isDragging = true;
             startX = e.clientX - panX; startY = e.clientY - panY;
+            viewport.setPointerCapture(e.pointerId);
         });
-        viewport.addEventListener('pointermove', onPointerMove);
-        viewport.addEventListener('pointerup', onPointerUp);
-        viewport.addEventListener('pointercancel', onPointerUp);
-        viewport.addEventListener('wheel', onWheel, { passive: false });
 
-        viewport.addEventListener('touchstart', onTouchStart, { passive: true });
-        viewport.addEventListener('touchmove', onTouchMove, { passive: false });
-        viewport.addEventListener('touchend', onTouchEnd);
-    }
-
-    function onPointerMove(e) {
-        if (!isDragging) return;
-        if (e.pointerType === 'touch' && initialPinchDist !== null) return;
-        
-        panX = e.clientX - startX;
-        panY = e.clientY - startY;
-        applyTransform();
-    }
-
-    function onPointerUp(e) {
-        if (!isDragging) return;
-        isDragging = false;
-
-        const deltaX = Math.abs(e.clientX - (startX + panX));
-        const deltaY = Math.abs(e.clientY - (startY + panY));
-        if (deltaX < 5 && deltaY < 5) {
-            handleMapTap(e);
-        }
-    }
-
-    function onWheel(e) {
-        e.preventDefault();
-        const zoomFactor = 1.1;
-        const rect = viewport.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-
-        const contentX = (mouseX - panX) / scale;
-        const contentY = (mouseY - panY) / scale;
-
-        if (e.deltaY < 0) {
-            scale = Math.min(scale * zoomFactor, 6); 
-        } else {
-            scale = Math.max(scale / zoomFactor, 1); 
-        }
-
-        panX = mouseX - contentX * scale;
-        panY = mouseY - contentY * scale;
-        
-        applyTransform();
-    }
-
-    function onTouchStart(e) {
-        if (e.touches.length === 2) {
-            initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        }
-    }
-    function onTouchMove(e) {
-        if (e.touches.length === 2 && initialPinchDist !== null) {
-            e.preventDefault();
-            const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            
-            const rect = viewport.getBoundingClientRect();
-            const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-            const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-
-            const contentX = (midX - panX) / scale;
-            const contentY = (midY - panY) / scale;
-
-            const zoomRatio = currentDist / initialPinchDist;
-            scale = Math.max(1, Math.min(scale * zoomRatio, 6));
-
-            panX = midX - contentX * scale;
-            panY = midY - contentY * scale;
-
-            initialPinchDist = currentDist;
+        viewport.addEventListener('pointermove', (e) => {
+            if (!isDragging || isMapLocked) return;
+            if (e.pointerType === 'touch' && initialPinchDist !== null) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
             applyTransform();
-        }
+        });
+
+        viewport.addEventListener('pointerup', (e) => {
+            if (isMapLocked) {
+                // If map is completely locked down, click inputs are treated as local target point drops instantly
+                handleMapTap(e);
+                return;
+            }
+            if (!isDragging) return;
+            isDragging = false;
+            viewport.releasePointerCapture(e.pointerId);
+
+            const deltaX = Math.abs(e.clientX - (startX + panX));
+            const deltaY = Math.abs(e.clientY - (startY + panY));
+            if (deltaX < 5 && deltaY < 5) {
+                handleMapTap(e);
+            }
+        });
+
+        viewport.addEventListener('pointercancel', (e) => {
+            isDragging = false;
+        });
+
+        viewport.addEventListener('wheel', (e) => {
+            if (isMapLocked) return; // Prevent zooming wheel shifts when locked down
+            e.preventDefault();
+            const zoomFactor = 1.1;
+            const rect = viewport.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const contentX = (mouseX - panX) / scale;
+            const contentY = (mouseY - panY) / scale;
+
+            if (e.deltaY < 0) {
+                scale = Math.min(scale * zoomFactor, 6); 
+            } else {
+                scale = Math.max(scale / zoomFactor, 1); 
+            }
+
+            panX = mouseX - contentX * scale;
+            panY = mouseY - contentY * scale;
+            applyTransform();
+        }, { passive: false });
+
+        // Direct handling for mobile browser scroll pass-through touch events
+        viewport.addEventListener('touchstart', (e) => {
+            if (isMapLocked) return; // Let touch events bubble to allow scroll pass-through
+            if (e.touches.length === 2) {
+                initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            }
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', (e) => {
+            if (isMapLocked) return; // Allow page scrolling when frozen
+            if (e.touches.length === 2 && initialPinchDist !== null) {
+                e.preventDefault(); // Lock browser scrolling only when actively manipulating canvas view
+                const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                
+                const rect = viewport.getBoundingClientRect();
+                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+
+                const contentX = (midX - panX) / scale;
+                const contentY = (midY - panY) / scale;
+
+                const zoomRatio = currentDist / initialPinchDist;
+                scale = Math.max(1, Math.min(scale * zoomRatio, 6));
+
+                panX = midX - contentX * scale;
+                panY = midY - contentY * scale;
+
+                initialPinchDist = currentDist;
+                applyTransform();
+            }
+        }, { passive: false });
+
+        viewport.addEventListener('touchend', () => { initialPinchDist = null; });
     }
-    function onTouchEnd() { initialPinchDist = null; }
 
     function applyTransform() {
         const maxPanX = viewport.clientWidth * (scale - 1);
@@ -405,64 +428,40 @@
 
         content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
         
+        // Re-adjust thickness scales of vectors dynamically
         const connectingLine = document.querySelector('#lineGroup line');
         if (connectingLine) {
             connectingLine.setAttribute('stroke-width', Math.max(0.5, 2.5 / scale));
-            connectingLine.setAttribute('stroke-dasharray', `${4/scale},${4/scale}`);
         }
     }
 
     function handleMapTap(e) {
-        if (isMapLocked || activePlacementMode === 'none' || initialPinchDist !== null) return;
+        if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        // FIXED ALIGNMENT MATH: Computes native coordinates decoupling the parent matrix offsets cleanly
+        // FIXED AXIS GEOMETRY MAPPER: Resolves raw screen tap positions directly into the image's coordinate bounds
         const rect = svgCanvas.getBoundingClientRect();
         const clickXPercentage = (e.clientX - rect.left) / rect.width;
         const clickYPercentage = (e.clientY - rect.top) / rect.height;
 
+        // Verify tap was placed within image bounds
         if (clickXPercentage < 0 || clickXPercentage > 1 || clickYPercentage < 0 || clickYPercentage > 1) return;
 
         if (activePlacementMode === 'peg') {
             pegPoint = { x: clickXPercentage, y: clickYPercentage };
-        } else {
+        } else if (activePlacementMode === 'spot') {
             spotPoint = { x: clickXPercentage, y: clickYPercentage };
         }
 
-        syncSvgToImageGeometry(); 
+        renderGraphicsLayer(); 
         calculateWraps();
     }
 
-    function syncSvgToImageGeometry() {
+    function renderGraphicsLayer() {
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
-        
-        const cWidth = content.clientWidth;
-        const cHeight = content.clientHeight;
 
-        const imageRatio = config.originalWidth / config.originalHeight;
-        const containerRatio = cWidth / cHeight;
-        
-        let imgRenderW, imgRenderH, imgOffsetTop, imgOffsetLeft;
-
-        if (containerRatio > imageRatio) {
-            imgRenderH = cHeight;
-            imgRenderW = cHeight * imageRatio;
-            imgOffsetTop = 0;
-            imgOffsetLeft = (cWidth - imgRenderW) / 2;
-        } else {
-            imgRenderW = cWidth;
-            imgRenderH = cWidth / imageRatio;
-            imgOffsetLeft = 0;
-            imgOffsetTop = (cHeight - imgRenderH) / 2;
-        }
-
-        svgCanvas.style.top = imgOffsetTop + 'px';
-        svgCanvas.style.left = imgOffsetLeft + 'px';
-        svgCanvas.style.width = imgRenderW + 'px';
-        svgCanvas.style.height = imgRenderH + 'px';
+        // Ensure canvas attributes are matched cleanly
         svgCanvas.setAttribute('viewBox', '0 0 100 100'); 
-
-        document.getElementById('svgImageElement').setAttribute('href', activeLakeFile);
 
         const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim();
         const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
@@ -481,10 +480,10 @@
         const rMaster = config.precisionMarkerPercent; 
 
         if (pegPoint) {
-            dotGroup.innerHTML += `<circle cx="${pegPoint.x * 100}" cy="${pegPoint.y * 100}" r="${rMaster * 2}" fill="${pegColor}" stroke="#ffffff" stroke-width="0.3" />`;
+            dotGroup.innerHTML += `<circle cx="${pegPoint.x * 100}" cy="${pegPoint.y * 100}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="0.15" />`;
         }
         if (spotPoint) {
-            dotGroup.innerHTML += `<circle cx="${spotPoint.x * 100}" cy="${spotPoint.y * 100}" r="${rMaster * 2}" fill="${spotColor}" stroke="#ffffff" stroke-width="0.3" />`;
+            dotGroup.innerHTML += `<circle cx="${spotPoint.x * 100}" cy="${spotPoint.y * 100}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="0.15" />`;
         }
 
         applyTransform(); 
@@ -537,7 +536,7 @@
             pegBtn.disabled = true; targetBtn.disabled = true;
             pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn";
             activePlacementMode = 'none';
-            text.innerText = "Map is safety-locked. Unlock above to drop markers.";
+            text.innerText = "Pins are locked. Page scrolling enabled over map area.";
         } else {
             lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔓 MAP UNLOCKED";
             pegBtn.disabled = false; targetBtn.disabled = false;
@@ -562,6 +561,7 @@
 
     function handleLakeChange() {
         scale = 1; panX = 0; panY = 0; applyTransform();
+        document.getElementById('lakeMap').src = document.getElementById('lakeSelect').value;
         if (!isMapLocked) toggleSafetyLock();
         resetMarkers(); 
     }
@@ -571,12 +571,13 @@
         document.getElementById('resultValue').innerText = "0 wraps";
         document.getElementById('resultDistance').innerText = "Distance: --";
         document.getElementById('resultNote').innerText = "Target distance reporting.";
-        syncSvgToImageGeometry(); 
+        renderGraphicsLayer(); 
     }
 
-    window.addEventListener('resize', () => {
-        syncSvgToImageGeometry();
-    });
+    // Force rendering adjustments if device orientation flips on the bank
+    mapImage.onload = function() {
+        renderGraphicsLayer();
+    };
 </script>
 
 </body>
