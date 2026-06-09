@@ -11,6 +11,8 @@
             --accent-color: #4caf50;
             --peg-color: #ff9800;
             --spot-color: #f44336;
+            --lock-color: #f44336;
+            --unlock-color: #4caf50;
             --text-color: #ffffff;
             --text-muted: #aaaaaa;
             --input-bg: #2d2d2d;
@@ -69,7 +71,7 @@
             font-weight: 600;
         }
 
-        select {
+        select, button.lock-btn {
             width: 100%;
             padding: 12px;
             border-radius: 8px;
@@ -80,6 +82,24 @@
             box-sizing: border-box;
             outline: none;
             cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        button.lock-btn {
+            border-width: 2px;
+        }
+
+        button.lock-btn.state-locked {
+            border-color: var(--lock-color);
+            color: var(--lock-color);
+            background-color: rgba(244, 67, 54, 0.05);
+        }
+
+        button.lock-btn.state-unlocked {
+            border-color: var(--unlock-color);
+            color: var(--unlock-color);
+            background-color: rgba(76, 175, 80, 0.05);
         }
 
         .mode-container {
@@ -102,7 +122,13 @@
             text-align: center;
         }
 
-        .mode-btn:active { transform: scale(0.98); }
+        .mode-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: var(--border-color) !important;
+            color: var(--text-muted) !important;
+            background-color: var(--input-bg) !important;
+        }
 
         .mode-btn.active-peg {
             border-color: var(--peg-color);
@@ -116,19 +142,17 @@
             color: var(--spot-color);
         }
 
-        /* Fixed Viewport Container for Panning/Zooming */
         .map-viewport {
             position: relative;
             width: 100%;
-            height: 400px; /* Locked box height on screen */
+            height: 400px;
             overflow: hidden;
             border-radius: 12px;
             border: 1px solid var(--border-color);
             background: #181818;
-            touch-action: none; /* Block native mobile browser scrolling inside here */
+            touch-action: none;
         }
 
-        /* This internal canvas houses everything and handles transforms */
         .zoom-content {
             position: absolute;
             top: 0;
@@ -144,13 +168,12 @@
         .map-image {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Keeps ratio intact inside your viewport box */
+            object-fit: contain;
             pointer-events: none;
             user-select: none;
             -webkit-user-select: none;
         }
 
-        /* Pins setup with inline baseline diameter variables */
         .pin {
             position: absolute;
             width: var(--base-size, 16px);
@@ -240,9 +263,16 @@
             </div>
         </div>
 
+        <div class="controls-grid" style="margin-bottom: 15px; grid-template-columns: 1fr;">
+            <div>
+                <label>SAFETY LOCK</label>
+                <button id="btnLockToggle" class="lock-btn state-locked" onclick="toggleSafetyLock()">🔒 Map Controls: Locked</button>
+            </div>
+        </div>
+
         <div class="mode-container">
-            <button id="btnSetPeg" class="mode-btn active-peg" onclick="setPlacementMode('peg')">📍 Set Peg</button>
-            <button id="btnSetTarget" class="mode-btn" onclick="setPlacementMode('spot')">🎯 Set Target</button>
+            <button id="btnSetPeg" class="mode-btn" onclick="setPlacementMode('peg')" disabled>📍 Set Peg</button>
+            <button id="btnSetTarget" class="mode-btn" onclick="setPlacementMode('spot')" disabled>🎯 Set Target</button>
         </div>
 
         <div class="map-viewport" id="mapViewport">
@@ -255,7 +285,7 @@
         </div>
         
         <div class="zoom-tip">💡 Pinch to Zoom / Drag to Pan map area</div>
-        <div class="instructions" id="instructionText">Mode: Setting Peg. Tap map to place swim position.</div>
+        <div class="instructions" id="instructionText">Pins are locked down. Unlock safety switch above to make edits.</div>
     </div>
 
     <div class="card result-container">
@@ -267,11 +297,11 @@
 </div>
 
 <script>
-    let activePlacementMode = 'peg';
-    let pegPoint = null; // Percentage based relative to natural image render sizes
+    let isMapLocked = true; // Hard default state
+    let activePlacementMode = 'none'; 
+    let pegPoint = null; 
     let spotPoint = null;
 
-    // Pan and Zoom Matrix Variables
     let scale = 1;
     let panX = 0;
     let panY = 0;
@@ -289,25 +319,70 @@
         "Lake3.png": { scaleRatio: 1.0, scaleRealMetres: 100 }
     };
 
-    // Initialize Event Listeners for Interaction Engines
     setupPanZoomEvents();
 
+    function toggleSafetyLock() {
+        isMapLocked = !isMapLocked;
+        const lockBtn = document.getElementById('btnLockToggle');
+        const pegBtn = document.getElementById('btnSetPeg');
+        const targetBtn = document.getElementById('btnSetTarget');
+        const text = document.getElementById('instructionText');
+
+        if (isMapLocked) {
+            lockBtn.className = "lock-btn state-locked";
+            lockBtn.innerHTML = "🔒 Map Controls: Locked";
+            
+            pegBtn.disabled = true;
+            targetBtn.disabled = true;
+            pegBtn.className = "mode-btn";
+            targetBtn.className = "mode-btn";
+            
+            activePlacementMode = 'none';
+            text.innerText = "Pins are locked down. Unlock safety switch above to make edits.";
+        } else {
+            lockBtn.className = "lock-btn state-unlocked";
+            lockBtn.innerHTML = "🔓 Map Controls: Unlocked";
+            
+            pegBtn.disabled = false;
+            targetBtn.disabled = false;
+            
+            // Auto-default to peg placement when clicking unlock
+            setPlacementMode('peg');
+        }
+    }
+
+    function setPlacementMode(mode) {
+        if (isMapLocked) return;
+        
+        activePlacementMode = mode;
+        const pegBtn = document.getElementById('btnSetPeg');
+        const targetBtn = document.getElementById('btnSetTarget');
+        const text = document.getElementById('instructionText');
+
+        if (mode === 'peg') {
+            pegBtn.className = "mode-btn active-peg";
+            targetBtn.className = "mode-btn";
+            text.innerText = "Mode: Setting Peg. Tap map to place swim position.";
+        } else {
+            pegBtn.className = "mode-btn";
+            targetBtn.className = "mode-btn active-spot";
+            text.innerText = "Mode: Setting Target. Tap map to adjust target fishing spot.";
+        }
+    }
+
     function setupPanZoomEvents() {
-        // Mouse/Pointer Events
         viewport.addEventListener('pointerdown', onPointerDown);
         viewport.addEventListener('pointermove', onPointerMove);
         viewport.addEventListener('pointerup', onPointerUp);
         viewport.addEventListener('pointercancel', onPointerUp);
         viewport.addEventListener('wheel', onWheel, { passive: false });
 
-        // Mobile Touch Gestures for Pinch Zooming
         viewport.addEventListener('touchstart', onTouchStart, { passive: true });
         viewport.addEventListener('touchmove', onTouchMove, { passive: false });
         viewport.addEventListener('touchend', onTouchEnd);
     }
 
     function onPointerDown(e) {
-        // Only trigger panning if dragging with primary click/touch
         isDragging = true;
         startX = e.clientX - panX;
         startY = e.clientY - panY;
@@ -315,7 +390,6 @@
 
     function onPointerMove(e) {
         if (!isDragging) return;
-        // Check if user is actively moving a pointer without pinching
         if (e.pointerType === 'touch' && initialPinchDist !== null) return;
         
         panX = e.clientX - startX;
@@ -327,7 +401,6 @@
         if (!isDragging) return;
         isDragging = false;
 
-        // If the shift change is minimal, count it as a clean "Tap" placement instead of a dragging shift
         const deltaX = Math.abs(e.clientX - (startX + panX));
         const deltaY = Math.abs(e.clientY - (startY + panY));
         if (deltaX < 5 && deltaY < 5) {
@@ -341,14 +414,13 @@
         const mouseX = e.clientX - viewport.getBoundingClientRect().left;
         const mouseY = e.clientY - viewport.getBoundingClientRect().top;
 
-        // Anchor zooming point to mouse tip location
         const contentX = (mouseX - panX) / scale;
         const contentY = (mouseY - panY) / scale;
 
         if (e.deltaY < 0) {
-            scale = Math.min(scale * zoomFactor, 6); // Max 6x Zoom
+            scale = Math.min(scale * zoomFactor, 6);
         } else {
-            scale = Math.max(scale / zoomFactor, 1); // Min 1x normal width
+            scale = Math.max(scale / zoomFactor, 1);
         }
 
         panX = mouseX - contentX * scale;
@@ -357,7 +429,6 @@
         applyTransform();
     }
 
-    // Touch Mobile Pinch Processing Handles
     function onTouchStart(e) {
         if (e.touches.length === 2) {
             initialPinchDist = Math.hypot(
@@ -395,11 +466,9 @@
     function onTouchEnd() { initialPinchDist = null; }
 
     function applyTransform() {
-        // Constrain bounds to prevent dragging completely out of sight
         const maxPanX = viewport.clientWidth * (scale - 1);
         const maxPanY = viewport.clientHeight * (scale - 1);
         
-        // Prevent map wandering outside limits
         if (panX > 0) panX = 0;
         if (panY > 0) panY = 0;
         if (panX < -maxPanX) panX = -maxPanX;
@@ -407,7 +476,6 @@
 
         content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
         
-        // Dynamic Reverse-Scaling for Pins and Lines so they don't grow massive when zooming
         const currentPinSize = Math.max(6, 16 / scale);
         const currentStrokeWidth = Math.max(1, 2.5 / scale);
         
@@ -420,17 +488,17 @@
         const targetLine = document.querySelector('#mapSvg line');
         if (targetLine) {
             targetLine.setAttribute('stroke-width', currentStrokeWidth);
-            targetLine.setAttribute('stroke-dasharray', `${5/scale},${5/scale}`);
         }
     }
 
     function handleMapTap(e) {
+        // Strict guard: if the app is safe-locked, skip editing pins entirely
+        if (isMapLocked || activePlacementMode === 'none') return;
+
         const rect = content.getBoundingClientRect();
-        // Decode position back through pan/zoom matrix calculations to find exact image position
         const clickXOnContent = (e.clientX - rect.left) / scale;
         const clickYOnContent = (e.clientY - rect.top) / scale;
 
-        // Store location relative to active dimensions
         const x = clickXOnContent / content.clientWidth;
         const y = clickYOnContent / content.clientHeight;
 
@@ -440,7 +508,7 @@
             pin.style.left = (x * 100) + '%';
             pin.style.top = (y * 100) + '%';
             pin.style.display = 'block';
-        } else {
+        } else if (activePlacementMode === 'spot') {
             spotPoint = { x, y };
             const pin = document.getElementById('spotPin');
             pin.style.left = (x * 100) + '%';
@@ -450,31 +518,16 @@
 
         drawConnectingLine();
         calculateWraps();
-        applyTransform(); // Re-sync marker scale sizing instantly
-    }
-
-    function setPlacementMode(mode) {
-        activePlacementMode = mode;
-        const pegBtn = document.getElementById('btnSetPeg');
-        const targetBtn = document.getElementById('btnSetTarget');
-        const text = document.getElementById('instructionText');
-
-        if (mode === 'peg') {
-            pegBtn.className = "mode-btn active-peg";
-            targetBtn.className = "mode-btn";
-            text.innerText = "Mode: Setting Peg. Tap map to place swim position.";
-        } else {
-            pegBtn.className = "mode-btn";
-            targetBtn.className = "mode-btn active-spot";
-            text.innerText = "Mode: Setting Target. Tap map to adjust target fishing spot.";
-        }
+        applyTransform();
     }
 
     function handleLakeChange() {
         document.getElementById('lakeMap').src = document.getElementById('lakeSelect').value;
-        // Reset transformation matrix view
         scale = 1; panX = 0; panY = 0;
         applyTransform();
+        
+        // Force the layout back to a safe locked state when swapping venues
+        if (!isMapLocked) toggleSafetyLock();
         resetMarkers();
     }
 
@@ -502,7 +555,6 @@
         document.getElementById('pegPin').style.display = 'none';
         document.getElementById('spotPin').style.display = 'none';
         document.getElementById('mapSvg').innerHTML = '';
-        setPlacementMode('peg');
         clearResults();
     }
 
@@ -512,7 +564,6 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
 
-        // Read natural layout dimensions inside content container
         const currentWidth = content.clientWidth;
         const currentHeight = content.clientHeight;
 
