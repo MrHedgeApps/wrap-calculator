@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
     <title>Hedge Wrap Calculator & Maps</title>
     <style>
         :root {
@@ -82,11 +82,6 @@
             cursor: pointer;
         }
 
-        select:focus {
-            border-color: var(--accent-color);
-        }
-
-        /* Mode Buttons Styling */
         .mode-container {
             display: flex;
             gap: 12px;
@@ -107,9 +102,7 @@
             text-align: center;
         }
 
-        .mode-btn:active {
-            transform: scale(0.98);
-        }
+        .mode-btn:active { transform: scale(0.98); }
 
         .mode-btn.active-peg {
             border-color: var(--peg-color);
@@ -123,40 +116,55 @@
             color: var(--spot-color);
         }
 
-        /* Map Canvas */
-        .map-wrapper {
+        /* Fixed Viewport Container for Panning/Zooming */
+        .map-viewport {
             position: relative;
             width: 100%;
+            height: 400px; /* Locked box height on screen */
             overflow: hidden;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            line-height: 0;
-            cursor: crosshair;
-            user-select: none;
-            -webkit-user-select: none;
             background: #181818;
+            touch-action: none; /* Block native mobile browser scrolling inside here */
         }
+
+        /* This internal canvas houses everything and handles transforms */
+        .zoom-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: 0 0;
+            cursor: grab;
+        }
+
+        .zoom-content:active { cursor: grabbing; }
 
         .map-image {
             width: 100%;
-            height: auto;
-            display: block;
+            height: 100%;
+            object-fit: contain; /* Keeps ratio intact inside your viewport box */
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
+        /* Pins setup with inline baseline diameter variables */
         .pin {
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: var(--base-size, 16px);
+            height: var(--base-size, 16px);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             box-shadow: 0 0 10px rgba(0,0,0,0.8);
             z-index: 10;
             border: 2px solid #fff;
-            transition: left 0.1s ease, top 0.1s ease;
+            pointer-events: none;
         }
 
-        .pin.peg { background-color: var(--peg-color); } 
-        .pin.spot { background-color: var(--spot-color); } 
+        .pin.peg { background-color: var(--peg-color); --base-size: 16px; } 
+        .pin.spot { background-color: var(--spot-color); --base-size: 16px; } 
 
         #mapSvg {
             position: absolute;
@@ -168,7 +176,6 @@
             z-index: 5;
         }
 
-        /* Results Display */
         .result-container {
             padding: 14px;
             background-color: rgba(76, 175, 80, 0.1);
@@ -185,23 +192,9 @@
             margin-bottom: 2px;
         }
 
-        .result-value {
-            font-size: 1.6rem;
-            font-weight: bold;
-        }
-
-        .result-distance {
-            font-size: 1rem;
-            color: var(--text-color);
-            margin-top: 2px;
-            font-weight: 500;
-        }
-
-        .result-note {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 6px;
-        }
+        .result-value { font-size: 1.6rem; font-weight: bold; }
+        .result-distance { font-size: 1rem; color: var(--text-color); margin-top: 2px; font-weight: 500; }
+        .result-note { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
 
         .instructions {
             font-size: 0.85rem;
@@ -209,6 +202,14 @@
             text-align: center;
             margin-top: 10px;
             font-style: italic;
+        }
+
+        .zoom-tip {
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            text-align: center;
+            margin-top: 4px;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -244,14 +245,17 @@
             <button id="btnSetTarget" class="mode-btn" onclick="setPlacementMode('spot')">🎯 Set Target</button>
         </div>
 
-        <div class="map-wrapper" id="mapWrapper" onclick="handleMapClick(event)">
-            <img src="Astral.png" alt="Lake Depth Map" class="map-image" id="lakeMap">
-            <svg id="mapSvg"></svg>
-            <div id="pegPin" class="pin peg" style="display: none;"></div>
-            <div id="spotPin" class="pin spot" style="display: none;"></div>
+        <div class="map-viewport" id="mapViewport">
+            <div class="zoom-content" id="zoomContent">
+                <img src="Astral.png" alt="Lake Depth Map" class="map-image" id="lakeMap">
+                <svg id="mapSvg"></svg>
+                <div id="pegPin" class="pin peg" style="display: none;"></div>
+                <div id="spotPin" class="pin spot" style="display: none;"></div>
+            </div>
         </div>
         
-        <div class="instructions" id="instructionText">Mode: Setting Peg. Tap the map to drop your swim location.</div>
+        <div class="zoom-tip">💡 Pinch to Zoom / Drag to Pan map area</div>
+        <div class="instructions" id="instructionText">Mode: Setting Peg. Tap map to place swim position.</div>
     </div>
 
     <div class="card result-container">
@@ -263,53 +267,172 @@
 </div>
 
 <script>
-    let activePlacementMode = 'peg'; // Tracks which pin our map-tap mutates
-    let pegPoint = null;
+    let activePlacementMode = 'peg';
+    let pegPoint = null; // Percentage based relative to natural image render sizes
     let spotPoint = null;
 
-    // Geographic calibration scale map rules
+    // Pan and Zoom Matrix Variables
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let startX, startY;
+    let initialPinchDist = null;
+
+    const viewport = document.getElementById('mapViewport');
+    const content = document.getElementById('zoomContent');
+    const mapImage = document.getElementById('lakeMap');
+
     const LAKE_CONFIGS = {
-        "Astral.png": {
-            scaleRatio: 262 / 960, 
-            scaleRealMetres: 200
-        },
-        "Lake2.png": {
-            scaleRatio: 1.0, 
-            scaleRealMetres: 100
-        },
-        "Lake3.png": {
-            scaleRatio: 1.0, 
-            scaleRealMetres: 100
-        }
+        "Astral.png": { scaleRatio: 262 / 960, scaleRealMetres: 200 },
+        "Lake2.png": { scaleRatio: 1.0, scaleRealMetres: 100 },
+        "Lake3.png": { scaleRatio: 1.0, scaleRealMetres: 100 }
     };
 
-    function setPlacementMode(mode) {
-        activePlacementMode = mode;
-        const pegBtn = document.getElementById('btnSetPeg');
-        const targetBtn = document.getElementById('btnSetTarget');
-        const text = document.getElementById('instructionText');
+    // Initialize Event Listeners for Interaction Engines
+    setupPanZoomEvents();
 
-        if (mode === 'peg') {
-            pegBtn.className = "mode-btn active-peg";
-            targetBtn.className = "mode-btn";
-            text.innerText = "Mode: Setting Peg. Tap the map to drop or move your swim position.";
-        } else {
-            pegBtn.className = "mode-btn";
-            targetBtn.className = "mode-btn active-spot";
-            text.innerText = "Mode: Setting Target. Tap the map to drop or adjust your target fishing spot.";
+    function setupPanZoomEvents() {
+        // Mouse/Pointer Events
+        viewport.addEventListener('pointerdown', onPointerDown);
+        viewport.addEventListener('pointermove', onPointerMove);
+        viewport.addEventListener('pointerup', onPointerUp);
+        viewport.addEventListener('pointercancel', onPointerUp);
+        viewport.addEventListener('wheel', onWheel, { passive: false });
+
+        // Mobile Touch Gestures for Pinch Zooming
+        viewport.addEventListener('touchstart', onTouchStart, { passive: true });
+        viewport.addEventListener('touchmove', onTouchMove, { passive: false });
+        viewport.addEventListener('touchend', onTouchEnd);
+    }
+
+    function onPointerDown(e) {
+        // Only trigger panning if dragging with primary click/touch
+        isDragging = true;
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+    }
+
+    function onPointerMove(e) {
+        if (!isDragging) return;
+        // Check if user is actively moving a pointer without pinching
+        if (e.pointerType === 'touch' && initialPinchDist !== null) return;
+        
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        applyTransform();
+    }
+
+    function onPointerUp(e) {
+        if (!isDragging) return;
+        isDragging = false;
+
+        // If the shift change is minimal, count it as a clean "Tap" placement instead of a dragging shift
+        const deltaX = Math.abs(e.clientX - (startX + panX));
+        const deltaY = Math.abs(e.clientY - (startY + panY));
+        if (deltaX < 5 && deltaY < 5) {
+            handleMapTap(e);
         }
     }
 
-    function handleLakeChange() {
-        const select = document.getElementById('lakeSelect');
-        document.getElementById('lakeMap').src = select.value;
-        resetMarkers();
+    function onWheel(e) {
+        e.preventDefault();
+        const zoomFactor = 1.1;
+        const mouseX = e.clientX - viewport.getBoundingClientRect().left;
+        const mouseY = e.clientY - viewport.getBoundingClientRect().top;
+
+        // Anchor zooming point to mouse tip location
+        const contentX = (mouseX - panX) / scale;
+        const contentY = (mouseY - panY) / scale;
+
+        if (e.deltaY < 0) {
+            scale = Math.min(scale * zoomFactor, 6); // Max 6x Zoom
+        } else {
+            scale = Math.max(scale / zoomFactor, 1); // Min 1x normal width
+        }
+
+        panX = mouseX - contentX * scale;
+        panY = mouseY - contentY * scale;
+        
+        applyTransform();
     }
 
-    function handleMapClick(event) {
-        const bounds = event.currentTarget.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / bounds.width;
-        const y = (event.clientY - bounds.top) / bounds.height;
+    // Touch Mobile Pinch Processing Handles
+    function onTouchStart(e) {
+        if (e.touches.length === 2) {
+            initialPinchDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+        }
+    }
+
+    function onTouchMove(e) {
+        if (e.touches.length === 2 && initialPinchDist !== null) {
+            e.preventDefault();
+            const currentDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            
+            const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - viewport.getBoundingClientRect().left;
+            const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - viewport.getBoundingClientRect().top;
+
+            const contentX = (midX - panX) / scale;
+            const contentY = (midY - panY) / scale;
+
+            const zoomRatio = currentDist / initialPinchDist;
+            scale = Math.max(1, Math.min(scale * zoomRatio, 6));
+
+            panX = midX - contentX * scale;
+            panY = midY - contentY * scale;
+
+            initialPinchDist = currentDist;
+            applyTransform();
+        }
+    }
+
+    function onTouchEnd() { initialPinchDist = null; }
+
+    function applyTransform() {
+        // Constrain bounds to prevent dragging completely out of sight
+        const maxPanX = viewport.clientWidth * (scale - 1);
+        const maxPanY = viewport.clientHeight * (scale - 1);
+        
+        // Prevent map wandering outside limits
+        if (panX > 0) panX = 0;
+        if (panY > 0) panY = 0;
+        if (panX < -maxPanX) panX = -maxPanX;
+        if (panY < -maxPanY) panY = -maxPanY;
+
+        content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+        
+        // Dynamic Reverse-Scaling for Pins and Lines so they don't grow massive when zooming
+        const currentPinSize = Math.max(6, 16 / scale);
+        const currentStrokeWidth = Math.max(1, 2.5 / scale);
+        
+        document.querySelectorAll('.pin').forEach(pin => {
+            pin.style.width = currentPinSize + 'px';
+            pin.style.height = currentPinSize + 'px';
+            pin.style.borderWidth = Math.max(1, 2 / scale) + 'px';
+        });
+
+        const targetLine = document.querySelector('#mapSvg line');
+        if (targetLine) {
+            targetLine.setAttribute('stroke-width', currentStrokeWidth);
+            targetLine.setAttribute('stroke-dasharray', `${5/scale},${5/scale}`);
+        }
+    }
+
+    function handleMapTap(e) {
+        const rect = content.getBoundingClientRect();
+        // Decode position back through pan/zoom matrix calculations to find exact image position
+        const clickXOnContent = (e.clientX - rect.left) / scale;
+        const clickYOnContent = (e.clientY - rect.top) / scale;
+
+        // Store location relative to active dimensions
+        const x = clickXOnContent / content.clientWidth;
+        const y = clickYOnContent / content.clientHeight;
 
         if (activePlacementMode === 'peg') {
             pegPoint = { x, y };
@@ -325,9 +448,34 @@
             pin.style.display = 'block';
         }
 
-        // Instantly sync layout graphics and map math rules
         drawConnectingLine();
         calculateWraps();
+        applyTransform(); // Re-sync marker scale sizing instantly
+    }
+
+    function setPlacementMode(mode) {
+        activePlacementMode = mode;
+        const pegBtn = document.getElementById('btnSetPeg');
+        const targetBtn = document.getElementById('btnSetTarget');
+        const text = document.getElementById('instructionText');
+
+        if (mode === 'peg') {
+            pegBtn.className = "mode-btn active-peg";
+            targetBtn.className = "mode-btn";
+            text.innerText = "Mode: Setting Peg. Tap map to place swim position.";
+        } else {
+            pegBtn.className = "mode-btn";
+            targetBtn.className = "mode-btn active-spot";
+            text.innerText = "Mode: Setting Target. Tap map to adjust target fishing spot.";
+        }
+    }
+
+    function handleLakeChange() {
+        document.getElementById('lakeMap').src = document.getElementById('lakeSelect').value;
+        // Reset transformation matrix view
+        scale = 1; panX = 0; panY = 0;
+        applyTransform();
+        resetMarkers();
     }
 
     function drawConnectingLine() {
@@ -339,7 +487,7 @@
         svg.innerHTML = `
             <line x1="${pegPoint.x * 100}%" y1="${pegPoint.y * 100}%" 
                   x2="${spotPoint.x * 100}%" y2="${spotPoint.y * 100}%" 
-                  stroke="#4caf50" stroke-width="2.5" stroke-dasharray="5,5" />
+                  stroke="#4caf50" stroke-width="2.5" />
         `;
     }
 
@@ -350,8 +498,7 @@
     }
 
     function resetMarkers() {
-        pegPoint = null;
-        spotPoint = null;
+        pegPoint = null; spotPoint = null;
         document.getElementById('pegPin').style.display = 'none';
         document.getElementById('spotPin').style.display = 'none';
         document.getElementById('mapSvg').innerHTML = '';
@@ -364,10 +511,10 @@
 
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
-        const mapImage = document.getElementById('lakeMap');
 
-        const currentWidth = mapImage.clientWidth;
-        const currentHeight = mapImage.clientHeight;
+        // Read natural layout dimensions inside content container
+        const currentWidth = content.clientWidth;
+        const currentHeight = content.clientHeight;
 
         const x1 = pegPoint.x * currentWidth;
         const y1 = pegPoint.y * currentHeight;
@@ -396,7 +543,7 @@
             const shortOfStick = rodLength - remainingFeet;
             document.getElementById('resultNote').innerText = `On wrap ${fullWraps + 1}, stop ${shortOfStick.toFixed(1)} ft short of the opposite stick.`;
         } else {
-            document.getElementById('resultNote').innerText = `Perfect configuration. Match the stick target exactly on wrap ${fullWraps}.`;
+            document.getElementById('resultNote').innerText = `Perfect alignment. Match the stick target exactly on wrap ${fullWraps}.`;
         }
     }
 
@@ -405,6 +552,7 @@
             drawConnectingLine();
             calculateWraps();
         }
+        applyTransform();
     });
 </script>
 
