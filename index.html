@@ -289,17 +289,20 @@
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
 
-    // Consolidated Topographic Ratios
     const LAKE_CONFIGS = {
         "Astral.png": { 
-            scaleWidthPercent: 27.291667, // 262px / 960px * 100
+            originalWidth: 960,  
+            originalHeight: 816,
+            scaleWidthPercent: 27.291667, 
             scaleRealMetres: 200
         },
         "Tiddenfoot.png": { 
-            scaleWidthPercent: 18.333333, // 176px / 960px * 100
+            originalWidth: 960,  
+            originalHeight: 684,
+            scaleWidthPercent: 18.333333, 
             scaleRealMetres: 100
         },
-        "Lake3.png": { scaleWidthPercent: 50.0, scaleRealMetres: 100 }
+        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleWidthPercent: 50.0, scaleRealMetres: 100 }
     };
 
     setupPanZoomEvents();
@@ -397,12 +400,8 @@
     }
 
     function syncCanvasGeometry() {
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        
-        // Locked entirely to a universal 0-100 percentage matrix system
         svgCanvas.setAttribute('viewBox', '0 0 100 100');
-        document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
-        
+        document.getElementById('svgMapImage').setAttribute('href', document.getElementById('lakeSelect').value);
         renderGraphicsLayer();
     }
 
@@ -424,16 +423,47 @@
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        const rect = svgCanvas.getBoundingClientRect();
-        const clickXPercentage = (e.clientX - rect.left) / rect.width;
-        const clickYPercentage = (e.clientY - rect.top) / rect.height;
+        const activeLakeFile = document.getElementById('lakeSelect').value;
+        const config = LAKE_CONFIGS[activeLakeFile];
 
-        if (clickXPercentage < 0 || clickXPercentage > 1 || clickYPercentage < 0 || clickYPercentage > 1) return;
+        // Read the absolute client bounding rect box of the SVG container
+        const rect = svgCanvas.getBoundingClientRect();
+
+        // Calculate aspect-ratio scale factors to strip away meet/contain viewport padding bounds
+        const containerRatio = rect.width / rect.height;
+        const imageRatio = config.originalWidth / config.originalHeight;
+
+        let trueImgWidth, trueImgHeight, paddingLeft, paddingTop;
+
+        if (containerRatio > imageRatio) {
+            // Box padding is on the sides (Left/Right margins)
+            trueImgHeight = rect.height;
+            trueImgWidth = rect.height * imageRatio;
+            paddingTop = 0;
+            paddingLeft = (rect.width - trueImgWidth) / 2;
+        } else {
+            // Box padding is on the top/bottom (Top/Bottom margins)
+            trueImgWidth = rect.width;
+            trueImgHeight = rect.width / imageRatio;
+            paddingLeft = 0;
+            paddingTop = (rect.height - trueImgHeight) / 2;
+        }
+
+        // Subtract structural letterboxing offsets explicitly to resolve true map coordinates
+        const clickXOnImg = e.clientX - rect.left - paddingLeft;
+        const clickYOnImg = e.clientY - rect.top - paddingTop;
+
+        // Turn coordinates into high-precision base percentages (0 to 100)
+        const xPercentage = (clickXOnImg / trueImgWidth) * 100;
+        const yPercentage = (clickYOnImg / trueImgHeight) * 100;
+
+        // Boundary guard
+        if (xPercentage < 0 || xPercentage > 100 || yPercentage < 0 || yPercentage > 100) return;
 
         if (activePlacementMode === 'peg') {
-            pegPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
+            pegPoint = { x: xPercentage, y: yPercentage };
         } else if (activePlacementMode === 'spot') {
-            spotPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
+            spotPoint = { x: xPercentage, y: yPercentage };
         }
 
         renderGraphicsLayer(); 
@@ -475,10 +505,7 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        // Vector straight-line distance across the percentage grid layout
         const distancePercentageOfWidth = Math.hypot(spotPoint.x - pegPoint.x, spotPoint.y - pegPoint.y);
-
-        // Pure structural matrix rule converts layout percentages to real world metrics directly
         const calculatedMetres = (distancePercentageOfWidth / config.scaleWidthPercent) * config.scaleRealMetres;
         
         const calculatedTotalFeet = calculatedMetres / 0.3048;
