@@ -166,6 +166,7 @@
             align-items: center;
         }
 
+        /* Combined vector viewport layout maps exactly to parent limits */
         #mapSvg {
             width: 100%;
             height: 100%;
@@ -173,6 +174,7 @@
             z-index: 5;
             box-sizing: border-box;
             background: transparent;
+            display: block;
         }
 
         .result-container {
@@ -288,16 +290,16 @@
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
 
+    // Precision Topographic Config Metrics
     const LAKE_CONFIGS = {
         "Astral.png": { 
             originalWidth: 960,  
             originalHeight: 816, 
             scaleLinePixels: 262, 
-            scaleRealMetres: 200,
-            precisionMarkerPercent: 0.45
+            scaleRealMetres: 200
         },
-        "Lake2.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100, precisionMarkerPercent: 0.5 },
-        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100, precisionMarkerPercent: 0.5 }
+        "Lake2.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100 },
+        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100 }
     };
 
     setupPanZoomEvents();
@@ -398,7 +400,8 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
         
-        svgCanvas.setAttribute('viewBox', `0 0 ${config.originalWidth} ${config.originalHeight}`);
+        // Use a standardized percentage matrix for the layout parameters
+        svgCanvas.setAttribute('viewBox', '0 0 100 100');
         document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
         
         renderGraphicsLayer();
@@ -413,33 +416,26 @@
 
         content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
         
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
         const connectingLine = document.querySelector('#lineGroup line');
         if (connectingLine) {
-            const baseStroke = (config.originalWidth / 960) * 2.5;
-            connectingLine.setAttribute('stroke-width', Math.max(0.5, baseStroke / scale));
+            connectingLine.setAttribute('stroke-width', Math.max(0.3, 0.6 / scale));
         }
     }
 
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        const point = svgCanvas.createSVGPoint();
-        point.x = e.clientX;
-        point.y = e.clientY;
-        
-        const transformedPoint = point.matrixTransform(svgCanvas.getScreenCTM().inverse());
+        // Unified percentage bounding framework fixes the marker visibility tracking bug
+        const rect = svgCanvas.getBoundingClientRect();
+        const clickXPercentage = (e.clientX - rect.left) / rect.width;
+        const clickYPercentage = (e.clientY - rect.top) / rect.height;
 
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
-
-        if (transformedPoint.x < 0 || transformedPoint.x > config.originalWidth || transformedPoint.y < 0 || transformedPoint.y > config.originalHeight) return;
+        if (clickXPercentage < 0 || clickXPercentage > 1 || clickYPercentage < 0 || clickYPercentage > 1) return;
 
         if (activePlacementMode === 'peg') {
-            pegPoint = { x: transformedPoint.x, y: transformedPoint.y };
+            pegPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
         } else if (activePlacementMode === 'spot') {
-            spotPoint = { x: transformedPoint.x, y: transformedPoint.y };
+            spotPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
         }
 
         renderGraphicsLayer(); 
@@ -447,17 +443,13 @@
     }
 
     function renderGraphicsLayer() {
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
-
         const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim();
         const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 
         const lineGroup = document.getElementById('lineGroup');
         if (pegPoint && spotPoint) {
-            const baseStroke = (config.originalWidth / 960) * 2.5;
-            lineGroup.innerHTML = `<line x1="${pegPoint.x}" y1="${pegPoint.y}" x2="${spotPoint.x}" y2="${spotPoint.y}" stroke="${accentColor}" stroke-width="${baseStroke / scale}" stroke-linecap="round" />`;
+            lineGroup.innerHTML = `<line x1="${pegPoint.x}" y1="${pegPoint.y}" x2="${spotPoint.x}" y2="${spotPoint.y}" stroke="${accentColor}" stroke-width="0.6" stroke-linecap="round" />`;
         } else {
             lineGroup.innerHTML = '';
         }
@@ -465,13 +457,14 @@
         const dotGroup = document.getElementById('dotGroup');
         dotGroup.innerHTML = ''; 
         
-        const rMaster = (config.originalWidth / 100) * config.precisionMarkerPercent;
+        // This structural layout locks the marker size explicitly to ~1m diameter coordinates on water
+        const rMaster = 0.45;
 
         if (pegPoint) {
-            dotGroup.innerHTML += `<circle cx="${pegPoint.x}" cy="${pegPoint.y}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="${rMaster * 0.15}" />`;
+            dotGroup.innerHTML += `<circle cx="${pegPoint.x}" cy="${pegPoint.y}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="0.1" />`;
         }
         if (spotPoint) {
-            dotGroup.innerHTML += `<circle cx="${spotPoint.x}" cy="${spotPoint.y}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="${rMaster * 0.15}" />`;
+            dotGroup.innerHTML += `<circle cx="${spotPoint.x}" cy="${spotPoint.y}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="0.1" />`;
         }
 
         applyTransform(); 
@@ -484,8 +477,11 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        const pixelDistanceOnNaturalImage = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
-        
+        // Calculate straight line distance across percentage coordinates
+        const distancePercentageOfWidth = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
+
+        // Use natural config properties to determine final real-world metric values
+        const pixelDistanceOnNaturalImage = (distancePercentageOfWidth / 100) * config.originalWidth;
         const pixelsPerMetreMasterRule = config.scaleLinePixels / config.scaleRealMetres;
         const calculatedMetres = pixelDistanceOnNaturalImage / pixelsPerMetreMasterRule;
         
