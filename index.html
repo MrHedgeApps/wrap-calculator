@@ -151,7 +151,7 @@
             border-radius: 10px;
             border: 1px solid var(--border-color);
             background: #111111;
-            touch-action: pan-y; /* Allows normal vertical scrolling when locked */
+            touch-action: pan-y;
         }
 
         .zoom-content {
@@ -166,28 +166,15 @@
             align-items: center;
         }
 
-        .image-container-frame {
-            position: relative;
-            display: inline-block;
-            line-height: 0;
-        }
-
-        .map-image {
+        /* Re-engineered completely self-contained SVG tracking layer box */
+        #mapSvg {
+            width: auto;
+            height: auto;
             max-width: 100%;
             max-height: 400px;
-            object-fit: contain;
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        #mapSvg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             z-index: 5;
+            box-sizing: border-box;
+            background: transparent;
         }
 
         .result-container {
@@ -270,13 +257,11 @@
 
         <div class="map-viewport" id="mapViewport">
             <div class="zoom-content" id="zoomContent">
-                <div class="image-container-frame" id="imgFrame">
-                    <img src="Astral.png" alt="Lake Map" class="map-image" id="lakeMap">
-                    <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg">
-                        <g id="lineGroup"></g>
-                        <g id="dotGroup"></g>
-                    </svg>
-                </div>
+                <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg">
+                    <image id="svgMapImage" href="Astral.png" x="0" y="0" width="100%" height="100%" />
+                    <g id="lineGroup"></g>
+                    <g id="dotGroup"></g>
+                </svg>
             </div>
         </div>
         
@@ -304,7 +289,6 @@
     const viewport = document.getElementById('mapViewport');
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
-    const mapImage = document.getElementById('lakeMap');
 
     const LAKE_CONFIGS = {
         "Astral.png": { 
@@ -319,17 +303,18 @@
     };
 
     setupPanZoomEvents();
+    syncCanvasGeometry();
 
     function setupPanZoomEvents() {
         viewport.addEventListener('pointerdown', (e) => {
-            if (isMapLocked) return; // Strict lock check: block movement
+            if (isMapLocked) return; 
             isDragging = true;
             startX = e.clientX - panX; startY = e.clientY - panY;
             viewport.setPointerCapture(e.pointerId);
         });
 
         viewport.addEventListener('pointermove', (e) => {
-            if (!isDragging || isMapLocked) return; // Block movement if locked
+            if (!isDragging || isMapLocked) return; 
             if (e.pointerType === 'touch' && initialPinchDist !== null) return;
             panX = e.clientX - startX;
             panY = e.clientY - startY;
@@ -376,11 +361,8 @@
             applyTransform();
         }, { passive: false });
 
-        // Touch Interceptors: Hard-blocking full-page zoom on mobile browsers
         viewport.addEventListener('touchstart', (e) => {
-            if (isMapLocked) return; // Let events bubble naturally to allow vertical page scrolling
-            
-            // If unlocked, block default behavior to stop native browser zoom engines from hijacking gestures
+            if (isMapLocked) return; 
             if (e.touches.length === 2) {
                 e.preventDefault();
                 initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
@@ -389,8 +371,7 @@
 
         viewport.addEventListener('touchmove', (e) => {
             if (isMapLocked) return; 
-            
-            e.preventDefault(); // Lock mobile view completely when mapping
+            e.preventDefault(); 
             if (e.touches.length === 2 && initialPinchDist !== null) {
                 const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
                 
@@ -415,6 +396,17 @@
         viewport.addEventListener('touchend', () => { initialPinchDist = null; });
     }
 
+    function syncCanvasGeometry() {
+        const activeLakeFile = document.getElementById('lakeSelect').value;
+        const config = LAKE_CONFIGS[activeLakeFile];
+        
+        // Match the layout box of the SVG cleanly to the image parameters config metrics
+        svgCanvas.setAttribute('viewBox', `0 0 ${config.originalWidth} ${config.originalHeight}`);
+        document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
+        
+        renderGraphicsLayer();
+    }
+
     function applyTransform() {
         const maxPanX = viewport.clientWidth * (scale - 1);
         const maxPanY = viewport.clientHeight * (scale - 1);
@@ -424,25 +416,38 @@
 
         content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
         
+        const activeLakeFile = document.getElementById('lakeSelect').value;
+        const config = LAKE_CONFIGS[activeLakeFile];
         const connectingLine = document.querySelector('#lineGroup line');
         if (connectingLine) {
-            connectingLine.setAttribute('stroke-width', Math.max(0.5, 2.5 / scale));
+            // Scale line thickness dynamically based on original image size and zoom scale
+            const baseStroke = (config.originalWidth / 960) * 2.5;
+            connectingLine.setAttribute('stroke-width', Math.max(0.5, baseStroke / scale));
         }
     }
 
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        const rect = svgCanvas.getBoundingClientRect();
-        const clickXPercentage = (e.clientX - rect.left) / rect.width;
-        const clickYPercentage = (e.clientY - rect.top) / rect.height;
+        // HIGH-PRECISION VECTOR RESOLUTION
+        // Converts screen event coordinates directly into the localized SVG coordinate coordinate matrix
+        const point = svgCanvas.createSVGPoint();
+        point.x = e.clientX;
+        point.y = e.clientY;
+        
+        // This method automatically strips out parent canvas padding, margins, scaling, and viewport panning completely
+        const transformedPoint = point.matrixTransform(svgCanvas.getScreenCTM().inverse());
 
-        if (clickXPercentage < 0 || clickXPercentage > 1 || clickYPercentage < 0 || clickYPercentage > 1) return;
+        const activeLakeFile = document.getElementById('lakeSelect').value;
+        const config = LAKE_CONFIGS[activeLakeFile];
+
+        // Guard logic: Ensure click stays inside map limits
+        if (transformedPoint.x < 0 || transformedPoint.x > config.originalWidth || transformedPoint.y < 0 || transformedPoint.y > config.originalHeight) return;
 
         if (activePlacementMode === 'peg') {
-            pegPoint = { x: clickXPercentage, y: clickYPercentage };
+            pegPoint = { x: transformedPoint.x, y: transformedPoint.y };
         } else if (activePlacementMode === 'spot') {
-            spotPoint = { x: clickXPercentage, y: clickYPercentage };
+            spotPoint = { x: transformedPoint.x, y: transformedPoint.y };
         }
 
         renderGraphicsLayer(); 
@@ -453,15 +458,14 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
 
-        svgCanvas.setAttribute('viewBox', '0 0 100 100'); 
-
         const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim();
         const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 
         const lineGroup = document.getElementById('lineGroup');
         if (pegPoint && spotPoint) {
-            lineGroup.innerHTML = `<line x1="${pegPoint.x * 100}" y1="${pegPoint.y * 100}" x2="${spotPoint.x * 100}" y2="${spotPoint.y * 100}" stroke="${accentColor}" stroke-width="2" stroke-linecap="round" />`;
+            const baseStroke = (config.originalWidth / 960) * 2.5;
+            lineGroup.innerHTML = `<line x1="${pegPoint.x}" y1="${pegPoint.y}" x2="${spotPoint.x}" y2="${spotPoint.y}" stroke="${accentColor}" stroke-width="${baseStroke / scale}" stroke-linecap="round" />`;
         } else {
             lineGroup.innerHTML = '';
         }
@@ -469,13 +473,14 @@
         const dotGroup = document.getElementById('dotGroup');
         dotGroup.innerHTML = ''; 
         
-        const rMaster = config.precisionMarkerPercent; 
+        // Radius scale based on natural px coordinates map width percent configuration metrics
+        const rMaster = (config.originalWidth / 100) * config.precisionMarkerPercent;
 
         if (pegPoint) {
-            dotGroup.innerHTML += `<circle cx="${pegPoint.x * 100}" cy="${pegPoint.y * 100}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="0.15" />`;
+            dotGroup.innerHTML += `<circle cx="${pegPoint.x}" cy="${pegPoint.y}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="${rMaster * 0.15}" />`;
         }
         if (spotPoint) {
-            dotGroup.innerHTML += `<circle cx="${spotPoint.x * 100}" cy="${spotPoint.y * 100}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="0.15" />`;
+            dotGroup.innerHTML += `<circle cx="${spotPoint.x}" cy="${spotPoint.y}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="${rMaster * 0.15}" />`;
         }
 
         applyTransform(); 
@@ -488,11 +493,9 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        const dxPercent = (spotPoint.x - pegPoint.x) * 100;
-        const dyPercent = (spotPoint.y - pegPoint.y) * 100;
-        const distancePercentageOfWidth = Math.sqrt(Math.pow(dxPercent, 2) + Math.pow(dyPercent, 2));
-
-        const pixelDistanceOnNaturalImage = (distancePercentageOfWidth / 100) * config.originalWidth;
+        // Native pixel distance formula calculations
+        const pixelDistanceOnNaturalImage = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
+        
         const pixelsPerMetreMasterRule = config.scaleLinePixels / config.scaleRealMetres;
         const calculatedMetres = pixelDistanceOnNaturalImage / pixelsPerMetreMasterRule;
         
@@ -530,7 +533,6 @@
             activePlacementMode = 'none';
             text.innerText = "Pins are locked. Page scrolling enabled over map area.";
             
-            // Snap map back to base view on lockdown to prevent awkward off-screen crops
             scale = 1; panX = 0; panY = 0; applyTransform();
         } else {
             lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔓 MAP UNLOCKED";
@@ -556,7 +558,6 @@
 
     function handleLakeChange() {
         scale = 1; panX = 0; panY = 0; applyTransform();
-        document.getElementById('lakeMap').src = document.getElementById('lakeSelect').value;
         if (!isMapLocked) toggleSafetyLock();
         resetMarkers(); 
     }
@@ -566,12 +567,8 @@
         document.getElementById('resultValue').innerText = "0 wraps";
         document.getElementById('resultDistance').innerText = "Distance: --";
         document.getElementById('resultNote').innerText = "Target distance reporting.";
-        renderGraphicsLayer(); 
+        syncCanvasGeometry(); 
     }
-
-    mapImage.onload = function() {
-        renderGraphicsLayer();
-    };
 </script>
 
 </body>
