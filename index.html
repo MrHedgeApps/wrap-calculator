@@ -143,7 +143,6 @@
             color: var(--spot-color);
         }
 
-        /* The viewport height is now fluidly managed dynamically by JavaScript */
         .map-viewport {
             position: relative;
             width: 100%;
@@ -289,6 +288,7 @@
     const viewport = document.getElementById('mapViewport');
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
+    const svgImage = document.getElementById('svgMapImage');
 
     const LAKE_CONFIGS = {
         "Astral.png": { 
@@ -305,6 +305,12 @@
     };
 
     setupPanZoomEvents();
+    
+    // Explicit binding to force container height re-calculation the exact millisecond the file stream processes
+    svgImage.onload = function() {
+        syncCanvasGeometry();
+    };
+    
     loadLakeState();
 
     function setupPanZoomEvents() {
@@ -402,17 +408,14 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
         
-        // AUTOMATED HEIGHT CORRECTION FACTOR
-        // Calculates available layout width on device and alters viewport container box height to prevent letterboxing
         const currentContainerWidth = viewport.clientWidth;
-        const aspectCorrectedHeight = (config.originalHeight / config.originalWidth) * currentContainerWidth;
-        
-        // Lock heights matching the custom graphic limits directly
-        viewport.style.height = aspectCorrectedHeight + 'px';
+        if (currentContainerWidth > 0) {
+            // HARD ALLY: Fluidly scales container height box parameter frames to map file geometry ratios
+            const aspectCorrectedHeight = (config.originalHeight / config.originalWidth) * currentContainerWidth;
+            viewport.style.height = aspectCorrectedHeight + 'px';
+        }
         
         svgCanvas.setAttribute('viewBox', `0 0 ${config.originalWidth} ${config.originalHeight}`);
-        document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
-        
         renderGraphicsLayer();
     }
 
@@ -438,8 +441,6 @@
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        // FIXED STRUCTURAL COORDINATE CALCULATOR
-        // Grabs point data relative to the exact inverse projection mapping matrix of the clean SVG canvas layout
         const point = svgCanvas.createSVGPoint();
         point.x = e.clientX;
         point.y = e.clientY;
@@ -563,8 +564,8 @@
             scale = 1; panX = 0; panY = 0;
         }
         
-        syncCanvasGeometry();
-        calculateWraps();
+        // Force asset update path
+        svgImage.setAttribute('href', activeLakeFile);
     }
 
     function toggleSafetyLock() {
