@@ -143,10 +143,12 @@
             color: var(--spot-color);
         }
 
+        /* The viewport height is now fluidly managed dynamically by JavaScript */
         .map-viewport {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: auto;
+            min-height: 200px;
             overflow: hidden;
             border-radius: 10px;
             border: 1px solid var(--border-color);
@@ -166,13 +168,13 @@
             align-items: center;
         }
 
-        /* SVG maps exactly to the dynamic scaled width/height of the active image */
         #mapSvg {
+            width: 100%;
+            height: 100%;
             z-index: 5;
             box-sizing: border-box;
             background: transparent;
             display: block;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         .result-container {
@@ -278,8 +280,6 @@
 <script>
     let isMapLocked = true; 
     let activePlacementMode = 'none'; 
-    
-    // Coordinates are now stored as absolute pixel coordinates on the raw native image file
     let pegPoint = null; 
     let spotPoint = null;
 
@@ -290,23 +290,22 @@
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
 
-    // Individual Native Image Specifications
     const LAKE_CONFIGS = {
         "Astral.png": { 
             originalWidth: 960,  
             originalHeight: 816,
-            pixelsPerMetre: 262 / 200 // 262px scale bar line / 200m real distance
+            pixelsPerMetre: 262 / 200 
         },
         "Tiddenfoot.png": { 
             originalWidth: 960,  
             originalHeight: 684,
-            pixelsPerMetre: 176 / 100 // 176px scale bar line / 100m real distance
+            pixelsPerMetre: 176 / 100 
         },
         "Lake3.png": { originalWidth: 1000, originalHeight: 1000, pixelsPerMetre: 5.0 }
     };
 
     setupPanZoomEvents();
-    loadLakeState(); // Primary system configuration init loading handler
+    loadLakeState();
 
     function setupPanZoomEvents() {
         viewport.addEventListener('pointerdown', (e) => {
@@ -403,24 +402,14 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
         
-        // Dynamic fit computation sets the exact visual sizing boundaries of the image box layout
-        const vWidth = viewport.clientWidth;
-        const vHeight = viewport.clientHeight;
-        const imgRatio = config.originalWidth / config.originalHeight;
-        const viewRatio = vWidth / vHeight;
+        // AUTOMATED HEIGHT CORRECTION FACTOR
+        // Calculates available layout width on device and alters viewport container box height to prevent letterboxing
+        const currentContainerWidth = viewport.clientWidth;
+        const aspectCorrectedHeight = (config.originalHeight / config.originalWidth) * currentContainerWidth;
         
-        let renderW, renderH;
-        if (viewRatio > imgRatio) {
-            renderH = vHeight;
-            renderW = vHeight * imgRatio;
-        } else {
-            renderW = vWidth;
-            renderH = vWidth / imgRatio;
-        }
+        // Lock heights matching the custom graphic limits directly
+        viewport.style.height = aspectCorrectedHeight + 'px';
         
-        // HARD ALLY: Viewbox properties are set to match the native raw pixel width/height of the file
-        svgCanvas.style.width = renderW + 'px';
-        svgCanvas.style.height = renderH + 'px';
         svgCanvas.setAttribute('viewBox', `0 0 ${config.originalWidth} ${config.originalHeight}`);
         document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
         
@@ -435,7 +424,7 @@
         if (panX < -maxPanX) panX = -maxPanX; if (panY < -maxPanY) panY = -maxPanY;
 
         content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-        saveLakeStateValuesOnly(); // Keep track of layout changes
+        saveLakeStateValuesOnly();
         
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
@@ -449,13 +438,12 @@
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        // RAW PIXEL CONVERSION MATRIX
-        // Resolves touch events into the absolute native pixel geometry grid of the raw image file
+        // FIXED STRUCTURAL COORDINATE CALCULATOR
+        // Grabs point data relative to the exact inverse projection mapping matrix of the clean SVG canvas layout
         const point = svgCanvas.createSVGPoint();
         point.x = e.clientX;
         point.y = e.clientY;
         
-        // Strips out parent padding, scaling matrices, panning, and letterbox boxes
         const transformedPoint = point.matrixTransform(svgCanvas.getScreenCTM().inverse());
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
@@ -492,7 +480,6 @@
         const dotGroup = document.getElementById('dotGroup');
         dotGroup.innerHTML = ''; 
         
-        // Marker diameter is locked to represent ~1m diameter of real water width percent metrics
         const rMaster = (config.originalWidth / 100) * 0.45;
 
         if (pegPoint) {
@@ -520,10 +507,7 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        // Native straight-line distance across the image's raw pixels
         const pixelDistance = Math.hypot(spotPoint.x - pegPoint.x, spotPoint.y - pegPoint.y);
-
-        // Direct real-world metre conversion
         const calculatedMetres = pixelDistance / config.pixelsPerMetre;
         
         const calculatedTotalFeet = calculatedMetres / 0.3048;
@@ -546,7 +530,6 @@
         }
     }
 
-    // --- BROWSER LOCAL STORAGE PERSISTENCE HANDLING ENGINE ---
     function saveLakeStateValuesOnly() {
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const stateObject = {
@@ -575,7 +558,6 @@
                 document.getElementById('rodLength').value = parsed.rodLength;
             }
         } else {
-            // Revert back to vanilla states if opening a fresh, unmapped venue
             pegPoint = null;
             spotPoint = null;
             scale = 1; panX = 0; panY = 0;
@@ -647,7 +629,7 @@
 
     function handleLakeChange() {
         if (!isMapLocked) toggleSafetyLock();
-        loadLakeState(); // Loads memory slots and calls scaling geometries automatically
+        loadLakeState(); 
     }
 
     function clearResultsDisplay() {
