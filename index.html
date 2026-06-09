@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hedge Wrap Calculator</title>
+    <title>Hedge Wrap Calculator & Maps</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -20,21 +20,27 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
         }
 
-        .calculator-card {
+        .container {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
             background-color: var(--card-bg);
-            padding: 24px;
+            padding: 20px;
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 400px;
             border: 1px solid var(--border-color);
         }
 
@@ -42,69 +48,87 @@
             margin-top: 0;
             text-align: center;
             color: var(--accent-color);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             letter-spacing: 0.5px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 600;
         }
 
-        select, input {
+        select {
             width: 100%;
             padding: 12px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             background-color: var(--input-bg);
             color: var(--text-color);
-            font-size: 1rem;
+            font-size: 0.95rem;
             box-sizing: border-box;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        select:focus, input:focus {
-            border-color: var(--accent-color);
-        }
-
-        .radio-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .radio-label {
-            flex: 1;
-            text-align: center;
-            background-color: var(--input-bg);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        input[type="radio"] {
-            display: none;
-        }
-
-        input[type="radio"]:checked + .radio-label {
-            background-color: var(--accent-color);
+        select:focus {
             border-color: var(--accent-color);
-            color: #000;
-            font-weight: bold;
+        }
+
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            line-height: 0;
+            cursor: crosshair;
+            user-select: none;
+            -webkit-user-select: none;
+            background: #181818;
+        }
+
+        .map-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .pin {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px rgba(0,0,0,0.8);
+            z-index: 10;
+            border: 2px solid #fff;
+        }
+
+        .pin.peg { background-color: #4caf50; } 
+        .pin.spot { background-color: #f44336; } 
+
+        #mapSvg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
         }
 
         .result-container {
-            margin-top: 24px;
-            padding: 16px;
+            padding: 14px;
             background-color: rgba(76, 175, 80, 0.1);
             border: 1px solid var(--accent-color);
             border-radius: 8px;
@@ -112,107 +136,236 @@
         }
 
         .result-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--accent-color);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .result-value {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: bold;
+        }
+
+        .result-distance {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-top: 2px;
+            font-weight: 500;
         }
 
         .result-note {
             font-size: 0.85rem;
             color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .instructions {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
             margin-top: 8px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 
-<div class="calculator-card">
-    <h2>Wrap Calculator</h2>
-    
-    <div class="form-group">
-        <label for="rodLength">ROD LENGTH</label>
-        <select id="rodLength" onchange="calculateWraps()">
-            <option value="10">10 ft</option>
-            <option value="12" selected>12 ft</option>
-            <option value="13">13 ft</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label>DISTANCE UNIT</label>
-        <div class="radio-group">
-            <input type="radio" id="unitMetres" name="distanceUnit" value="metres" checked onchange="calculateWraps()">
-            <label for="unitMetres" class="radio-label">Metres</label>
-
-            <input type="radio" id="unitYards" name="distanceUnit" value="yards" onchange="calculateWraps()">
-            <label for="unitYards" class="radio-label">Yards</label>
+<div class="container">
+    <div class="card">
+        <h2>Hedge Wrap Calculator</h2>
+        
+        <div class="controls-grid">
+            <div>
+                <label for="lakeSelect">CHOOSE LAKE</label>
+                <select id="lakeSelect" onchange="handleLakeChange()">
+                    <option value="Astral.png">Astral Park Lake</option>
+                    <option value="Lake2.png">Lake 2 (Pending)</option>
+                    <option value="Lake3.png">Lake 3 (Pending)</option>
+                </select>
+            </div>
+            <div>
+                <label for="rodLength">ROD LENGTH</label>
+                <select id="rodLength" onchange="calculateWraps()">
+                    <option value="9">9 ft</option>
+                    <option value="10">10 ft</option>
+                    <option value="11">11 ft</option>
+                    <option value="12" selected>12 ft</option>
+                    <option value="13">13 ft</option>
+                </select>
+            </div>
         </div>
+
+        <div class="map-wrapper" id="mapWrapper" onclick="handleMapClick(event)">
+            <img src="Astral.png" alt="Lake Depth Map" class="map-image" id="lakeMap">
+            <svg id="mapSvg"></svg>
+            <div id="pegPin" class="pin peg" style="display: none;"></div>
+            <div id="spotPin" class="pin spot" style="display: none;"></div>
+        </div>
+        
+        <div class="instructions" id="instructionText">Tap on the map to set your Peg (Swim) location.</div>
     </div>
 
-    <div class="form-group">
-        <label for="distanceInput">TARGET DISTANCE</label>
-        <input type="number" id="distanceInput" placeholder="Enter distance..." value="25" min="0" step="any" oninput="calculateWraps()">
-    </div>
-
-    <div class="result-container">
-        <div class="result-title">Required Line Distance</div>
-        <div id="resultValue" class="result-value">6 wraps + 10.0 ft</div>
-        <div id="resultNote" class="result-note">On wrap 7, stop 2.0 ft short of the stick.</div>
+    <div class="card result-container">
+        <div class="result-title">Target Calculation</div>
+        <div id="resultValue" class="result-value">0 wraps</div>
+        <div id="resultDistance" class="result-distance">Distance: --</div>
+        <div id="resultNote" class="result-note">Tap two locations on the map to calculate distance.</div>
     </div>
 </div>
 
 <script>
-    function calculateWraps() {
-        const rodLength = parseFloat(document.getElementById('rodLength').value);
-        const distanceInput = parseFloat(document.getElementById('distanceInput').value);
-        const isMetres = document.getElementById('unitMetres').checked;
+    // Points stored as percentages to keep calculations accurate across all screen sizes
+    let pegPoint = null;
+    let spotPoint = null;
+
+    // Central Data Config for Lake Math
+    // Each lake entry holds its tracking calibration rule based on image geometry
+    const LAKE_CONFIGS = {
+        "Astral.png": {
+            scaleRatio: 262 / 960,  // 262px scale bar width divided by 960px image width
+            scaleRealMetres: 200
+        },
+        "Lake2.png": {
+            scaleRatio: 1.0, // Temporary fallback placeholder
+            scaleRealMetres: 100
+        },
+        "Lake3.png": {
+            scaleRatio: 1.0, // Temporary fallback placeholder
+            scaleRealMetres: 100
+        }
+    };
+
+    function handleLakeChange() {
+        const select = document.getElementById('lakeSelect');
+        const mapImg = document.getElementById('lakeMap');
         
-        const resultValueDiv = document.getElementById('resultValue');
-        const resultNoteDiv = document.getElementById('resultNote');
+        // Update image source relative to your root path directory
+        mapImg.src = select.value;
+        
+        // Wipe old pins and calculations clean for the new lake view
+        resetMarkers();
+    }
 
-        if (isNaN(distanceInput) || distanceInput <= 0) {
-            resultValueDiv.innerText = "0 wraps";
-            resultNoteDiv.innerText = "Enter a valid distance.";
-            return;
-        }
+    function handleMapClick(event) {
+        const bounds = event.currentTarget.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width;
+        const y = (event.clientY - bounds.top) / bounds.height;
 
-        // Convert target distance to total feet
-        let totalFeet = 0;
-        if (isMetres) {
-            totalFeet = distanceInput / 0.3048; // 1 foot = 0.3048 metres
+        const pegPin = document.getElementById('pegPin');
+        const spotPin = document.getElementById('spotPin');
+        const instructionText = document.getElementById('instructionText');
+
+        if (!pegPoint || (pegPoint && spotPoint)) {
+            // First tap sets Peg
+            pegPoint = { x, y };
+            spotPoint = null;
+            
+            pegPin.style.left = (x * 100) + '%';
+            pegPin.style.top = (y * 100) + '%';
+            pegPin.style.display = 'block';
+            spotPin.style.display = 'none';
+            
+            instructionText.innerText = "Now tap your target casting spot.";
+            clearLines();
+            clearResults();
         } else {
-            totalFeet = distanceInput * 3; // 1 yard = 3 feet
-        }
-
-        // Calculate wraps and exact remaining feet
-        const fullWraps = Math.floor(totalFeet / rodLength);
-        const remainingFeet = totalFeet % rodLength;
-
-        // Format the output string
-        let outputText = `${fullWraps} wrap${fullWraps !== 1 ? 's' : ''}`;
-        if (remainingFeet > 0.05) { // Avoid displaying tiny fractions due to rounding
-            outputText += ` + ${remainingFeet.toFixed(1)} ft`;
-        }
-        resultValueDiv.innerText = outputText;
-
-        // Calculate the handy clip-short reference note
-        if (remainingFeet > 0.05) {
-            const shortOfStick = rodLength - remainingFeet;
-            resultNoteDiv.innerText = `On wrap ${fullWraps + 1}, stop ${shortOfStick.toFixed(1)} ft short of the opposite stick.`;
-        } else {
-            resultNoteDiv.innerText = `Exactly hitting the distance stick target on wrap ${fullWraps}.`;
+            // Second tap sets Target Spot
+            spotPoint = { x, y };
+            
+            spotPin.style.left = (x * 100) + '%';
+            spotPin.style.top = (y * 100) + '%';
+            spotPin.style.display = 'block';
+            
+            instructionText.innerText = "Tap again to clear and reset markers.";
+            drawConnectingLine();
+            calculateWraps();
         }
     }
 
-    // Run initial calculation on page load
-    window.onload = calculateWraps;
+    function drawConnectingLine() {
+        const svg = document.getElementById('mapSvg');
+        svg.innerHTML = `
+            <line x1="${pegPoint.x * 100}%" y1="${pegPoint.y * 100}%" 
+                  x2="${spotPoint.x * 100}%" y2="${spotPoint.y * 100}%" 
+                  stroke="#4caf50" stroke-width="2" stroke-dasharray="4,4" />
+        `;
+    }
+
+    function clearLines() {
+        document.getElementById('mapSvg').innerHTML = '';
+    }
+
+    function clearResults() {
+        document.getElementById('resultValue').innerText = "0 wraps";
+        document.getElementById('resultDistance').innerText = "Distance: --";
+        document.getElementById('resultNote').innerText = "Select target location.";
+    }
+
+    function resetMarkers() {
+        pegPoint = null;
+        spotPoint = null;
+        document.getElementById('pegPin').style.display = 'none';
+        document.getElementById('spotPin').style.display = 'none';
+        document.getElementById('instructionText').innerText = "Tap on the map to set your Peg (Swim) location.";
+        clearLines();
+        clearResults();
+    }
+
+    function calculateWraps() {
+        if (!pegPoint || !spotPoint) return;
+
+        const select = document.getElementById('lakeSelect');
+        const activeLakeFile = select.value;
+        const config = LAKE_CONFIGS[activeLakeFile];
+
+        const mapImage = document.getElementById('lakeMap');
+        const currentWidth = mapImage.clientWidth;
+        const currentHeight = mapImage.clientHeight;
+
+        // Turn coordinates back into active screen pixel space
+        const x1 = pegPoint.x * currentWidth;
+        const y1 = pegPoint.y * currentHeight;
+        const x2 = spotPoint.x * currentWidth;
+        const y2 = spotPoint.y * currentHeight;
+
+        // Distance formula
+        const pixelDistance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
+        // Use the scale logic specific to the chosen lake profile
+        const scaleBarPixels = currentWidth * config.scaleRatio;
+        const calculatedMetres = (pixelDistance / scaleBarPixels) * config.scaleRealMetres;
+        const calculatedTotalFeet = calculatedMetres / 0.3048;
+
+        // Break down wraps based on rod size configuration
+        const rodLength = parseFloat(document.getElementById('rodLength').value);
+        const fullWraps = Math.floor(calculatedTotalFeet / rodLength);
+        const remainingFeet = calculatedTotalFeet % rodLength;
+
+        // Update view outputs
+        document.getElementById('resultDistance').innerText = `Distance: ${calculatedMetres.toFixed(1)}m (${(calculatedMetres * 1.09361).toFixed(1)}yds)`;
+
+        let outputText = `${fullWraps} wrap${fullWraps !== 1 ? 's' : ''}`;
+        if (remainingFeet > 0.05) {
+            outputText += ` + ${remainingFeet.toFixed(1)} ft`;
+        }
+        document.getElementById('resultValue').innerText = outputText;
+
+        if (remainingFeet > 0.05) {
+            const shortOfStick = rodLength - remainingFeet;
+            document.getElementById('resultNote').innerText = `On wrap ${fullWraps + 1}, stop ${shortOfStick.toFixed(1)} ft short of the opposite stick.`;
+        } else {
+            document.getElementById('resultNote').innerText = `Perfect alignment. Hit your stick mark cleanly on wrap ${fullWraps}.`;
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        if (pegPoint && spotPoint) {
+            drawConnectingLine();
+            calculateWraps();
+        }
+    });
 </script>
 
 </body>
