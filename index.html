@@ -143,7 +143,6 @@
             color: var(--spot-color);
         }
 
-        /* Fixed viewport bounding box container */
         .map-viewport {
             position: relative;
             width: 100%;
@@ -152,9 +151,9 @@
             border-radius: 10px;
             border: 1px solid var(--border-color);
             background: #111111;
+            touch-action: pan-y; /* Allows normal vertical scrolling when locked */
         }
 
-        /* Fixed structural canvas container layout handles scaling matrices perfectly */
         .zoom-content {
             position: absolute;
             top: 0;
@@ -167,7 +166,6 @@
             align-items: center;
         }
 
-        /* Wrapper that matches the image dimensions natively */
         .image-container-frame {
             position: relative;
             display: inline-block;
@@ -183,7 +181,6 @@
             -webkit-user-select: none;
         }
 
-        /* SVG layer overlays image directly for perfect alignment */
         #mapSvg {
             position: absolute;
             top: 0;
@@ -324,17 +321,15 @@
     setupPanZoomEvents();
 
     function setupPanZoomEvents() {
-        // Core interaction handling using explicit pointer events
         viewport.addEventListener('pointerdown', (e) => {
-            // Guard rule: If map locked down, ignore drag mechanics to let page scroll freely
-            if (isMapLocked) return;
+            if (isMapLocked) return; // Strict lock check: block movement
             isDragging = true;
             startX = e.clientX - panX; startY = e.clientY - panY;
             viewport.setPointerCapture(e.pointerId);
         });
 
         viewport.addEventListener('pointermove', (e) => {
-            if (!isDragging || isMapLocked) return;
+            if (!isDragging || isMapLocked) return; // Block movement if locked
             if (e.pointerType === 'touch' && initialPinchDist !== null) return;
             panX = e.clientX - startX;
             panY = e.clientY - startY;
@@ -343,7 +338,6 @@
 
         viewport.addEventListener('pointerup', (e) => {
             if (isMapLocked) {
-                // If map is completely locked down, click inputs are treated as local target point drops instantly
                 handleMapTap(e);
                 return;
             }
@@ -358,12 +352,10 @@
             }
         });
 
-        viewport.addEventListener('pointercancel', (e) => {
-            isDragging = false;
-        });
+        viewport.addEventListener('pointercancel', () => { isDragging = false; });
 
         viewport.addEventListener('wheel', (e) => {
-            if (isMapLocked) return; // Prevent zooming wheel shifts when locked down
+            if (isMapLocked) return; 
             e.preventDefault();
             const zoomFactor = 1.1;
             const rect = viewport.getBoundingClientRect();
@@ -384,18 +376,22 @@
             applyTransform();
         }, { passive: false });
 
-        // Direct handling for mobile browser scroll pass-through touch events
+        // Touch Interceptors: Hard-blocking full-page zoom on mobile browsers
         viewport.addEventListener('touchstart', (e) => {
-            if (isMapLocked) return; // Let touch events bubble to allow scroll pass-through
+            if (isMapLocked) return; // Let events bubble naturally to allow vertical page scrolling
+            
+            // If unlocked, block default behavior to stop native browser zoom engines from hijacking gestures
             if (e.touches.length === 2) {
+                e.preventDefault();
                 initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
             }
-        }, { passive: true });
+        }, { passive: false });
 
         viewport.addEventListener('touchmove', (e) => {
-            if (isMapLocked) return; // Allow page scrolling when frozen
+            if (isMapLocked) return; 
+            
+            e.preventDefault(); // Lock mobile view completely when mapping
             if (e.touches.length === 2 && initialPinchDist !== null) {
-                e.preventDefault(); // Lock browser scrolling only when actively manipulating canvas view
                 const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
                 
                 const rect = viewport.getBoundingClientRect();
@@ -428,7 +424,6 @@
 
         content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
         
-        // Re-adjust thickness scales of vectors dynamically
         const connectingLine = document.querySelector('#lineGroup line');
         if (connectingLine) {
             connectingLine.setAttribute('stroke-width', Math.max(0.5, 2.5 / scale));
@@ -438,12 +433,10 @@
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        // FIXED AXIS GEOMETRY MAPPER: Resolves raw screen tap positions directly into the image's coordinate bounds
         const rect = svgCanvas.getBoundingClientRect();
         const clickXPercentage = (e.clientX - rect.left) / rect.width;
         const clickYPercentage = (e.clientY - rect.top) / rect.height;
 
-        // Verify tap was placed within image bounds
         if (clickXPercentage < 0 || clickXPercentage > 1 || clickYPercentage < 0 || clickYPercentage > 1) return;
 
         if (activePlacementMode === 'peg') {
@@ -460,7 +453,6 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
 
-        // Ensure canvas attributes are matched cleanly
         svgCanvas.setAttribute('viewBox', '0 0 100 100'); 
 
         const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim();
@@ -537,6 +529,9 @@
             pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn";
             activePlacementMode = 'none';
             text.innerText = "Pins are locked. Page scrolling enabled over map area.";
+            
+            // Snap map back to base view on lockdown to prevent awkward off-screen crops
+            scale = 1; panX = 0; panY = 0; applyTransform();
         } else {
             lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔓 MAP UNLOCKED";
             pegBtn.disabled = false; targetBtn.disabled = false;
@@ -574,7 +569,6 @@
         renderGraphicsLayer(); 
     }
 
-    // Force rendering adjustments if device orientation flips on the bank
     mapImage.onload = function() {
         renderGraphicsLayer();
     };
