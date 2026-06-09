@@ -87,16 +87,16 @@
             color: #fff;
         }
 
-        /* Search & Geolocation Row */
+        /* Search Bar & Actions Setup */
         .search-row {
             display: flex;
+            flex-direction: column;
             gap: 8px;
             margin-bottom: 12px;
         }
 
         .search-input-wrapper {
-            position: relative;
-            flex: 1;
+            width: 100%;
         }
 
         .search-input {
@@ -111,27 +111,38 @@
             outline: none;
         }
 
+        .action-buttons-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
         .geo-btn, .save-loc-btn {
-            padding: 10px 14px;
+            flex: 1;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             background-color: var(--input-bg);
             color: var(--text-color);
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-sizing: border-box;
+        }
+
+        .geo-btn {
+            border-color: var(--border-color);
         }
 
         .save-loc-btn {
             background-color: rgba(76, 175, 80, 0.1);
             border-color: var(--accent-color);
             color: var(--accent-color);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .controls-grid {
@@ -220,7 +231,6 @@
             color: var(--spot-color);
         }
 
-        /* Map Window Container */
         .map-viewport {
             position: relative;
             width: 100%;
@@ -237,7 +247,6 @@
             z-index: 1;
         }
 
-        /* Saved Locations Overlay Panel */
         .saved-overlay {
             position: absolute;
             top: 0;
@@ -350,7 +359,15 @@
             font-style: italic;
         }
 
-        /* Override Leaflet Marker Styles to keep clean look and minimize collision footprints */
+        .precision-tip {
+            font-size: 0.7rem;
+            color: var(--accent-color);
+            text-align: center;
+            margin-top: 5px;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
         .leaflet-div-icon {
             background: transparent !important;
             border: none !important;
@@ -372,8 +389,10 @@
             <div class="search-input-wrapper">
                 <input id="searchInput" type="text" class="search-input" placeholder="Search lake, venue, postcode..." onkeydown="if(event.key==='Enter') executeLocationSearch()">
             </div>
-            <button class="geo-btn" onclick="fetchDeviceLocation()" title="Find My Location">🛰️ GPS</button>
-            <button class="save-loc-btn" onclick="promptSaveCurrentLocation()" title="Save Current View">⭐ Save</button>
+            <div class="action-buttons-row">
+                <button class="geo-btn" onclick="fetchDeviceLocation()" title="Find My Location">📍 My Current Location</button>
+                <button class="save-loc-btn" onclick="promptSaveCurrentLocation()" title="Save Current View">⭐ Save</button>
+            </div>
         </div>
 
         <div class="controls-grid">
@@ -427,23 +446,19 @@
     let isMapLocked = true; 
     let activePlacementMode = 'none'; 
     
-    // Core Geographic Objects
     let pegLatLng = null; 
     let spotLatLng = null;
     let pegMarker = null;
     let spotMarker = null;
     let flightPathLine = null;
 
-    // Navigation and State Cache arrays
     let currentNavMode = 'find'; 
     let savedLocations = [];
 
-    // Initialize components
     initSatelliteMap();
     loadSavedLocationsFromCache();
 
     function initSatelliteMap() {
-        // Fallback view safely centered on Dunstable context area
         const defaultLat = 51.884;
         const defaultLng = -0.520;
         
@@ -454,19 +469,16 @@
             attributionControl: false
         });
 
-        // Pull pristine Esri World Imagery Satellite Tiles directly
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19,
             maxNativeZoom: 19
         }).addTo(map);
 
-        // Map Click Entry Hook
         map.on('click', (e) => {
             if (isMapLocked || activePlacementMode === 'none') return;
             handleMapInteraction(e.latlng);
         });
 
-        // Initialize UI lock rules
         lockMapInteractions();
     }
 
@@ -505,7 +517,6 @@
             savedBtn.className = "nav-btn active-tab";
             overlay.style.display = 'flex';
             
-            // Force safe lock transition when switching windows to prevent background map shifts
             if (!isMapLocked) toggleSafetyLock();
             renderSavedLocationItems();
         }
@@ -528,12 +539,10 @@
         const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 
-        // Clear existing vector components safely
         if (pegMarker) map.removeLayer(pegMarker);
         if (spotMarker) map.removeLayer(spotMarker);
         if (flightPathLine) map.removeLayer(flightPathLine);
 
-        // Render Peg Element via clean dynamic inline HTML icons
         if (pegLatLng) {
             const pegHtml = `<div style="background-color: ${pegColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
             pegMarker = L.marker(pegLatLng, {
@@ -541,7 +550,6 @@
             }).addTo(map);
         }
 
-        // Render Spot Element
         if (spotLatLng) {
             const spotHtml = `<div style="background-color: ${spotColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
             spotMarker = L.marker(spotLatLng, {
@@ -549,7 +557,6 @@
             }).addTo(map);
         }
 
-        // Render Connection Vector Line Rule
         if (pegLatLng && spotLatLng) {
             flightPathLine = L.polyline([pegLatLng, spotLatLng], {
                 color: accentColor,
@@ -565,8 +572,7 @@
 
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        // Haversine Precise Formula Computation Path
-        const R = 6371000; // Earth radius rule in metres
+        const R = 6371000; 
         const dLat = (spotLatLng.lat - pegLatLng.lat) * Math.PI / 180;
         const dLon = (spotLatLng.lng - pegLatLng.lng) * Math.PI / 180;
         
@@ -574,7 +580,7 @@
                   Math.cos(pegLatLng.lat * Math.PI / 180) * Math.cos(spotLatLng.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
                   
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        const calculatedMetres = R * c; // Absolute horizontal distance line
+        const calculatedMetres = R * c; 
 
         const calculatedTotalFeet = calculatedMetres / 0.3048;
         const fullWraps = Math.floor(calculatedTotalFeet / rodLength);
@@ -627,7 +633,6 @@
         document.getElementById('instructionText').innerText = "Searching global index logs...";
 
         try {
-            // Safe fallback open OSM Geocoding lookup configuration
             const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
             const data = await response.json();
 
@@ -709,10 +714,8 @@
         const loc = savedLocations.find(l => l.id === locationId);
         if (!loc) return;
 
-        // Restore venue viewport map perspective configuration
         map.setView([loc.lat, loc.lng], loc.zoom || 17);
 
-        // Restore markers if they existed for this venue instance
         pegLatLng = loc.pegLatLng ? L.latLng(loc.pegLatLng.lat, loc.pegLatLng.lng) : null;
         spotLatLng = loc.spotLatLng ? L.latLng(loc.spotLatLng.lat, loc.spotLatLng.lng) : null;
 
