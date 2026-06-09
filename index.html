@@ -166,7 +166,6 @@
             align-items: center;
         }
 
-        /* Combined vector viewport layout maps exactly to parent limits */
         #mapSvg {
             width: 100%;
             height: 100%;
@@ -251,8 +250,8 @@
         </div>
 
         <div class="mode-container">
-            <button id="btnSetPeg" class="mode-btn" onclick="setPlacementMode('peg')" disabled>📍 Peg</button>
-            <button id="btnSetTarget" class="mode-btn" onclick="setPlacementMode('spot')" disabled>🎯 Spot</button>
+            <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>📍 Peg</button>
+            <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>🎯 Spot</button>
         </div>
 
         <div class="map-viewport" id="mapViewport">
@@ -279,7 +278,7 @@
 
 <script>
     let isMapLocked = true; 
-    let activePlacementMode = 'none'; 
+    let activePlacementMode = 'none'; // 'none', 'peg', or 'spot'
     let pegPoint = null; 
     let spotPoint = null;
 
@@ -290,7 +289,6 @@
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
 
-    // Precision Topographic Config Metrics
     const LAKE_CONFIGS = {
         "Astral.png": { 
             originalWidth: 960,  
@@ -400,7 +398,6 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
         
-        // Use a standardized percentage matrix for the layout parameters
         svgCanvas.setAttribute('viewBox', '0 0 100 100');
         document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
         
@@ -425,7 +422,6 @@
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        // Unified percentage bounding framework fixes the marker visibility tracking bug
         const rect = svgCanvas.getBoundingClientRect();
         const clickXPercentage = (e.clientX - rect.left) / rect.width;
         const clickYPercentage = (e.clientY - rect.top) / rect.height;
@@ -440,6 +436,9 @@
 
         renderGraphicsLayer(); 
         calculateWraps();
+        
+        // AUTO-TOGGLE BACK TO SCROLL MODE IMMEDIATELY AFTER TAP PLACEMENT
+        resetPlacementState();
     }
 
     function renderGraphicsLayer() {
@@ -457,7 +456,6 @@
         const dotGroup = document.getElementById('dotGroup');
         dotGroup.innerHTML = ''; 
         
-        // This structural layout locks the marker size explicitly to ~1m diameter coordinates on water
         const rMaster = 0.45;
 
         if (pegPoint) {
@@ -477,10 +475,8 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        // Calculate straight line distance across percentage coordinates
         const distancePercentageOfWidth = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
 
-        // Use natural config properties to determine final real-world metric values
         const pixelDistanceOnNaturalImage = (distancePercentageOfWidth / 100) * config.originalWidth;
         const pixelsPerMetreMasterRule = config.scaleLinePixels / config.scaleRealMetres;
         const calculatedMetres = pixelDistanceOnNaturalImage / pixelsPerMetreMasterRule;
@@ -510,35 +506,62 @@
         const lockBtn = document.getElementById('btnLockToggle');
         const pegBtn = document.getElementById('btnSetPeg');
         const targetBtn = document.getElementById('btnSetTarget');
-        const text = document.getElementById('instructionText');
 
         if (isMapLocked) {
             lockBtn.className = "lock-btn state-locked"; lockBtn.innerHTML = "🔒 MAP LOCKED";
             pegBtn.disabled = true; targetBtn.disabled = true;
-            pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn";
             activePlacementMode = 'none';
-            text.innerText = "Pins are locked. Page scrolling enabled over map area.";
+            resetPlacementState();
+            document.getElementById('instructionText').innerText = "Pins are locked. Page scrolling enabled over map area.";
             
-            scale = 1; panX = 0; panY = 0; applyTransform();
+            // CRITICAL UPGRADE: Removed scale/pan resets to keep current close-up zoom state intact!
+            applyTransform();
         } else {
             lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔓 MAP UNLOCKED";
             pegBtn.disabled = false; targetBtn.disabled = false;
-            setPlacementMode('peg'); 
+            resetPlacementState(); 
         }
     }
 
-    function setPlacementMode(mode) {
+    // ARMED TOGGLE PATTERN LOGIC
+    function togglePlacementMode(mode) {
         if (isMapLocked) return;
-        activePlacementMode = mode;
+        
         const pegBtn = document.getElementById('btnSetPeg');
         const targetBtn = document.getElementById('btnSetTarget');
         const text = document.getElementById('instructionText');
+
+        // If clicking a mode that is already armed, turn it off back to safe scroll mode
+        if (activePlacementMode === mode) {
+            activePlacementMode = 'none';
+            resetPlacementState();
+            return;
+        }
+
+        activePlacementMode = mode;
+
         if (mode === 'peg') {
             pegBtn.className = "mode-btn active-peg"; targetBtn.className = "mode-btn";
-            text.innerText = "Mode: Placing Peg (Orange). Tap to move swim position.";
+            text.innerText = "Armed: Placing Peg (Orange). Tap map to place or adjust.";
         } else {
             pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn active-spot";
-            text.innerText = "Mode: Placing Target (Red). Tap to adjust target fishing spot.";
+            text.innerText = "Armed: Placing Target (Red). Tap map to place or adjust.";
+        }
+    }
+
+    function resetPlacementState() {
+        activePlacementMode = 'none';
+        const pegBtn = document.getElementById('btnSetPeg');
+        const targetBtn = document.getElementById('btnSetTarget');
+        const text = document.getElementById('instructionText');
+
+        pegBtn.className = "mode-btn";
+        targetBtn.className = "mode-btn";
+
+        if (isMapLocked) {
+            text.innerText = "Pins are locked. Page scrolling enabled over map area.";
+        } else {
+            text.innerText = "Ready. Arm 'Peg' or 'Spot' buttons above to update locations, or slide to pan/zoom.";
         }
     }
 
