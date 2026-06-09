@@ -289,21 +289,17 @@
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
 
-    // Central Data Config for Lake Math
+    // Consolidated Topographic Ratios
     const LAKE_CONFIGS = {
         "Astral.png": { 
-            originalWidth: 960,  
-            originalHeight: 816, 
-            scaleLinePixels: 262, 
+            scaleWidthPercent: 27.291667, // 262px / 960px * 100
             scaleRealMetres: 200
         },
         "Tiddenfoot.png": { 
-            originalWidth: 960,  
-            originalHeight: 684, 
-            scaleLinePixels: 176, // 100m bar width in pixels
+            scaleWidthPercent: 18.333333, // 176px / 960px * 100
             scaleRealMetres: 100
         },
-        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100 }
+        "Lake3.png": { scaleWidthPercent: 50.0, scaleRealMetres: 100 }
     };
 
     setupPanZoomEvents();
@@ -402,8 +398,8 @@
 
     function syncCanvasGeometry() {
         const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
         
+        // Locked entirely to a universal 0-100 percentage matrix system
         svgCanvas.setAttribute('viewBox', '0 0 100 100');
         document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
         
@@ -479,11 +475,11 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        const distancePercentageOfWidth = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
+        // Vector straight-line distance across the percentage grid layout
+        const distancePercentageOfWidth = Math.hypot(spotPoint.x - pegPoint.x, spotPoint.y - pegPoint.y);
 
-        const pixelDistanceOnNaturalImage = (distancePercentageOfWidth / 100) * config.originalWidth;
-        const pixelsPerMetreMasterRule = config.scaleLinePixels / config.scaleRealMetres;
-        const calculatedMetres = pixelDistanceOnNaturalImage / pixelsPerMetreMasterRule;
+        // Pure structural matrix rule converts layout percentages to real world metrics directly
+        const calculatedMetres = (distancePercentageOfWidth / config.scaleWidthPercent) * config.scaleRealMetres;
         
         const calculatedTotalFeet = calculatedMetres / 0.3048;
         const fullWraps = Math.floor(calculatedTotalFeet / rodLength);
