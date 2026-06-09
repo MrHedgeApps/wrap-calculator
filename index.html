@@ -166,11 +166,9 @@
             align-items: center;
         }
 
-        /* Re-engineered completely self-contained SVG tracking layer box */
         #mapSvg {
-            width: auto;
-            height: auto;
-            max-width: 100%;
+            width: 100%;
+            height: 100%;
             max-height: 400px;
             z-index: 5;
             box-sizing: border-box;
@@ -258,7 +256,7 @@
         <div class="map-viewport" id="mapViewport">
             <div class="zoom-content" id="zoomContent">
                 <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg">
-                    <image id="svgMapImage" href="Astral.png" x="0" y="0" width="100%" height="100%" />
+                    <image id="svgMapImage" href="Astral.png" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
                     <g id="lineGroup"></g>
                     <g id="dotGroup"></g>
                 </svg>
@@ -400,7 +398,6 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
         
-        // Match the layout box of the SVG cleanly to the image parameters config metrics
         svgCanvas.setAttribute('viewBox', `0 0 ${config.originalWidth} ${config.originalHeight}`);
         document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
         
@@ -420,7 +417,6 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const connectingLine = document.querySelector('#lineGroup line');
         if (connectingLine) {
-            // Scale line thickness dynamically based on original image size and zoom scale
             const baseStroke = (config.originalWidth / 960) * 2.5;
             connectingLine.setAttribute('stroke-width', Math.max(0.5, baseStroke / scale));
         }
@@ -429,19 +425,15 @@
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        // HIGH-PRECISION VECTOR RESOLUTION
-        // Converts screen event coordinates directly into the localized SVG coordinate coordinate matrix
         const point = svgCanvas.createSVGPoint();
         point.x = e.clientX;
         point.y = e.clientY;
         
-        // This method automatically strips out parent canvas padding, margins, scaling, and viewport panning completely
         const transformedPoint = point.matrixTransform(svgCanvas.getScreenCTM().inverse());
 
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
 
-        // Guard logic: Ensure click stays inside map limits
         if (transformedPoint.x < 0 || transformedPoint.x > config.originalWidth || transformedPoint.y < 0 || transformedPoint.y > config.originalHeight) return;
 
         if (activePlacementMode === 'peg') {
@@ -473,7 +465,6 @@
         const dotGroup = document.getElementById('dotGroup');
         dotGroup.innerHTML = ''; 
         
-        // Radius scale based on natural px coordinates map width percent configuration metrics
         const rMaster = (config.originalWidth / 100) * config.precisionMarkerPercent;
 
         if (pegPoint) {
@@ -493,7 +484,6 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        // Native pixel distance formula calculations
         const pixelDistanceOnNaturalImage = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
         
         const pixelsPerMetreMasterRule = config.scaleLinePixels / config.scaleRealMetres;
