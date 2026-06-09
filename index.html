@@ -146,8 +146,7 @@
         .map-viewport {
             position: relative;
             width: 100%;
-            height: auto;
-            min-height: 200px;
+            height: 400px;
             overflow: hidden;
             border-radius: 10px;
             border: 1px solid var(--border-color);
@@ -170,6 +169,7 @@
         #mapSvg {
             width: 100%;
             height: 100%;
+            max-height: 400px;
             z-index: 5;
             box-sizing: border-box;
             background: transparent;
@@ -226,13 +226,13 @@
                 <label for="lakeSelect">CHOOSE LAKE</label>
                 <select id="lakeSelect" onchange="handleLakeChange()">
                     <option value="Astral.png">Astral Park Lake</option>
-                    <option value="Tiddenfoot.png">Tiddenfoot Lake</option>
+                    <option value="Lake2.png">Lake 2 (Pending)</option>
                     <option value="Lake3.png">Lake 3 (Pending)</option>
                 </select>
             </div>
             <div>
                 <label for="rodLength">ROD LENGTH</label>
-                <select id="rodLength" onchange="saveAndCalculate()">
+                <select id="rodLength" onchange="calculateWraps()">
                     <option value="9">9 ft</option>
                     <option value="10">10 ft</option>
                     <option value="11">11 ft</option>
@@ -257,7 +257,7 @@
         <div class="map-viewport" id="mapViewport">
             <div class="zoom-content" id="zoomContent">
                 <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg">
-                    <image id="svgMapImage" href="Astral.png" x="0" y="0" width="100%" height="100%" />
+                    <image id="svgMapImage" href="Astral.png" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
                     <g id="lineGroup"></g>
                     <g id="dotGroup"></g>
                 </svg>
@@ -288,30 +288,20 @@
     const viewport = document.getElementById('mapViewport');
     const content = document.getElementById('zoomContent');
     const svgCanvas = document.getElementById('mapSvg');
-    const svgImage = document.getElementById('svgMapImage');
 
     const LAKE_CONFIGS = {
         "Astral.png": { 
             originalWidth: 960,  
-            originalHeight: 816,
-            pixelsPerMetre: 262 / 200 
+            originalHeight: 816, 
+            scaleLinePixels: 262, 
+            scaleRealMetres: 200
         },
-        "Tiddenfoot.png": { 
-            originalWidth: 960,  
-            originalHeight: 684,
-            pixelsPerMetre: 176 / 100 
-        },
-        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, pixelsPerMetre: 5.0 }
+        "Lake2.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100 },
+        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100 }
     };
 
     setupPanZoomEvents();
-    
-    // Explicit binding to force container height re-calculation the exact millisecond the file stream processes
-    svgImage.onload = function() {
-        syncCanvasGeometry();
-    };
-    
-    loadLakeState();
+    syncCanvasGeometry();
 
     function setupPanZoomEvents() {
         viewport.addEventListener('pointerdown', (e) => {
@@ -408,14 +398,9 @@
         const activeLakeFile = document.getElementById('lakeSelect').value;
         const config = LAKE_CONFIGS[activeLakeFile];
         
-        const currentContainerWidth = viewport.clientWidth;
-        if (currentContainerWidth > 0) {
-            // HARD ALLY: Fluidly scales container height box parameter frames to map file geometry ratios
-            const aspectCorrectedHeight = (config.originalHeight / config.originalWidth) * currentContainerWidth;
-            viewport.style.height = aspectCorrectedHeight + 'px';
-        }
+        svgCanvas.setAttribute('viewBox', '0 0 100 100');
+        document.getElementById('svgMapImage').setAttribute('href', activeLakeFile);
         
-        svgCanvas.setAttribute('viewBox', `0 0 ${config.originalWidth} ${config.originalHeight}`);
         renderGraphicsLayer();
     }
 
@@ -427,53 +412,41 @@
         if (panX < -maxPanX) panX = -maxPanX; if (panY < -maxPanY) panY = -maxPanY;
 
         content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-        saveLakeStateValuesOnly();
         
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
         const connectingLine = document.querySelector('#lineGroup line');
         if (connectingLine) {
-            const baseStroke = (config.originalWidth / 960) * 2.5;
-            connectingLine.setAttribute('stroke-width', Math.max(0.5, baseStroke / scale));
+            connectingLine.setAttribute('stroke-width', Math.max(0.3, 0.6 / scale));
         }
     }
 
     function handleMapTap(e) {
         if (activePlacementMode === 'none' || initialPinchDist !== null) return;
 
-        const point = svgCanvas.createSVGPoint();
-        point.x = e.clientX;
-        point.y = e.clientY;
-        
-        const transformedPoint = point.matrixTransform(svgCanvas.getScreenCTM().inverse());
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
+        const rect = svgCanvas.getBoundingClientRect();
+        const clickXPercentage = (e.clientX - rect.left) / rect.width;
+        const clickYPercentage = (e.clientY - rect.top) / rect.height;
 
-        if (transformedPoint.x < 0 || transformedPoint.x > config.originalWidth || transformedPoint.y < 0 || transformedPoint.y > config.originalHeight) return;
+        if (clickXPercentage < 0 || clickXPercentage > 1 || clickYPercentage < 0 || clickYPercentage > 1) return;
 
         if (activePlacementMode === 'peg') {
-            pegPoint = { x: transformedPoint.x, y: transformedPoint.y };
+            pegPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
         } else if (activePlacementMode === 'spot') {
-            spotPoint = { x: transformedPoint.x, y: transformedPoint.y };
+            spotPoint = { x: clickXPercentage * 100, y: clickYPercentage * 100 };
         }
 
         renderGraphicsLayer(); 
-        saveAndCalculate();
+        calculateWraps();
         resetPlacementState();
     }
 
     function renderGraphicsLayer() {
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const config = LAKE_CONFIGS[activeLakeFile];
-
         const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim();
         const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 
         const lineGroup = document.getElementById('lineGroup');
         if (pegPoint && spotPoint) {
-            const baseStroke = (config.originalWidth / 960) * 2.5;
-            lineGroup.innerHTML = `<line x1="${pegPoint.x}" y1="${pegPoint.y}" x2="${spotPoint.x}" y2="${spotPoint.y}" stroke="${accentColor}" stroke-width="${baseStroke / scale}" stroke-linecap="round" />`;
+            lineGroup.innerHTML = `<line x1="${pegPoint.x}" y1="${pegPoint.y}" x2="${spotPoint.x}" y2="${spotPoint.y}" stroke="${accentColor}" stroke-width="0.6" stroke-linecap="round" />`;
         } else {
             lineGroup.innerHTML = '';
         }
@@ -481,21 +454,16 @@
         const dotGroup = document.getElementById('dotGroup');
         dotGroup.innerHTML = ''; 
         
-        const rMaster = (config.originalWidth / 100) * 0.45;
+        const rMaster = 0.45;
 
         if (pegPoint) {
-            dotGroup.innerHTML += `<circle cx="${pegPoint.x}" cy="${pegPoint.y}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="${rMaster * 0.15}" />`;
+            dotGroup.innerHTML += `<circle cx="${pegPoint.x}" cy="${pegPoint.y}" r="${rMaster}" fill="${pegColor}" stroke="#ffffff" stroke-width="0.1" />`;
         }
         if (spotPoint) {
-            dotGroup.innerHTML += `<circle cx="${spotPoint.x}" cy="${spotPoint.y}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="${rMaster * 0.15}" />`;
+            dotGroup.innerHTML += `<circle cx="${spotPoint.x}" cy="${spotPoint.y}" r="${rMaster}" fill="${spotColor}" stroke="#ffffff" stroke-width="0.1" />`;
         }
 
         applyTransform(); 
-    }
-
-    function saveAndCalculate() {
-        calculateWraps();
-        saveLakeStateValuesOnly();
     }
 
     function calculateWraps() {
@@ -508,8 +476,11 @@
         const config = LAKE_CONFIGS[activeLakeFile];
         const rodLength = parseFloat(document.getElementById('rodLength').value);
 
-        const pixelDistance = Math.hypot(spotPoint.x - pegPoint.x, spotPoint.y - pegPoint.y);
-        const calculatedMetres = pixelDistance / config.pixelsPerMetre;
+        const distancePercentageOfWidth = Math.sqrt(Math.pow(spotPoint.x - pegPoint.x, 2) + Math.pow(spotPoint.y - pegPoint.y, 2));
+
+        const pixelDistanceOnNaturalImage = (distancePercentageOfWidth / 100) * config.originalWidth;
+        const pixelsPerMetreMasterRule = config.scaleLinePixels / config.scaleRealMetres;
+        const calculatedMetres = pixelDistanceOnNaturalImage / pixelsPerMetreMasterRule;
         
         const calculatedTotalFeet = calculatedMetres / 0.3048;
         const fullWraps = Math.floor(calculatedTotalFeet / rodLength);
@@ -529,43 +500,6 @@
         } else {
             document.getElementById('resultNote').innerText = `Target spot is ${calculatedMetres.toFixed(2)}m away.\nExactly hit your stick mark on wrap ${fullWraps}.`;
         }
-    }
-
-    function saveLakeStateValuesOnly() {
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const stateObject = {
-            pegPoint,
-            spotPoint,
-            scale,
-            panX,
-            panY,
-            rodLength: document.getElementById('rodLength').value
-        };
-        localStorage.setItem(`hedge_lake_state_${activeLakeFile}`, JSON.stringify(stateObject));
-    }
-
-    function loadLakeState() {
-        const activeLakeFile = document.getElementById('lakeSelect').value;
-        const savedData = localStorage.getItem(`hedge_lake_state_${activeLakeFile}`);
-        
-        if (savedData) {
-            const parsed = JSON.parse(savedData);
-            pegPoint = parsed.pegPoint;
-            spotPoint = parsed.spotPoint;
-            scale = parsed.scale || 1;
-            panX = parsed.panX || 0;
-            panY = parsed.panY || 0;
-            if (parsed.rodLength) {
-                document.getElementById('rodLength').value = parsed.rodLength;
-            }
-        } else {
-            pegPoint = null;
-            spotPoint = null;
-            scale = 1; panX = 0; panY = 0;
-        }
-        
-        // Force asset update path
-        svgImage.setAttribute('href', activeLakeFile);
     }
 
     function toggleSafetyLock() {
@@ -629,8 +563,17 @@
     }
 
     function handleLakeChange() {
+        scale = 1; panX = 0; panY = 0; applyTransform();
         if (!isMapLocked) toggleSafetyLock();
-        loadLakeState(); 
+        resetMarkers(); 
+    }
+
+    function resetMarkers() {
+        pegPoint = null; spotPoint = null;
+        document.getElementById('resultValue').innerText = "0 wraps";
+        document.getElementById('resultDistance').innerText = "Distance: --";
+        document.getElementById('resultNote').innerText = "Target distance reporting.";
+        syncCanvasGeometry(); 
     }
 
     function clearResultsDisplay() {
