@@ -226,8 +226,8 @@
                 <label for="lakeSelect">CHOOSE LAKE</label>
                 <select id="lakeSelect" onchange="handleLakeChange()">
                     <option value="Astral.png">Astral Park Lake</option>
-                    <option value="Lake2.png">Lake 2 (Pending)</option>
-                    <option value="Lake3.png">Lake 3 (Pending)</option>
+                    <option value="Tiddenfoot.png">Tiddenfoot Lake</option>
+                    <option value="Rackley Hills.png">Rackley Hills</option>
                 </select>
             </div>
             <div>
@@ -278,7 +278,7 @@
 
 <script>
     let isMapLocked = true; 
-    let activePlacementMode = 'none'; // 'none', 'peg', or 'spot'
+    let activePlacementMode = 'none'; 
     let pegPoint = null; 
     let spotPoint = null;
 
@@ -296,8 +296,18 @@
             scaleLinePixels: 262, 
             scaleRealMetres: 200
         },
-        "Lake2.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100 },
-        "Lake3.png": { originalWidth: 1000, originalHeight: 1000, scaleLinePixels: 500, scaleRealMetres: 100 }
+        "Tiddenfoot.png": { 
+            originalWidth: 960,  
+            originalHeight: 684, 
+            scaleLinePixels: 176, 
+            scaleRealMetres: 100 
+        },
+        "Rackley Hills.png": { 
+            originalWidth: 960,  
+            originalHeight: 684, 
+            scaleLinePixels: 236, 
+            scaleRealMetres: 100 
+        }
     };
 
     setupPanZoomEvents();
@@ -436,8 +446,6 @@
 
         renderGraphicsLayer(); 
         calculateWraps();
-        
-        // AUTO-TOGGLE BACK TO SCROLL MODE IMMEDIATELY AFTER TAP PLACEMENT
         resetPlacementState();
     }
 
@@ -513,8 +521,6 @@
             activePlacementMode = 'none';
             resetPlacementState();
             document.getElementById('instructionText').innerText = "Pins are locked. Page scrolling enabled over map area.";
-            
-            // CRITICAL UPGRADE: Removed scale/pan resets to keep current close-up zoom state intact!
             applyTransform();
         } else {
             lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔓 MAP UNLOCKED";
@@ -523,7 +529,6 @@
         }
     }
 
-    // ARMED TOGGLE PATTERN LOGIC
     function togglePlacementMode(mode) {
         if (isMapLocked) return;
         
@@ -531,7 +536,6 @@
         const targetBtn = document.getElementById('btnSetTarget');
         const text = document.getElementById('instructionText');
 
-        // If clicking a mode that is already armed, turn it off back to safe scroll mode
         if (activePlacementMode === mode) {
             activePlacementMode = 'none';
             resetPlacementState();
@@ -578,6 +582,10 @@
         document.getElementById('resultNote').innerText = "Target distance reporting.";
         syncCanvasGeometry(); 
     }
+
+    window.addEventListener('resize', () => {
+        syncCanvasGeometry();
+    });
 </script>
 
 </body>
