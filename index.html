@@ -59,26 +59,27 @@
             text-transform: uppercase;
         }
 
-        /* Nav Tab Switches */
+        /* Nav Tab Switches Overhaul */
         .nav-container {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             margin-bottom: 12px;
         }
 
         .nav-btn {
             flex: 1;
-            padding: 10px;
+            padding: 10px 4px;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: bold;
             cursor: pointer;
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             transition: all 0.2s ease;
+            text-align: center;
         }
 
         .nav-btn.active-tab {
@@ -215,7 +216,6 @@
             letter-spacing: 1px;
         }
 
-        /* Centered formatting for Safety Lock label */
         .lock-label {
             text-align: center;
         }
@@ -258,7 +258,6 @@
             margin-bottom: 12px;
         }
 
-        /* Two-line centered layout formatting for mode actions */
         .mode-btn {
             flex: 1;
             padding: 8px 10px;
@@ -473,8 +472,9 @@
         <h2>Wraps Anywhere</h2>
 
         <div class="nav-container">
-            <button id="navFindBtn" class="nav-btn active-tab" onclick="switchNavMode('find')">🗺️ Find Location</button>
-            <button id="navSavedBtn" class="nav-btn" onclick="switchNavMode('saved')">⭐ Saved Locations</button>
+            <button id="navFindBtn" class="nav-btn active-tab" onclick="switchNavMode('find')">🗺️ Find</button>
+            <button id="navSavedBtn" class="nav-btn" onclick="switchNavMode('saved')">⭐ Saved</button>
+            <button id="navPremierBtn" class="nav-btn" onclick="switchNavMode('premier')">🏆 Premier Venues</button>
         </div>
         
         <div id="searchControlsRow" class="search-row">
@@ -517,7 +517,7 @@
             <div id="satelliteMap"></div>
 
             <div id="savedOverlayPanel" class="saved-overlay">
-                <div class="saved-overlay-title">Your Saved Venues</div>
+                <div id="overlayPanelTitle" class="saved-overlay-title">Your Saved Venues</div>
                 <div id="locationListContainer" class="location-list"></div>
             </div>
         </div>
@@ -565,6 +565,50 @@
     let savedLocations = [];
     let searchDebounceTimeout = null;
 
+    // Hardcoded Top 40 UK Premier Fisheries Dataset Vector Matrix
+    const PREMIER_FISHERIES_DATA = [
+        { name: "Linear Fisheries (Oxlease/Brasenose)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire" },
+        { name: "Wyre Forest Carping (Furnace Mill)", lat: 52.3789, lng: -2.3923, desc: "Worcestershire" },
+        { name: "Coombe Abbey Pool", lat: 52.4116, lng: -1.4172, desc: "Warwickshire" },
+        { name: "Bluebell Lakes", lat: 52.4851, lng: -0.4435, desc: "Northamptonshire" },
+        { name: "Makins Fishery", lat: 52.4937, lng: -1.3912, desc: "Warwickshire" },
+        { name: "Barston Lakes", lat: 52.4172, lng: -1.6881, desc: "West Midlands" },
+        { name: "Cudmore Fisheries", lat: 53.0041, lng: -2.3096, desc: "Staffordshire" },
+        { name: "Partridge Lakes", lat: 53.4611, lng: -2.5186, desc: "Cheshire" },
+        { name: "Larford Lakes", lat: 52.3275, lng: -2.2514, desc: "Worcestershire" },
+        { name: "The Monument (RH Fisheries)", lat: 52.6841, lng: -2.3552, desc: "Shropshire" },
+        { name: "Walthamstow Reservoirs", lat: 51.5832, lng: -0.0461, desc: "North London" },
+        { name: "Thorpe Lea", lat: 51.4221, lng: -0.5365, desc: "Surrey" },
+        { name: "Sandhurst Lake", lat: 51.3415, lng: -0.7932, desc: "Berkshire" },
+        { name: "Elphicks Fisheries", lat: 51.1118, lng: 0.4491, desc: "Kent" },
+        { name: "Manor Farm Lakes", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire" },
+        { name: "Farlows Lake", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire" },
+        { name: "Bury Hill Fisheries", lat: 51.2185, lng: -0.3475, desc: "Surrey" },
+        { name: "Gold Valley Lakes", lat: 51.2652, lng: -0.7812, desc: "Hampshire" },
+        { name: "St Ives Lakes", lat: 52.3168, lng: -0.0652, desc: "Cambridgeshire" },
+        { name: "Monk Lakes", lat: 51.1895, lng: 0.5462, desc: "Kent" },
+        { name: "Cefn Mably Lakes", lat: 51.5395, lng: -3.1112, desc: "South Wales" },
+        { name: "White Acres Fishery", lat: 50.4095, lng: -5.0082, desc: "Cornwall" },
+        { name: "Shatterford Lakes", lat: 52.4241, lng: -2.2891, desc: "Worcestershire" },
+        { name: "Lindholme Lakes", lat: 53.5385, lng: -0.9385, desc: "South Yorkshire" },
+        { name: "The Moorlands Totnes", lat: 50.4485, lng: -3.7115, desc: "Devon" },
+        { name: "Orchid Lakes", lat: 51.6571, lng: -1.1632, desc: "Oxfordshire" },
+        { name: "Wyreside Lakes", lat: 53.9665, lng: -2.7665, desc: "Lancashire" },
+        { name: "Bainton Fisheries", lat: 52.6415, lng: -0.3542, desc: "Cambridgeshire" },
+        { name: "Baden Hall Fisheries", lat: 52.8835, lng: -2.2365, desc: "Staffordshire" },
+        { name: "Borwick Lakes", lat: 54.1485, lng: -2.7212, desc: "Lancashire" },
+        { name: "Pavyotts Mill", lat: 50.9265, lng: -2.6952, desc: "Somerset" },
+        { name: "Heronbrook Fisheries", lat: 52.9552, lng: -2.3251, desc: "Staffordshire" },
+        { name: "Messingham Sands", lat: 53.5355, lng: -0.6695, desc: "Lincolnshire" },
+        { name: "Stanwick Lakes", lat: 52.3265, lng: -0.6125, desc: "Northamptonshire" },
+        { name: "Weston Pools", lat: 52.8465, lng: -3.0292, desc: "Shropshire" },
+        { name: "Hallcroft Fishery", lat: 53.3325, lng: -0.9195, desc: "Nottinghamshire" },
+        { name: "Todber Manor", lat: 50.9785, lng: -2.3115, desc: "Dorset" },
+        { name: "Magiscroft Fishery", lat: 55.9395, lng: -4.0412, desc: "North Lanarkshire" },
+        { name: "Tunnel Barn Farm", lat: 52.2985, lng: -1.6885, desc: "Warwickshire" },
+        { name: "Drayton Reservoir", lat: 52.2682, lng: -1.1735, desc: "Northamptonshire" }
+    ];
+
     initSatelliteMap();
     loadSavedLocationsFromCache();
     setupSearchSuggestionsEngine();
@@ -610,26 +654,37 @@
         map.scrollWheelZoom.enable();
         map.boxZoom.enable();
         map.keyboard.enable();
-        if (map.tap) map.tap.enable();
+        if (map.tap) map.tap.disable();
     }
 
     function switchNavMode(targetMode) {
         currentNavMode = targetMode;
         const findBtn = document.getElementById('navFindBtn');
         const savedBtn = document.getElementById('navSavedBtn');
+        const premierBtn = document.getElementById('navPremierBtn');
         const overlay = document.getElementById('savedOverlayPanel');
+        const overlayTitle = document.getElementById('overlayPanelTitle');
+
+        // Reset navigation tab button classes
+        findBtn.className = "nav-btn";
+        savedBtn.className = "nav-btn";
+        premierBtn.className = "nav-btn";
 
         if (targetMode === 'find') {
             findBtn.className = "nav-btn active-tab";
-            savedBtn.className = "nav-btn";
             overlay.style.display = 'none';
-        } else {
-            findBtn.className = "nav-btn";
+        } else if (targetMode === 'saved') {
             savedBtn.className = "nav-btn active-tab";
+            overlayTitle.innerText = "Your Saved Venues";
             overlay.style.display = 'flex';
-            
             if (!isMapLocked) toggleSafetyLock();
             renderSavedLocationItems();
+        } else if (targetMode === 'premier') {
+            premierBtn.className = "nav-btn active-tab";
+            overlayTitle.innerText = "UK Premier Fisheries";
+            overlay.style.display = 'flex';
+            if (!isMapLocked) toggleSafetyLock();
+            renderPremierFisheriesItems();
         }
     }
 
@@ -870,6 +925,41 @@
             `;
             container.appendChild(row);
         });
+    }
+
+    // Dynamic rendering layout logic for the Premier Top 40 vector list
+    function renderPremierFisheriesItems() {
+        const container = document.getElementById('locationListContainer');
+        container.innerHTML = '';
+
+        PREMIER_FISHERIES_DATA.forEach(venue => {
+            const row = document.createElement('div');
+            row.className = 'location-item';
+            row.onclick = () => flyToPremierFisheryVector(venue.lat, venue.lng);
+
+            row.innerHTML = `
+                <div class="location-info">
+                    <div class="location-name">${venue.name}</div>
+                    <div class="location-coords">${venue.desc} &bull; Lat: ${venue.lat.toFixed(4)}, Lng: ${venue.lng.toFixed(4)}</div>
+                </div>
+                <div style="color: var(--accent-color); font-weight: bold; font-size: 0.9rem; padding-right: 4px;">🗺️</div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function flyToPremierFisheryVector(lat, lng) {
+        map.setView([lat, lng], 16);
+        
+        // Wipe markers and connections clean to prevent calculations bridging across distinct complexes
+        pegLatLng = null;
+        spotLatLng = null;
+        renderMapGraphicsLayers();
+        clearResultsDisplay();
+
+        switchNavMode('find');
+        document.getElementById('instructionText').innerText = "Moved layout onto target fishery.";
+        setTimeout(resetPlacementState, 2000);
     }
 
     function selectAndFlyToSavedLocation(locationId) {
