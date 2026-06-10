@@ -174,12 +174,10 @@
             color: #fff;
         }
 
-        /* Spaced Actions Layout Matrix */
         .action-buttons-row {
             display: flex;
             gap: 8px;
             width: 100%;
-            margin-top: 8px; 
         }
 
         .geo-btn, .save-loc-btn {
@@ -253,8 +251,6 @@
             display: flex;
             gap: 10px;
             margin-bottom: 12px;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .mode-btn {
@@ -268,14 +264,7 @@
             border: 2px solid var(--border-color);
             color: var(--text-muted);
             transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             text-align: center;
-            line-height: 1.3;
-            min-height: 64px; 
-            letter-spacing: 0.5px;
         }
 
         .mode-btn:disabled {
@@ -302,9 +291,8 @@
         }
 
         .mode-btn.reset-btn:not(:disabled):hover {
-            border-color: var(--spot-color);
+            border-color: var(--text-color);
             color: #fff;
-            background-color: rgba(244, 67, 54, 0.05);
         }
 
         .map-viewport {
@@ -449,6 +437,7 @@
             border: none !important;
         }
 
+        /* Footer System Section */
         .app-footer {
             margin-top: 10px;
             text-align: center;
@@ -492,18 +481,9 @@
         </div>
 
         <div class="mode-container">
-            <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>
-                <span>📍</span>
-                <span>Peg</span>
-            </button>
-            <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>
-                <span>🎯</span>
-                <span>Target</span>
-            </button>
-            <button id="btnResetPins" class="mode-btn reset-btn" onclick="clearActiveMapPins()" disabled>
-                <span>✕</span>
-                <span>Reset Pins</span>
-            </button>
+            <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>📍 Peg</button>
+            <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>🎯 Target</button>
+            <button id="btnResetPins" class="mode-btn reset-btn" onclick="clearActiveMapPins()" disabled>✕ Reset Pins</button>
         </div>
 
         <div class="map-viewport" id="mapViewport">
@@ -949,4 +929,10 @@
 
     function clearResultsDisplay() {
         document.getElementById('resultValue').innerText = "0 wraps";
-        document.getElementById('resultDistance').innerText = "Distance:
+        document.getElementById('resultDistance').innerText = "Distance: --";
+        document.getElementById('resultNote').innerText = "Ensure both Peg and Target positions are marked on the map layout.";
+    }
+</script>
+
+</body>
+</html>
