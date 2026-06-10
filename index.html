@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
-    <title>Hedge Wrap Calculator</title>
+    <title>Wraps Anywhere</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         :root {
@@ -284,7 +284,6 @@
             color: var(--spot-color);
         }
 
-        /* Styled Reset Button Option */
         .mode-btn.reset-btn {
             border-color: var(--border-color);
             background-color: var(--input-bg);
@@ -437,13 +436,23 @@
             background: transparent !important;
             border: none !important;
         }
+
+        /* Footer System Section */
+        .app-footer {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="card">
-        <h2>Hedge Wraps</h2>
+        <h2>Wraps Anywhere</h2>
 
         <div class="nav-container">
             <button id="navFindBtn" class="nav-btn active-tab" onclick="switchNavMode('find')">🗺️ Find Location</button>
@@ -464,19 +473,6 @@
             </div>
         </div>
 
-        <div class="controls-grid">
-            <div style="grid-template-columns: 1fr; grid-column: span 2;">
-                <label for="rodLength">ROD LENGTH</label>
-                <select id="rodLength" onchange="calculateWraps()">
-                    <option value="9">9 ft</option>
-                    <option value="10">10 ft</option>
-                    <option value="11">11 ft</option>
-                    <option value="12" selected>12 ft</option>
-                    <option value="13">13 ft</option>
-                </select>
-            </div>
-        </div>
-
         <div class="controls-grid" style="grid-template-columns: 1fr;">
             <div>
                 <label>SAFETY LOCK</label>
@@ -486,7 +482,7 @@
 
         <div class="mode-container">
             <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>📍 Peg</button>
-            <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>🎯 Spot</button>
+            <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>🎯 Target</button>
             <button id="btnResetPins" class="mode-btn reset-btn" onclick="clearActiveMapPins()" disabled>✕ Reset Pins</button>
         </div>
 
@@ -502,11 +498,27 @@
         <div class="instructions" id="instructionText">Map is safety-locked. Unlock above to drop markers.</div>
     </div>
 
+    <div class="card" style="padding: 14px;">
+        <label for="rodLength">ROD LENGTH</label>
+        <select id="rodLength" onchange="calculateWraps()">
+            <option value="9">9 ft</option>
+            <option value="10">10 ft</option>
+            <option value="11">11 ft</option>
+            <option value="12" selected>12 ft</option>
+            <option value="13">13 ft</option>
+        </select>
+    </div>
+
     <div class="card result-container">
         <div class="result-title">Target Geometry</div>
         <div id="resultValue" class="result-value">0 wraps</div>
         <div id="resultDistance" class="result-distance">Distance: --</div>
         <div id="resultNote" class="result-note">Ensure both Peg and Target positions are marked on the map layout.</div>
+    </div>
+
+    <div class="app-footer">
+        &copy; 2026 Wraps Anywhere. All rights reserved.<br>
+        Designed & developed by MrHedge.
     </div>
 </div>
 
@@ -764,7 +776,6 @@
         input.focus(); 
     }
 
-    // EXPLICIT PIN FLUSH LAYER RESET ENGINE
     function clearActiveMapPins() {
         pegLatLng = null;
         spotLatLng = null;
@@ -912,7 +923,7 @@
         if (isMapLocked) {
             text.innerText = "Pins are locked. Page scrolling enabled over map area.";
         } else {
-            text.innerText = "Ready. Arm 'Peg' or 'Spot' buttons above to update locations, or slide to pan/zoom.";
+            text.innerText = "Ready. Arm 'Peg' or 'Target' buttons above to update locations, or slide to pan/zoom.";
         }
     }
 
