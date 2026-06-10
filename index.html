@@ -741,7 +741,6 @@
         });
     }
 
-    // Explicit clear field execution
     function clearInputFieldQuickly() {
         const input = document.getElementById('searchInput');
         const box = document.getElementById('suggestionsBox');
@@ -749,7 +748,7 @@
         input.value = '';
         box.innerHTML = '';
         box.style.display = 'none';
-        input.focus(); // Pull touch keyboard focus straight back
+        input.focus(); 
     }
 
     function promptSaveCurrentLocation() {
@@ -771,7 +770,8 @@
 
         savedLocations.push(record);
         localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations));
-        alert("Venue profile cached safely into storage matrices.");
+        // REDUCED TO CRITICAL PHRASE ONLY
+        alert("Location saved");
     }
 
     function loadSavedLocationsFromCache() {
