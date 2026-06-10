@@ -19,7 +19,7 @@
             --input-bg: #262626;
             --border-color: #333333;
             
-            /* App System Help Blue Color Scheme Variables */
+            /* Help Blue Color Scheme Variables */
             --info-blue: #0288d1;
             --info-blue-border: #01579b;
             --info-blue-hover: #03a9f4;
@@ -55,7 +55,6 @@
             position: relative;
         }
 
-        /* Title container updated for clean side-by-side spacing distribution */
         .header-row {
             display: flex;
             justify-content: space-between;
@@ -65,7 +64,6 @@
             width: 100%;
         }
 
-        /* Changed to clean left alignment matrix placement */
         h2 {
             margin: 0;
             text-align: left;
@@ -75,7 +73,6 @@
             text-transform: uppercase;
         }
 
-        /* Transformed info button style into shades of systemic blue */
         .info-toggle-btn {
             background: var(--info-blue);
             border: 1px solid var(--info-blue-border);
@@ -99,7 +96,6 @@
             box-shadow: 0 4px 12px rgba(3, 169, 244, 0.3);
         }
 
-        /* Nav Tab Switches Framework */
         .nav-container {
             display: flex;
             gap: 6px;
@@ -128,7 +124,6 @@
             color: #fff;
         }
 
-        /* Search Input and Clear Button Wrapper */
         .search-row {
             display: flex;
             flex-direction: column;
@@ -180,7 +175,6 @@
             background-color: rgba(244, 67, 54, 0.05);
         }
 
-        /* Dynamic Suggestions Dropdown */
         .suggestions-panel {
             position: absolute;
             top: 100%;
@@ -1118,7 +1112,7 @@
         pegLatLng = loc.pegLatLng ? L.latLng(loc.pegLatLng.lat, loc.pegLatLng.lng) : null;
         spotLatLng = loc.spotLatLng ? L.latLng(loc.spotLatLng.lat, loc.spotLatLng.lng) : null;
 
-        renderMapGraphicsLayers layers();
+        renderMapGraphicsLayers();
         calculateWraps();
         switchNavMode('find');
     }
