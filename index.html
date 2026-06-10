@@ -38,7 +38,7 @@
             box-sizing: border-box;
         }
 
-        /* 1.5s Premium Splash Screen Overlay Layout */
+        /* 3.0s Premium Splash Screen Overlay Layout */
         .app-splash-screen {
             position: fixed;
             top: 0;
@@ -46,7 +46,7 @@
             width: 100vw;
             height: 100vh;
             background-color: #080808;
-            z-index: 99999; /* Higher than map dropdown arrays and navigation frames */
+            z-index: 99999;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -807,23 +807,21 @@
         { name: "Drayton Reservoir", lat: 52.2682, lng: -1.1735, desc: "Northamptonshire" }
     ];
 
-    // Core Initialization Matrix Setup Trigger
     window.addEventListener('DOMContentLoaded', () => {
         initSatelliteMap();
         loadSavedLocationsFromCache();
         setupSearchSuggestionsEngine();
         
-        // Execute smooth fade execution routine for opening splash element layer
+        // Enforced 3.0-second delay execution matrix boundary target rules
         setTimeout(() => {
             const splash = document.getElementById('appSplashScreenFrame');
             splash.style.opacity = '0';
-            splash.style.pointerEvents = 'none'; // Re-enable interaction layer targeting map
+            splash.style.pointerEvents = 'none';
             
-            // Garbage cleanup routine removing nodes from viewport engine completely after animation
             setTimeout(() => {
                 splash.remove();
             }, 400);
-        }, 1500); // Enforced 1.5-second runtime rule execution target boundaries
+        }, 3000);
     });
 
     function initSatelliteMap() {
