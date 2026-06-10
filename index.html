@@ -284,6 +284,18 @@
             color: var(--spot-color);
         }
 
+        /* Styled Reset Button Option */
+        .mode-btn.reset-btn {
+            border-color: var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-muted);
+        }
+
+        .mode-btn.reset-btn:not(:disabled):hover {
+            border-color: var(--text-color);
+            color: #fff;
+        }
+
         .map-viewport {
             position: relative;
             width: 100%;
@@ -475,6 +487,7 @@
         <div class="mode-container">
             <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>📍 Peg</button>
             <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>🎯 Spot</button>
+            <button id="btnResetPins" class="mode-btn reset-btn" onclick="clearActiveMapPins()" disabled>✕ Reset Pins</button>
         </div>
 
         <div class="map-viewport" id="mapViewport">
@@ -751,6 +764,18 @@
         input.focus(); 
     }
 
+    // EXPLICIT PIN FLUSH LAYER RESET ENGINE
+    function clearActiveMapPins() {
+        pegLatLng = null;
+        spotLatLng = null;
+        
+        renderMapGraphicsLayers();
+        clearResultsDisplay();
+        
+        document.getElementById('instructionText').innerText = "Pins successfully reset.";
+        setTimeout(resetPlacementState, 1500);
+    }
+
     function promptSaveCurrentLocation() {
         const currentCenter = map.getCenter();
         const currentZoom = map.getZoom();
@@ -770,7 +795,6 @@
 
         savedLocations.push(record);
         localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations));
-        // REDUCED TO CRITICAL PHRASE ONLY
         alert("Location saved");
     }
 
@@ -836,16 +860,17 @@
         const lockBtn = document.getElementById('btnLockToggle');
         const pegBtn = document.getElementById('btnSetPeg');
         const targetBtn = document.getElementById('btnSetTarget');
+        const resetBtn = document.getElementById('btnResetPins');
 
         if (isMapLocked) {
             lockBtn.className = "lock-btn state-locked"; lockBtn.innerHTML = "🔒 MAP LOCKED";
-            pegBtn.disabled = true; targetBtn.disabled = true;
+            pegBtn.disabled = true; targetBtn.disabled = true; resetBtn.disabled = true;
             activePlacementMode = 'none';
             resetPlacementState();
             lockMapInteractions();
         } else {
             lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔓 MAP UNLOCKED";
-            pegBtn.disabled = false; targetBtn.disabled = false;
+            pegBtn.disabled = false; targetBtn.disabled = false; resetBtn.disabled = false;
             resetPlacementState(); 
             unlockMapInteractions();
         }
