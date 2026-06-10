@@ -50,8 +50,17 @@
             position: relative;
         }
 
+        /* Header Layout Matrix containing the Info toggle button */
+        .header-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 14px;
+        }
+
         h2 {
-            margin: 0 0 14px 0;
+            margin: 0;
             text-align: center;
             color: var(--accent-color);
             font-size: 1.3rem;
@@ -59,7 +68,30 @@
             text-transform: uppercase;
         }
 
-        /* Nav Tab Switches Overhaul */
+        .info-toggle-btn {
+            position: absolute;
+            right: 0;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--accent-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .info-toggle-btn:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        /* Nav Tab Switches Framework */
         .nav-container {
             display: flex;
             gap: 6px;
@@ -441,27 +473,108 @@
             font-style: italic;
         }
 
-        .precision-tip {
-            font-size: 0.7rem;
-            color: var(--accent-color);
-            text-align: center;
-            margin-top: 5px;
-            opacity: 0.7;
-            font-weight: 600;
+        /* Idiot-Proof Walkthrough Walkthrough Overlay Modal */
+        .walkthrough-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.96);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            padding: 24px 16px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
-        .leaflet-div-icon {
-            background: transparent !important;
-            border: none !important;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-close-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .guide-section {
+            margin-bottom: 20px;
+        }
+
+        .guide-section h3 {
+            font-size: 0.9rem;
+            color: #fff;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .guide-section p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+        }
+
+        .guide-list {
+            margin: 0;
+            padding-left: 18px;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            line-height: 1.4;
+        }
+
+        .guide-list strong {
+            color: var(--accent-color);
+        }
+
+        .math-box {
+            background: #222;
+            border: 1px dashed var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-top: 6px;
+            line-height: 1.3;
         }
 
         .app-footer {
-            margin-top: 10px;
+            margin-top: auto;
             text-align: center;
             font-size: 0.75rem;
             color: var(--text-muted);
             letter-spacing: 0.5px;
             line-height: 1.4;
+            padding-top: 20px;
         }
     </style>
 </head>
@@ -469,7 +582,10 @@
 
 <div class="container">
     <div class="card">
-        <h2>Wraps Anywhere</h2>
+        <div class="header-row">
+            <h2>Wraps Anywhere</h2>
+            <button class="info-toggle-btn" onclick="toggleWalkthroughModal(true)" title="App Instructions">i</button>
+        </div>
 
         <div class="nav-container">
             <button id="navFindBtn" class="nav-btn active-tab" onclick="switchNavMode('find')">🗺️ Find</button>
@@ -549,6 +665,59 @@
     </div>
 </div>
 
+<div id="walkthroughModalOverlay" class="walkthrough-modal" onclick="toggleWalkthroughModal(false)">
+    <div class="card" style="max-width: 600px; margin: auto; width: 100%;" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">📖 App Walkthrough</div>
+            <button class="modal-close-btn" onclick="toggleWalkthroughModal(false)">Close</button>
+        </div>
+
+        <div class="guide-section">
+            <h3>🗺️ 1. Finding Your Water</h3>
+            <p>Get your map centered over your swim using one of three options:</p>
+            <ul class="guide-list">
+                <li><strong>Search Bar:</strong> Type a lake name, town, or postcode. Tap a suggestion to fly there. Hit <em>Clear</em> to reset the bar.</li>
+                <li><strong>📍 My Current Location:</strong> Queries device GPS to snap the map instantly onto your bankside seat.</li>
+                <li><strong>🏆 Premier Venues Tab:</strong> Select from a pre-loaded matrix of the Top 40 UK fisheries to open them immediately.</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>🔓 2. Setting Your Pins</h3>
+            <p>By default, the map is locked to prevent misclicks while scrolling.</p>
+            <ul class="guide-list">
+                <li>Tap <strong>🔒 MAP LOCKED</strong> to unlock editing capabilities.</li>
+                <li>Tap <strong>📍 Peg</strong> (turns Orange), then tap your exact swim position on the map satellite imagery.</li>
+                <li>Tap <strong>🎯 Target</strong> (turns Red), then tap the spot, island, or feature you are fishing to.</li>
+                <li>Tap <strong>✕ Reset Pins</strong> at any time to flush your active lines clean.</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>📏 3. Selecting Tackle & Results</h3>
+            <ul class="guide-list">
+                <li>Select your active <strong>Rod Length</strong> using the dropdown menu below the map.</li>
+                <li>The <strong>Target Geometry</strong> panel instantly displays the exact distance in meters/yards, alongside the exact number of wrap revolutions to clip up to on your distance sticks.</li>
+            </ul>
+        </div>
+
+        <div class="guide-section">
+            <h3>🧮 4. How the Math Works</h3>
+            <p>The app calculates geodesic distance directly across the Earth's curve between your two high-precision coordinates using the Haversine formula:</p>
+            <div class="math-box">
+                Distance (ft) = Geodesic Metres / 0.3048<br>
+                Full Wraps = Floor (Total Feet / Rod Length)<br>
+                Remaining Feet = Total Feet % Rod Length<br><br>
+                Example: A 120ft cast on 12ft rods = exactly 10.0 wraps. If remaining distance left over is 6ft, the note instructs you to stop 6ft short of your opposite distance stick.
+            </div>
+        </div>
+
+        <div class="guide-section" style="margin-bottom: 0;">
+            <p style="text-align: center; font-style: italic; color: var(--accent-color); margin-top: 15px;">Tap Close or anywhere outside this panel to return to your map.</p>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     let map = null;
@@ -565,7 +734,6 @@
     let savedLocations = [];
     let searchDebounceTimeout = null;
 
-    // Hardcoded Top 40 UK Premier Fisheries Dataset Vector Matrix
     const PREMIER_FISHERIES_DATA = [
         { name: "Linear Fisheries (Oxlease/Brasenose)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire" },
         { name: "Wyre Forest Carping (Furnace Mill)", lat: 52.3789, lng: -2.3923, desc: "Worcestershire" },
@@ -654,7 +822,13 @@
         map.scrollWheelZoom.enable();
         map.boxZoom.enable();
         map.keyboard.enable();
-        if (map.tap) map.tap.disable();
+        if (map.tap) map.tap.enable();
+    }
+
+    // Modal Display Trigger Toggle Function
+    function toggleWalkthroughModal(show) {
+        const modal = document.getElementById('walkthroughModalOverlay');
+        modal.style.display = show ? 'flex' : 'none';
     }
 
     function switchNavMode(targetMode) {
@@ -665,7 +839,6 @@
         const overlay = document.getElementById('savedOverlayPanel');
         const overlayTitle = document.getElementById('overlayPanelTitle');
 
-        // Reset navigation tab button classes
         findBtn.className = "nav-btn";
         savedBtn.className = "nav-btn";
         premierBtn.className = "nav-btn";
@@ -927,7 +1100,6 @@
         });
     }
 
-    // Dynamic rendering layout logic for the Premier Top 40 vector list
     function renderPremierFisheriesItems() {
         const container = document.getElementById('locationListContainer');
         container.innerHTML = '';
@@ -951,7 +1123,6 @@
     function flyToPremierFisheryVector(lat, lng) {
         map.setView([lat, lng], 16);
         
-        // Wipe markers and connections clean to prevent calculations bridging across distinct complexes
         pegLatLng = null;
         spotLatLng = null;
         renderMapGraphicsLayers();
