@@ -18,6 +18,11 @@
             --text-muted: #999999;
             --input-bg: #262626;
             --border-color: #333333;
+            
+            /* App System Help Blue Color Scheme Variables */
+            --info-blue: #0288d1;
+            --info-blue-border: #01579b;
+            --info-blue-hover: #03a9f4;
         }
 
         body {
@@ -50,29 +55,31 @@
             position: relative;
         }
 
+        /* Title container updated for clean side-by-side spacing distribution */
         .header-row {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             position: relative;
             margin-bottom: 14px;
+            width: 100%;
         }
 
+        /* Changed to clean left alignment matrix placement */
         h2 {
             margin: 0;
-            text-align: center;
+            text-align: left;
             color: var(--accent-color);
             font-size: 1.3rem;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
+        /* Transformed info button style into shades of systemic blue */
         .info-toggle-btn {
-            position: absolute;
-            right: 0;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--accent-color);
+            background: var(--info-blue);
+            border: 1px solid var(--info-blue-border);
+            color: #ffffff;
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -82,12 +89,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
             transition: all 0.2s ease;
         }
 
         .info-toggle-btn:hover {
-            border-color: var(--accent-color);
-            background-color: rgba(76, 175, 80, 0.1);
+            background-color: var(--info-blue-hover);
+            border-color: var(--info-blue);
+            box-shadow: 0 4px 12px rgba(3, 169, 244, 0.3);
         }
 
         /* Nav Tab Switches Framework */
@@ -1109,7 +1118,7 @@
         pegLatLng = loc.pegLatLng ? L.latLng(loc.pegLatLng.lat, loc.pegLatLng.lng) : null;
         spotLatLng = loc.spotLatLng ? L.latLng(loc.spotLatLng.lat, loc.spotLatLng.lng) : null;
 
-        renderMapGraphicsLayers();
+        renderMapGraphicsLayers layers();
         calculateWraps();
         switchNavMode('find');
     }
@@ -1121,7 +1130,6 @@
         renderSavedLocationItems();
     }
 
-    // DYNAMIC LOCK STATE TOGGLE SWITCH
     function toggleSafetyLock() {
         isMapLocked = !isMapLocked;
         const lockBtn = document.getElementById('btnLockToggle');
