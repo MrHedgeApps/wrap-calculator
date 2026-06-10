@@ -215,6 +215,11 @@
             letter-spacing: 1px;
         }
 
+        /* Centered formatting for Safety Lock label */
+        .lock-label {
+            text-align: center;
+        }
+
         select, button.lock-btn {
             width: 100%;
             padding: 10px;
@@ -253,9 +258,10 @@
             margin-bottom: 12px;
         }
 
+        /* Two-line centered layout formatting for mode actions */
         .mode-btn {
             flex: 1;
-            padding: 12px;
+            padding: 8px 10px;
             border-radius: 8px;
             font-size: 0.95rem;
             font-weight: bold;
@@ -264,7 +270,20 @@
             border: 2px solid var(--border-color);
             color: var(--text-muted);
             transition: all 0.2s ease;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
             text-align: center;
+            min-height: 58px;
+            box-sizing: border-box;
+        }
+
+        .mode-btn span {
+            display: block;
+            width: 100%;
         }
 
         .mode-btn:disabled {
@@ -437,7 +456,6 @@
             border: none !important;
         }
 
-        /* Footer System Section */
         .app-footer {
             margin-top: 10px;
             text-align: center;
@@ -475,15 +493,24 @@
 
         <div class="controls-grid" style="grid-template-columns: 1fr;">
             <div>
-                <label>SAFETY LOCK</label>
+                <label class="lock-label">SAFETY LOCK</label>
                 <button id="btnLockToggle" class="lock-btn state-locked" onclick="toggleSafetyLock()">🔒 MAP LOCKED</button>
             </div>
         </div>
 
         <div class="mode-container">
-            <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>📍 Peg</button>
-            <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>🎯 Target</button>
-            <button id="btnResetPins" class="mode-btn reset-btn" onclick="clearActiveMapPins()" disabled>✕ Reset Pins</button>
+            <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>
+                <span>📍</span>
+                <span>Peg</span>
+            </button>
+            <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>
+                <span>🎯</span>
+                <span>Target</span>
+            </button>
+            <button id="btnResetPins" class="mode-btn reset-btn" onclick="clearActiveMapPins()" disabled>
+                <span>✕</span>
+                <span>Reset Pins</span>
+            </button>
         </div>
 
         <div class="map-viewport" id="mapViewport">
