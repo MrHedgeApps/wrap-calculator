@@ -472,6 +472,7 @@
             font-style: italic;
         }
 
+        /* HARD LOCKED X-AXIS MODAL OVERLAY WRAPPER */
         .walkthrough-modal {
             position: fixed;
             top: 0;
@@ -482,9 +483,13 @@
             z-index: 10000;
             display: none;
             flex-direction: column;
-            padding: 24px 16px;
+            padding: 24px 12px;
             box-sizing: border-box;
+            
+            /* Enforced horizontal scrolling blockades */
             overflow-y: auto;
+            overflow-x: hidden;
+            max-width: 100%;
         }
 
         .modal-header {
@@ -651,7 +656,7 @@
 </div>
 
 <div id="walkthroughModalOverlay" class="walkthrough-modal" onclick="toggleWalkthroughModal(false)">
-    <div class="card" style="max-width: 600px; margin: auto; width: 100%;" onclick="event.stopPropagation()">
+    <div class="card" style="max-width: 600px; margin: auto; width: 100%; box-sizing: border-box;" onclick="event.stopPropagation()">
         <div class="modal-header">
             <div class="modal-title">📖 App Walkthrough</div>
             <button class="modal-close-btn" onclick="toggleWalkthroughModal(false)">Close</button>
@@ -1002,7 +1007,7 @@
     }
 
     function clearActiveMapPins() {
-        pegLatLng = null;
+        textPegLatLng = null;
         spotLatLng = null;
         
         renderMapGraphicsLayers();
