@@ -428,7 +428,7 @@
         </div>
         <div class="guide-section">
             <p style="color: #fff; font-size: 0.95rem; font-weight: bold;">One-time payment of £3.99. Yours forever.</p>
-            <p>Upgrade your bankside toolkit with our highly comprehensive tracking and tactical analytics configurations:</p>
+            <p>Upgrade your bankside toolkit with our highly comprehensive tracking and tactical analytics systems:</p>
             <ul class="guide-list">
                 <li><strong>Full Tackle Box Unlock:</strong> Instantly unlock calculations for all rod lengths, beachcasters, casting ranges, and pole shipping reaches.</li>
                 <li><strong>Custom Dimensions Entry:</strong> Input custom sizes down to exact decimals for matching any rod setup on the market.</li>
@@ -476,7 +476,6 @@
 
     let isPremiumUser = false;
 
-    // FIVE COMPLETELY ISOLATED HIGH-PRECISION SECTOR DATA MATRICES
     const DISCIPLINE_PREMIER_DATABASES = {
         carp: [
             { name: "Linear Fisheries (Oxlease Lake)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire", vibe: "Highly productive gravel pit holding massive 30lb+ blocks. Responds to heavy spod groups.", spots: [{ name: "Witney Point (Swim 9) -> Silt Channel", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Targets a natural bloodworm silt gully. Highly active on South-Easterly wind channels." }, { name: "The Dugout -> Gravel Ridge", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Cast straight out onto a hard gravel plateau right off the deep road bank." }] },
@@ -499,6 +498,34 @@
             { name: "Chesil Beach (Abbotsbury Mark)", lat: 50.6482, lng: -2.6124, desc: "Dorset", vibe: "Iconic 18-mile steep shingle barrier shelf dropping instantly into intense deep water channels.", spots: [{ name: "The Main Shingle Crest -> Outer Breaker Trough", distance_yds: 90, peg_lat: 50.6475, peg_lng: -2.6135, spot_lat: 50.6484, spot_lng: -2.6120, advice: "Power cast behind the third breaker reef boundary. Exceptional codling and whiting territory after a heavy south-westerly swell." }] }
         ]
     };
+
+    // Rectified, perfectly syntax-closed initialization loop
+    window.addEventListener('DOMContentLoaded', () => {
+        initSatelliteMap(); 
+        loadSavedLocationsFromCache(); 
+        setupSearchSuggestionsEngine(); 
+        populateTackleOptionsBox();
+        
+        setTimeout(() => {
+            const splash = document.getElementById('appSplashScreenFrame'); 
+            if (splash) {
+                splash.style.opacity = '0'; 
+                splash.style.pointerEvents = 'none';
+                setTimeout(() => { splash.remove(); }, 400);
+            }
+        }, 3000);
+    });
+
+    function initSatelliteMap() {
+        const defaultLat = 51.884; const defaultLng = -0.520;
+        map = L.map('satelliteMap', { center: [defaultLat, defaultLng], zoom: 16, zoomControl: false, attributionControl: false });
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19 }).addTo(map);
+        map.on('click', (e) => { if (isMapLocked || activePlacementMode === 'none') return; handleMapInteraction(e.latlng); });
+        lockMapInteractions();
+    }
+
+    function lockMapInteractions() { map.dragging.disable(); map.touchZoom.disable(); map.doubleClickZoom.disable(); map.scrollWheelZoom.disable(); map.boxZoom.disable(); map.keyboard.disable(); if (map.tap) map.tap.disable(); }
+    function unlockMapInteractions() { map.dragging.enable(); map.touchZoom.enable(); map.doubleClickZoom.enable(); map.scrollWheelZoom.enable(); map.boxZoom.enable(); map.keyboard.enable(); if (map.tap) map.tap.disable(); }
 
     function handleAnglingStyleChange() {
         populateTackleOptionsBox();
@@ -635,12 +662,12 @@
     function simulatePremiumPurchaseUnlock() { togglePaywallModal(false); isPremiumUser = false; toggleTestingTierMode(); alert("Pro unlocked for testing!"); }
 
     function switchNavMode(targetMode) {
-        currentNavMode = targetMode;
         const findBtn = document.getElementById('navFindBtn'); const savedBtn = document.getElementById('navSavedBtn'); const premierBtn = document.getElementById('navPremierBtn'); const overlay = document.getElementById('savedOverlayPanel'); const overlayTitle = document.getElementById('overlayPanelTitle');
+        currentNavMode = targetMode;
         findBtn.className = "nav-btn"; savedBtn.className = "nav-btn"; premierBtn.className = "nav-btn";
         if (targetMode === 'find') { findBtn.className = "nav-btn active-tab"; overlay.style.display = 'none'; } 
         else if (targetMode === 'saved') { savedBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "Your Saved Venues"; overlay.style.display = 'flex'; if (!isMapLocked) toggleSafetyLock(); renderSavedLocationItems(); } 
-        else if (targetMode === 'premier') { premierBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "UK Premier Fisheries"; overlay.style.display = 'flex'; if (!isMapLocked) toggleSafetyLock(); renderPremierFisheriesItems(); }
+        else if (targetMode === 'premier') { premierBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "Curated Marks Matrix"; overlay.style.display = 'flex'; if (!isMapLocked) toggleSafetyLock(); renderPremierFisheriesItems(); }
     }
 
     function handleMapInteraction(latlng) { if (activePlacementMode === 'none') return; if (activePlacementMode === 'peg') { pegLatLng = latlng; } else if (activePlacementMode === 'spot') { spotLatLng = latlng; } renderMapGraphicsLayers(); calculateWraps(); resetPlacementState(); }
