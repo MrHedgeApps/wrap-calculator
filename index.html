@@ -19,10 +19,11 @@
             --input-bg: #262626;
             --border-color: #333333;
             
-            /* Help Blue Color Scheme Variables */
+            /* UI Color Variable Matrices */
             --info-blue: #0288d1;
             --info-blue-border: #01579b;
             --info-blue-hover: #03a9f4;
+            --premium-gold: #ffd700;
         }
 
         body {
@@ -38,7 +39,6 @@
             box-sizing: border-box;
         }
 
-        /* 3.0s Premium Splash Screen Overlay Layout */
         .app-splash-screen {
             position: fixed;
             top: 0;
@@ -84,10 +84,7 @@
         }
 
         @keyframes splashFadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .container {
@@ -114,6 +111,13 @@
             position: relative;
             margin-bottom: 14px;
             width: 100%;
+            gap: 8px;
+        }
+
+        .title-block {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
         }
 
         h2 {
@@ -124,6 +128,21 @@
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
+
+        /* Testing Mode Status Badge Tracker */
+        .tier-badge {
+            font-size: 0.65rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 2px;
+            width: fit-content;
+            cursor: pointer;
+            user-select: none;
+        }
+        .tier-badge.free { background: #333; color: var(--text-muted); border: 1px solid #444; }
+        .tier-badge.pro { background: rgba(255, 215, 0, 0.15); color: var(--premium-gold); border: 1px solid var(--premium-gold); }
 
         .info-toggle-btn {
             background: var(--info-blue);
@@ -142,17 +161,9 @@
             transition: all 0.2s ease;
         }
 
-        .info-toggle-btn:hover {
-            background-color: var(--info-blue-hover);
-            border-color: var(--info-blue);
-            box-shadow: 0 4px 12px rgba(3, 169, 244, 0.3);
-        }
+        .info-toggle-btn:hover { background-color: var(--info-blue-hover); border-color: var(--info-blue); }
 
-        .nav-container {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
+        .nav-container { display: flex; gap: 6px; margin-bottom: 12px; }
 
         .nav-btn {
             flex: 1;
@@ -176,24 +187,9 @@
             color: #fff;
         }
 
-        .search-row {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 12px;
-            position: relative;
-        }
-
-        .search-bar-inline-wrapper {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .search-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
+        .search-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; position: relative; }
+        .search-bar-inline-wrapper { display: flex; gap: 8px; width: 100%; }
+        .search-input-wrapper { flex: 1; position: relative; }
 
         .search-input {
             width: 100%;
@@ -218,91 +214,19 @@
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: all 0.2s ease;
         }
 
-        .clear-input-btn:hover {
-            border-color: var(--spot-color);
-            color: var(--spot-color);
-            background-color: rgba(244, 67, 54, 0.05);
-        }
+        .clear-input-btn:hover { border-color: var(--spot-color); color: var(--spot-color); background-color: rgba(244, 67, 54, 0.05); }
+        .suggestions-panel { position: absolute; top: 100%; left: 0; width: 100%; background-color: #222222; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 4px; max-height: 220px; overflow-y: auto; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.8); display: none; }
+        .suggestion-item { padding: 10px 12px; font-size: 0.85rem; color: var(--text-color); cursor: pointer; border-bottom: 1px solid #2d2d2d; line-height: 1.4; }
+        .suggestion-item:hover { background-color: #2d2d2d; color: #fff; }
+        .action-buttons-row { display: flex; gap: 8px; width: 100%; }
+        .geo-btn, .save-loc-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-color); font-weight: bold; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; text-transform: uppercase; letter-spacing: 0.5px; box-sizing: border-box; }
+        .controls-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
 
-        .suggestions-panel {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: #222222;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-top: 4px;
-            max-height: 220px;
-            overflow-y: auto;
-            z-index: 100;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.8);
-            display: none;
-        }
+        label { display: block; margin-bottom: 5px; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-        .suggestion-item {
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            color: var(--text-color);
-            cursor: pointer;
-            border-bottom: 1px solid #2d2d2d;
-            line-height: 1.4;
-        }
-
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-
-        .suggestion-item:hover {
-            background-color: #2d2d2d;
-            color: #fff;
-        }
-
-        .action-buttons-row {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .geo-btn, .save-loc-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-sizing: border-box;
-        }
-
-        .controls-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        select, button.lock-btn {
+        select, button.lock-btn, .custom-input-box {
             width: 100%;
             padding: 12px;
             border-radius: 8px;
@@ -317,29 +241,13 @@
             transition: all 0.2s ease;
         }
 
-        button.lock-btn {
-            border-width: 2px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
+        .custom-input-box { cursor: text; margin-top: 8px; display: none; border-color: var(--premium-gold); }
 
-        button.lock-btn.state-locked {
-            border-color: var(--unlock-color);
-            color: var(--unlock-color);
-            background-color: rgba(76, 175, 80, 0.08);
-        }
+        button.lock-btn { border-width: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
+        button.lock-btn.state-locked { border-color: var(--unlock-color); color: var(--unlock-color); background-color: rgba(76, 175, 80, 0.08); }
+        button.lock-btn.state-unlocked { border-color: var(--lock-color); color: var(--lock-color); background-color: rgba(244, 67, 54, 0.08); }
 
-        button.lock-btn.state-unlocked {
-            border-color: var(--lock-color);
-            color: var(--lock-color);
-            background-color: rgba(244, 67, 54, 0.08);
-        }
-
-        .mode-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
+        .mode-container { display: flex; gap: 10px; margin-bottom: 12px; }
 
         .mode-btn {
             flex: 1;
@@ -352,7 +260,6 @@
             border: 2px solid var(--border-color);
             color: var(--text-muted);
             transition: all 0.2s ease;
-            
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -363,259 +270,59 @@
             box-sizing: border-box;
         }
 
-        .mode-btn span {
-            display: block;
-            width: 100%;
-        }
+        .mode-btn span { display: block; width: 100%; }
+        .mode-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+        .mode-btn.active-peg { border-color: var(--peg-color); background-color: rgba(255, 152, 0, 0.2); color: var(--peg-color); }
+        .mode-btn.active-spot { border-color: var(--spot-color); background-color: rgba(244, 67, 54, 0.2); color: var(--spot-color); }
+        .mode-btn.reset-btn { border-color: var(--border-color); background-color: var(--input-bg); color: var(--text-muted); }
+        .mode-btn.reset-btn:not(:disabled):hover { border-color: var(--text-color); color: #fff; }
 
-        .mode-btn:disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-        }
+        .map-viewport { position: relative; width: 100%; height: 400px; border-radius: 10px; border: 1px solid var(--border-color); background: #111111; overflow: hidden; }
+        #satelliteMap { width: 100%; height: 100%; z-index: 1; }
 
-        .mode-btn.active-peg {
-            border-color: var(--peg-color);
-            background-color: rgba(255, 152, 0, 0.2);
-            color: var(--peg-color);
-        }
+        .saved-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 15, 15, 0.94); z-index: 10; display: none; flex-direction: column; padding: 16px; box-sizing: border-box; overflow-y: auto; }
+        .saved-overlay-title { font-size: 0.9rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
+        .location-list { display: flex; flex-direction: column; gap: 8px; }
 
-        .mode-btn.active-spot {
-            border-color: var(--spot-color);
-            background-color: rgba(244, 67, 54, 0.2);
-            color: var(--spot-color);
-        }
+        .location-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
+        .location-item:hover { border-color: var(--text-muted); }
+        .location-info { display: flex; flex-direction: column; gap: 2px; }
+        .location-name { font-size: 0.95rem; font-weight: bold; color: #fff; }
+        .location-coords { font-size: 0.75rem; color: var(--text-muted); }
+        .delete-loc-btn { background: transparent; border: none; color: var(--spot-color); cursor: pointer; font-size: 1.1rem; font-weight: bold; padding: 4px 8px; }
+        .no-locations-msg { color: var(--text-muted); font-size: 0.85rem; text-align: center; font-style: italic; margin-top: 20px; }
 
-        .mode-btn.reset-btn {
-            border-color: var(--border-color);
-            background-color: var(--input-bg);
-            color: var(--text-muted);
-        }
+        /* Premium Tactical Hotspots Dashboard Styles */
+        .tactical-panel { display: none; flex-direction: column; gap: 10px; margin-top: 12px; padding: 14px; border: 1px dashed var(--premium-gold); background: rgba(255, 215, 0, 0.02); border-radius: 10px; }
+        .tactical-title { font-size: 0.8rem; font-weight: bold; color: var(--premium-gold); text-transform: uppercase; letter-spacing: 1px; }
 
-        .mode-btn.reset-btn:not(:disabled):hover {
-            border-color: var(--text-color);
-            color: #fff;
-        }
-
-        .map-viewport {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background: #111111;
-            overflow: hidden;
-        }
-
-        #satelliteMap {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .saved-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 15, 15, 0.92);
-            z-index: 10;
-            display: none;
-            flex-direction: column;
-            padding: 16px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-
-        .saved-overlay-title {
-            font-size: 0.9rem;
-            color: var(--accent-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px;
-        }
-
-        .location-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .location-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .location-item:hover {
-            border-color: var(--text-muted);
-        }
-
-        .location-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .location-name {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .location-coords {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .delete-loc-btn {
-            background: transparent;
-            border: none;
-            color: var(--spot-color);
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            padding: 4px 8px;
-        }
-
-        .no-locations-msg {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            text-align: center;
-            font-style: italic;
-            margin-top: 20px;
-        }
-
-        .result-container {
-            padding: 14px;
-            background-color: rgba(76, 175, 80, 0.08);
-            border: 1px solid var(--accent-color);
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .result-title {
-            font-size: 0.8rem;
-            color: var(--accent-color);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-
+        .result-container { padding: 14px; background-color: rgba(76, 175, 80, 0.08); border: 1px solid var(--accent-color); border-radius: 10px; text-align: center; }
+        .result-title { font-size: 0.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 3px; }
         .result-value { font-size: 1.7rem; font-weight: 800; color: #fff; }
         .result-distance { font-size: 1.1rem; color: #fff; margin-top: 3px; font-weight: 600; }
-        .result-note { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.3; }
+        .result-note { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4; white-space: pre-line; }
 
-        .instructions {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-align: center;
-            margin-top: 10px;
-            font-style: italic;
-        }
+        .instructions { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 10px; font-style: italic; }
 
-        .walkthrough-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(10, 10, 10, 0.96);
-            z-index: 10000;
-            display: none;
-            flex-direction: column;
-            padding: 24px 12px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            overflow-x: hidden;
-            max-width: 100%;
-        }
+        .walkthrough-modal, .paywall-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 10, 0.96); z-index: 10000; display: none; flex-direction: column; padding: 24px 12px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; max-width: 100%; }
+        
+        /* Premium Upgrade Paywall Modal Styles */
+        .paywall-card { max-width: 500px; margin: auto; width: 100%; border: 1px solid var(--premium-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.1); }
+        .paywall-gold-text { color: var(--premium-gold) !important; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .paywall-btn { background: var(--premium-gold); color: #000; font-weight: 800; border: none; padding: 14px; border-radius: 8px; width: 100%; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; cursor: pointer; transition: transform 0.2s; margin-top: 16px; }
+        .paywall-btn:hover { transform: scale(1.02); }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; }
+        .modal-title { font-size: 1.1rem; font-weight: bold; color: var(--accent-color); text-transform: uppercase; letter-spacing: 0.5px; }
+        .modal-close-btn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
 
-        .modal-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .guide-section { margin-bottom: 20px; }
+        .guide-section h3 { font-size: 0.9rem; color: #fff; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+        .guide-section p { font-size: 0.85rem; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.4; }
+        .guide-list { margin: 0; padding-left: 18px; font-size: 0.85rem; color: var(--text-color); display: flex; flex-direction: column; gap: 6px; line-height: 1.4; }
+        .guide-list strong { color: var(--accent-color); }
 
-        .modal-close-btn {
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
-
-        .guide-section {
-            margin-bottom: 20px;
-        }
-
-        .guide-section h3 {
-            font-size: 0.9rem;
-            color: #fff;
-            margin: 0 0 8px 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .guide-section p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin: 0 0 8px 0;
-            line-height: 1.4;
-        }
-
-        .guide-list {
-            margin: 0;
-            padding-left: 18px;
-            font-size: 0.85rem;
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            line-height: 1.4;
-        }
-
-        .guide-list strong {
-            color: var(--accent-color);
-        }
-
-        .app-footer {
-            margin-top: auto;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-            line-height: 1.4;
-            padding-top: 20px;
-        }
+        .app-footer { margin-top: auto; text-align: center; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1.4; padding-top: 20px; }
     </style>
 </head>
 <body>
@@ -628,7 +335,10 @@
 <div class="container">
     <div class="card">
         <div class="header-row">
-            <h2>Wraps Anywhere</h2>
+            <div class="title-block">
+                <h2>Wraps Anywhere</h2>
+                <div id="tierStatusBadge" class="tier-badge free" onclick="toggleTestingTierMode()">Free Version</div>
+            </div>
             <button class="info-toggle-btn" onclick="toggleWalkthroughModal(true)" title="App Instructions">i</button>
         </div>
 
@@ -647,8 +357,8 @@
                 <button id="clearSearchBtn" class="clear-input-btn" onclick="clearInputFieldQuickly()">Clear</button>
             </div>
             <div class="action-buttons-row">
-                <button class="geo-btn" onclick="fetchDeviceLocation()" title="Find My Location">📍 My Current Location</button>
-                <button class="save-loc-btn" onclick="promptSaveCurrentLocation()" title="Save Current View">⭐ Save Current Location</button>
+                <button class="geo-btn" onclick="fetchDeviceLocation()" title="Find My Location">📍 My Location</button>
+                <button class="save-loc-btn" onclick="promptSaveCurrentLocation()" title="Save Current View">⭐ Save Location</button>
             </div>
         </div>
 
@@ -660,16 +370,13 @@
 
         <div class="mode-container">
             <button id="btnSetPeg" class="mode-btn" onclick="togglePlacementMode('peg')" disabled>
-                <span>📍</span>
-                <span>Peg</span>
+                <span>📍</span><span>Peg</span>
             </button>
             <button id="btnSetTarget" class="mode-btn" onclick="togglePlacementMode('spot')" disabled>
-                <span>🎯</span>
-                <span>Target</span>
+                <span>🎯</span><span>Target</span>
             </button>
             <button id="btnResetPins" class="mode-btn reset-btn" onclick="clearActiveMapPins()" disabled>
-                <span>✕</span>
-                <span>Reset Pins</span>
+                <span>✕</span><span>Reset Pins</span>
             </button>
         </div>
 
@@ -683,17 +390,24 @@
         </div>
         
         <div class="instructions" id="instructionText">Map is locked. Unlock above to drop markers.</div>
+
+        <div id="tacticalHotspotPanel" class="tactical-panel">
+            <div class="tactical-title">🎯 Premium Tactical Hot Spots</div>
+            <select id="tacticalSpotsDropdown" onchange="loadSelectedTacticalSpotLine()"></select>
+        </div>
     </div>
 
     <div class="card" style="padding: 14px;">
         <label for="rodLength">ROD LENGTH</label>
-        <select id="rodLength" onchange="calculateWraps()">
-            <option value="9">9 ft</option>
-            <option value="10">10 ft</option>
-            <option value="11">11 ft</option>
-            <option value="12" selected>12 ft</option>
-            <option value="13">13 ft</option>
+        <select id="rodLength" onchange="handleRodLengthSelectionChange()">
+            <option value="9">9 ft (Premium)</option>
+            <option value="10">10 ft (Premium)</option>
+            <option value="11">11 ft (Premium)</option>
+            <option value="12" selected>12 ft (Free Starter)</option>
+            <option value="13">13 ft (Premium)</option>
+            <option value="custom">Custom Dimensions... (Premium)</option>
         </select>
+        <input type="number" id="customRodInput" class="custom-input-box" placeholder="Enter custom length in feet (e.g. 12.6)" step="0.1" oninput="calculateWraps()">
     </div>
 
     <div class="card result-container">
@@ -709,41 +423,57 @@
     </div>
 </div>
 
+<div id="premiumPaywallModalOverlay" class="paywall-modal">
+    <div class="card paywall-card" onclick="event.stopPropagation()">
+        <div class="modal-header" style="border-color: var(--premium-gold);">
+            <div class="modal-title paywall-gold-text">👑 Unlock Premium Tackle Box</div>
+            <button class="modal-close-btn" onclick="togglePaywallModal(false)">Close</button>
+        </div>
+        <div class="guide-section">
+            <p style="color: #fff; font-size: 0.95rem; font-weight: bold;">One-time payment of £3.99. Yours forever.</p>
+            <p>Upgrade your bankside toolkit with our highly comprehensive tracking and tactical analytics systems:</p>
+            <ul class="guide-list">
+                <li><strong>Full Tackle Box Unlock:</strong> Instantly unlock calculations for 9ft, 10ft, 11ft, and 13ft rod setups.</li>
+                <li><strong>Custom Dimensions Entry:</strong> Input custom specifications to decimal places for spod, marker, or specialized rods.</li>
+                <li><strong>Top 20 UK Hot Spots Guide:</strong> Instant access to hardcoded, verified hotspots on the country's most legendary lakes.</li>
+                <li><strong>Unlimited Personal Swim Saves:</strong> Catalog your home club waters and secret spots directly to local storage layers.</li>
+            </ul>
+            <button class="paywall-btn" onclick="simulatePremiumPurchaseUnlock()">Upgrade to Pro &bull; £3.99</button>
+        </div>
+    </div>
+</div>
+
 <div id="walkthroughModalOverlay" class="walkthrough-modal" onclick="toggleWalkthroughModal(false)">
     <div class="card" style="max-width: 600px; margin: auto; width: 100%; box-sizing: border-box;" onclick="event.stopPropagation()">
         <div class="modal-header">
             <div class="modal-title">📖 App Walkthrough</div>
             <button class="modal-close-btn" onclick="toggleWalkthroughModal(false)">Close</button>
         </div>
-
         <div class="guide-section">
             <h3>🗺️ 1. Finding Your Water</h3>
             <p>Get your map centered over your swim using one of three options:</p>
             <ul class="guide-list">
-                <li><strong>Search Bar:</strong> Type a lake name, town, or postcode. Tap a suggestion to fly there. Hit <em>Clear</em> to reset the bar.</li>
-                <li><strong>📍 My Current Location:</strong> Queries device GPS to snap the map instantly onto your bankside seat.</li>
-                <li><strong>🏆 Premier Venues Tab:</strong> Select from a pre-loaded matrix of the Top 40 UK fisheries to open them immediately.</li>
+                <li><strong>Search Bar:</strong> Type a lake name, town, or postcode. Tap a suggestion to fly there.</li>
+                <li><strong>📍 My Location:</strong> Snaps the map layout straight onto your active bankside position.</li>
+                <li><strong>🏆 Premier Venues Tab:</strong> Select from a pre-loaded matrix of the Top 20 UK fisheries.</li>
             </ul>
         </div>
-
         <div class="guide-section">
             <h3>🔓 2. Setting Your Pins</h3>
             <p>By default, the map is locked to prevent misclicks while scrolling.</p>
             <ul class="guide-list">
                 <li>Tap <strong>🔓 Unlock Map</strong> to enable editing capabilities.</li>
                 <li>Tap <strong>📍 Peg</strong> (turns Orange), then tap your exact swim position on the map satellite imagery.</li>
-                <li>Tap <strong>🎯 Target</strong> (turns Red), then tap the spot, island, or feature you are fishing to.</li>
+                <li>Tap <strong>🎯 Target</strong> (turns Red), then tap the spot or feature you are fishing to.</li>
                 <li>Tap <strong>✕ Reset Pins</strong> at any time to flush your active lines clean.</li>
             </ul>
         </div>
-
         <div class="guide-section" style="margin-bottom: 0;">
             <h3>📏 3. Selecting Tackle & Results</h3>
             <ul class="guide-list">
                 <li>Select your active <strong>Rod Length</strong> using the dropdown menu below the map.</li>
                 <li>The <strong>Target Geometry</strong> panel instantly displays the exact distance alongside the exact number of wrap revolutions to clip up to on your distance sticks.</li>
             </ul>
-            <p style="text-align: center; font-style: italic; color: var(--accent-color); margin-top: 25px;">Tap Close or anywhere outside this panel to return to your map.</p>
         </div>
     </div>
 </div>
@@ -764,47 +494,65 @@
     let savedLocations = [];
     let searchDebounceTimeout = null;
 
+    // FREEMIUM CONTROL MONITOR MATRIX SWITCH VARIABLE
+    let isPremiumUser = false;
+
+    // CONDENSED HYPER-CURATED TOP 20 PREMIUM TACTICAL DATA MATRIX
     const PREMIER_FISHERIES_DATA = [
-        { name: "Linear Fisheries (Oxlease/Brasenose)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire" },
-        { name: "Wyre Forest Carping (Furnace Mill)", lat: 52.3789, lng: -2.3923, desc: "Worcestershire" },
-        { name: "Coombe Abbey Pool", lat: 52.4116, lng: -1.4172, desc: "Warwickshire" },
-        { name: "Bluebell Lakes", lat: 52.4851, lng: -0.4435, desc: "Northamptonshire" },
-        { name: "Makins Fishery", lat: 52.4937, lng: -1.3912, desc: "Warwickshire" },
-        { name: "Barston Lakes", lat: 52.4172, lng: -1.6881, desc: "West Midlands" },
-        { name: "Cudmore Fisheries", lat: 53.0041, lng: -2.3096, desc: "Staffordshire" },
-        { name: "Partridge Lakes", lat: 53.4611, lng: -2.5186, desc: "Cheshire" },
-        { name: "Larford Lakes", lat: 52.3275, lng: -2.2514, desc: "Worcestershire" },
-        { name: "The Monument (RH Fisheries)", lat: 52.6841, lng: -2.3552, desc: "Shropshire" },
-        { name: "Walthamstow Reservoirs", lat: 51.5832, lng: -0.0461, desc: "North London" },
-        { name: "Thorpe Lea", lat: 51.4221, lng: -0.5365, desc: "Surrey" },
-        { name: "Sandhurst Lake", lat: 51.3415, lng: -0.7932, desc: "Berkshire" },
-        { name: "Elphicks Fisheries", lat: 51.1118, lng: 0.4491, desc: "Kent" },
-        { name: "Manor Farm Lakes", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire" },
-        { name: "Farlows Lake", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire" },
-        { name: "Bury Hill Fisheries", lat: 51.2185, lng: -0.3475, desc: "Surrey" },
-        { name: "Gold Valley Lakes", lat: 51.2652, lng: -0.7812, desc: "Hampshire" },
-        { name: "St Ives Lakes", lat: 52.3168, lng: -0.0652, desc: "Cambridgeshire" },
-        { name: "Monk Lakes", lat: 51.1895, lng: 0.5462, desc: "Kent" },
-        { name: "Cefn Mably Lakes", lat: 51.5395, lng: -3.1112, desc: "South Wales" },
-        { name: "White Acres Fishery", lat: 50.4095, lng: -5.0082, desc: "Cornwall" },
-        { name: "Shatterford Lakes", lat: 52.4241, lng: -2.2891, desc: "Worcestershire" },
-        { name: "Lindholme Lakes", lat: 53.5385, lng: -0.9385, desc: "South Yorkshire" },
-        { name: "The Moorlands Totnes", lat: 50.4485, lng: -3.7115, desc: "Devon" },
-        { name: "Orchid Lakes", lat: 51.6571, lng: -1.1632, desc: "Oxfordshire" },
-        { name: "Wyreside Lakes", lat: 53.9665, lng: -2.7665, desc: "Lancashire" },
-        { name: "Bainton Fisheries", lat: 52.6415, lng: -0.3542, desc: "Cambridgeshire" },
-        { name: "Baden Hall Fisheries", lat: 52.8835, lng: -2.2365, desc: "Staffordshire" },
-        { name: "Borwick Lakes", lat: 54.1485, lng: -2.7212, desc: "Lancashire" },
-        { name: "Pavyotts Mill", lat: 50.9265, lng: -2.6952, desc: "Somerset" },
-        { name: "Heronbrook Fisheries", lat: 52.9552, lng: -2.3251, desc: "Staffordshire" },
-        { name: "Messingham Sands", lat: 53.5355, lng: -0.6695, desc: "Lincolnshire" },
-        { name: "Stanwick Lakes", lat: 52.3265, lng: -0.6125, desc: "Northamptonshire" },
-        { name: "Weston Pools", lat: 52.8465, lng: -3.0292, desc: "Shropshire" },
-        { name: "Hallcroft Fishery", lat: 53.3325, lng: -0.9195, desc: "Nottinghamshire" },
-        { name: "Todber Manor", lat: 50.9785, lng: -2.3115, desc: "Dorset" },
-        { name: "Magiscroft Fishery", lat: 55.9395, lng: -4.0412, desc: "North Lanarkshire" },
-        { name: "Tunnel Barn Farm", lat: 52.2985, lng: -1.6885, desc: "Warwickshire" },
-        { name: "Drayton Reservoir", lat: 52.2682, lng: -1.1735, desc: "Northamptonshire" }
+        {
+            id: "linear_oxlease", name: "Linear Fisheries (Oxlease Lake)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire",
+            vibe: "A highly productive 26-acre gravel pit holding over 1,600 carp with an immense head of 30lb and 40lb fish.",
+            spots: [
+                { name: "Witney Point (Swim 9) -> Silt Channel", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Fish on a South-Easterly wind. Targets a natural bloodworm silt bed that fish track constantly." },
+                { name: "The Dugout -> Gravel Hump", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Located along deep road bank. Drops right onto a distinct, hard polished gravel hump." }
+            ]
+        },
+        {
+            id: "linear_b1", name: "Linear Fisheries (Brasenose 1)", lat: 51.7165, lng: -1.4245, desc: "Oxfordshire",
+            vibe: "The ultimate numbers water. Massive depth transitions averaging 14ft. Responds heavily to high-volume spodding.",
+            spots: [
+                { name: "First Bay -> Clay Patch", distance_yds: 85, peg_lat: 51.7155, peg_lng: -1.4255, spot_lat: 51.7161, spot_lng: -1.4248, advice: "Shallower water area (around 10ft deep). High attraction spots show rapid bite conversions." },
+                { name: "The Far Spit -> Silt Beds", distance_yds: 110, peg_lat: 51.7172, peg_lng: -1.4230, spot_lat: 51.7168, spot_lng: -1.4245, advice: "Controls massive expanse of open water. Target long-range central channels." }
+            ]
+        },
+        {
+            id: "farlows_l1", name: "Farlows Lake (Lake 1)", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire",
+            vibe: "Historic Colne Valley crown jewel day-ticket mecca. Deeply mature topographies with complex margin shelves.",
+            spots: [
+                { name: "Island Swim -> Margins", distance_yds: 65, peg_lat: 51.5170, peg_lng: -0.5060, spot_lat: 51.5174, spot_lng: -0.5054, advice: "Cast ultra tight under overhanging tree lines on the point of the small island structure." },
+                { name: "Carp Alley -> Deep Channel", distance_yds: 45, peg_lat: 51.5182, peg_lng: -0.5048, spot_lat: 51.5179, spot_lng: -0.5052, advice: "A legendary cold weather winter patrol route holding consistent temperatures." }
+            ]
+        },
+        {
+            id: "sandhurst", name: "Sandhurst Lake", lat: 51.3415, lng: -0.7932, desc: "Berkshire",
+            vibe: "Famous Yateley complex resident. Shallow 14-acre layout averaging 5-7ft depths with sharp sandbars.",
+            spots: [
+                { name: "The Pipes (Peg 31) -> Sandbar", distance_yds: 70, peg_lat: 51.3410, peg_lng: -0.7940, spot_lat: 51.3414, spot_lng: -0.7933, advice: "Prolific warm weather sector spot. Highly reactive to high attraction washed-out singles." },
+                { name: "Secrets (Peg 1) -> Margin Track", distance_yds: 60, peg_lat: 51.3422, peg_lng: -0.7930, spot_lat: 51.3418, spot_lng: -0.7935, advice: "Commanding angle tracking natural wind movements down the historical hedge margins." }
+            ]
+        },
+        {
+            id: "monument", name: "The Monument (RH Fisheries)", lat: 52.6841, lng: -2.3552, desc: "Shropshire",
+            vibe: "Premium engineered specimen pool purpose built to support massive, rapid weight gains and big carp.",
+            spots: [
+                { name: "Christmas Tree -> Gravel Ridge", distance_yds: 70, peg_lat: 52.6836, peg_lng: -2.3559, spot_lat: 52.6840, spot_lng: -2.3551, advice: "The single most consistent sector point on the lake. Spomb instantly after runs to pin shoals." }
+            ]
+        },
+        { id: "drayton", name: "Drayton Reservoir", lat: 52.2682, lng: -1.1735, desc: "Northamptonshire", vibe: "The high-octane pouch-pult capital of England. Heavy surface cruising patterns in summer.", spots: [{ name: "Dam Wall -> Silt Line", distance_yds: 80, peg_lat: 52.2675, peg_lng: -1.1740, spot_lat: 52.2681, spot_lng: -1.1732, advice: "Pouch-pult 8mm pellets continuously over short zig setups to create competitive feeding frenzies." }] },
+        { id: "makins", name: "Makins Fishery (Phase 1)", lat: 52.4937, lng: -1.3912, desc: "Warwickshire", vibe: "Historical home blueprint of modern UK match venues. Complex island cuts and clay drops.", spots: [{ name: "Lake 1 -> Island Shelf", distance_yds: 55, peg_lat: 52.4932, peg_lng: -1.3920, spot_lat: 52.4935, spot_lng: -1.3914, advice: "Method setups with mini wafters dominate patrolling routes along island drops." }] },
+        { id: "barston", name: "Barston Lakes", lat: 52.4172, lng: -1.6881, desc: "West Midlands", vibe: "Colossal 25-acre hybrid venue. Giant bags of skimmers alongside specimen carp past 30lbs.", spots: [{ name: "Golf Course Bank -> Margins", distance_yds: 75, peg_lat: 52.4165, peg_lng: -1.6890, spot_lat: 52.4170, spot_lng: -1.6882, advice: "Cast pellet cones tight to the far reeds. Use heavy baits to bypass match species." }] },
+        { id: "partridge", name: "Partridge Lakes (The Covey)", lat: 53.4611, lng: -2.5186, desc: "Cheshire", vibe: "The absolute northern match epicentre. Narrow canalized designs requiring ultimate pinpoint feeding accuracy.", spots: [{ name: "Covey 5 -> Far Mud Bank", distance_yds: 16, peg_lat: 53.4608, peg_lng: -2.5190, spot_lat: 53.4609, spot_lng: -2.5189, advice: "Ship poles precisely to shallow mud shelves. Loose feed micros sparingly via cad pots." }] },
+        { id: "elphicks", name: "Elphicks Fisheries (North Lake)", lat: 51.1118, lng: 0.4491, desc: "Kent", vibe: "Immaculate Kent complex holding absolute pristine, highly catalogued monster residents to over 50lbs.", spots: [{ name: "Peg 1 -> Island Bushlines", distance_yds: 50, peg_lat: 51.1112, peg_lng: -0.4498, spot_lat: 51.1116, spot_lng: -0.4493, advice: "Strict boilie water focus. High quality food sources fished tightly draw out specimens." }] },
+        { id: "manorfarm", name: "Manor Farm Lakes (Boone's)", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire", vibe: "Beautifully mature Beds complex offering premium gravel transitions and massive lily fields.", spots: [{ name: "Lily Corner -> Pad Margins", distance_yds: 40, peg_lat: 52.0728, peg_lng: -0.2792, spot_lat: 52.0731, spot_lng: -0.2787, advice: "Run light leads with completely slack lines in high clarity margin areas to hide terminal tackle." }] },
+        { id: "buryhill", name: "Bury Hill (The Old Lake)", lat: 51.2185, lng: -0.3475, desc: "Surrey", vibe: "Stunning old English estate layout surrounded by thick forests. Premium tench and ancient mirrors.", spots: [{ name: "Long Bank -> Overhanging Jungle", distance_yds: 80, peg_lat: 51.2178, peg_lng: -0.3482, spot_lat: 51.2183, spot_lng: -0.3476, advice: "Traditional particle strategies pin large traveling bream and tench columns perfectly." }] },
+        { id: "wyreside", name: "Wyreside Lakes (Wyre Lake)", lat: 53.9665, lng: -2.7665, desc: "Lancashire", vibe: "The premier northern day-ticket arena. Wild, cold gravel layout with steep drop-offs.", spots: [{ name: "The Lawn Swim -> Silt Gully", distance_yds: 55, peg_lat: 53.9659, peg_lng: -2.7672, spot_lat: 53.9663, spot_lng: -2.7666, advice: "Find the base of the bars where natural food gathers. Precision tracking is critical here." }] },
+        { id: "larford", name: "Larford Lakes (Specimen)", lat: 52.3275, lng: -2.2514, desc: "Worcestershire", vibe: "Incredible weights captured across all blocks. Deep water bowls that react violently to wind changes.", spots: [{ name: "Chalet Bank -> Sunken Island", distance_yds: 60, peg_lat: 52.3269, peg_lng: -2.2522, spot_lat: 52.3273, spot_lng: -2.2516, advice: "If bottom setups dry up, deploy a pellet waggler shallow to secure rapid tracking strikes." }] },
+        { id: "todber", name: "Todber Manor (Big Fowler)", lat: 50.9785, lng: -2.3115, desc: "Dorset", vibe: "The South West's flagship fast action runs lake. Thick stocking density keeps action high year round.", spots: [{ name: "Peg 1 Corner -> Reed Feature", distance_yds: 35, peg_lat: 50.9779, peg_lng: -2.3122, spot_lat: 50.9783, spot_lng: -2.3117, advice: "Solid PVA bags packed with mixed pellets and neon dumbbell wafters convert instantly." }] },
+        { id: "tunnelbarn", name: "Tunnel Barn Farm (Extension)", lat: 52.2985, lng: -1.6885, desc: "Warwickshire", vibe: "Immaculate custom match canals. Elite winter venue where small details differentiate bags.", spots: [{ name: "Peg 7 -> Far Shelf Track", distance_yds: 14, peg_lat: 52.2980, peg_lng: -1.6892, spot_lat: 52.2983, spot_lng: -1.6887, advice: "Deploy hyper light wire hooks and light pole lines. Cad pot freebies directly on float tips." }] },
+        { id: "orchid", name: "Orchid Lakes", lat: 51.6571, lng: -1.1632, desc: "Oxfordshire", vibe: "The historic 'Home of the Log Cabin'. Ancient oak trees surround old heavily scaled mirrors.", spots: [{ name: "Log Cabin Swim -> Gravel Bar", distance_yds: 55, peg_lat: 51.6565, peg_lng: -1.1640, spot_lat: 51.6569, spot_lng: -1.1634, advice: "Nut food source boilies track well across 48hr sessions to pull fish from central silt fields." }] },
+        { id: "coombe", name: "Coombe Abbey Pool", lat: 52.4116, lng: -1.4172, desc: "Warwickshire", vibe: "Massive 80-acre ancient landscape pool. Challenging silty basins tracking large roaming packs.", spots: [{ name: "Deep Track -> Old River Bed", distance_yds: 80, peg_lat: 52.4110, peg_lng: -1.4180, spot_lat: 52.4114, spot_lng: -1.4174, advice: "Heavily pre-bait particles to anchor roaming columns inside historical river seams." }] },
+        { id: "walthamstow", name: "Walthamstow Reservoirs (No. 1/2)", lat: 51.5832, lng: -0.0461, desc: "North London", vibe: "Gritty, wind-swept concrete bowls holding massive urban historical monsters. Closely follows wind patterns.", spots: [{ name: "Island Channel -> Drop-Off", distance_yds: 90, peg_lat: 51.5826, peg_lng: -0.0469, spot_lat: 51.5830, spot_lng: -0.0463, advice: "If heavy gales lash the concrete banks, fish short right at your feet in the crashing undertow." }] },
+        { id: "heronbrook", name: "Heronbrook Fisheries", lat: 52.9552, lng: -2.3251, desc: "Staffordshire", vibe: "Beautifully maintained match maze. High island distributions providing incredibly consistent returns.", spots: [{ name: "Peg 12 -> Island Shelf Point", distance_yds: 45, peg_lat: 52.9546, peg_lng: -2.3259, spot_lat: 52.9550, spot_lng: -2.3253, advice: "Juggle lines between far island steps and close margin vegetation fields dynamically." }] }
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -812,66 +560,84 @@
         loadSavedLocationsFromCache();
         setupSearchSuggestionsEngine();
         
-        // Enforced 3.0-second delay execution matrix boundary target rules
         setTimeout(() => {
             const splash = document.getElementById('appSplashScreenFrame');
             splash.style.opacity = '0';
             splash.style.pointerEvents = 'none';
-            
-            setTimeout(() => {
-                splash.remove();
-            }, 400);
+            setTimeout(() => { splash.remove(); }, 400);
         }, 3000);
     });
 
     function initSatelliteMap() {
         const defaultLat = 51.884;
         const defaultLng = -0.520;
-        
-        map = L.map('satelliteMap', {
-            center: [defaultLat, defaultLng],
-            zoom: 16,
-            zoomControl: false,
-            attributionControl: false
-        });
+        map = L.map('satelliteMap', { center: [defaultLat, defaultLng], zoom: 16, zoomControl: false, attributionControl: false });
 
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 19,
-            maxNativeZoom: 19
+            maxZoom: 19, maxNativeZoom: 19
         }).addTo(map);
 
         map.on('click', (e) => {
             if (isMapLocked || activePlacementMode === 'none') return;
             handleMapInteraction(e.latlng);
         });
-
         lockMapInteractions();
     }
 
     function lockMapInteractions() {
-        map.dragging.disable();
-        map.touchZoom.disable();
-        map.doubleClickZoom.disable();
-        map.scrollWheelZoom.disable();
-        map.boxZoom.disable();
-        map.keyboard.disable();
-        if (map.tap) map.tap.disable();
+        map.dragging.disable(); map.touchZoom.disable(); map.doubleClickZoom.disable(); map.scrollWheelZoom.disable(); map.boxZoom.disable(); map.keyboard.disable(); if (map.tap) map.tap.disable();
     }
 
     function unlockMapInteractions() {
-        map.dragging.enable();
-        map.touchZoom.enable();
-        map.doubleClickZoom.enable();
-        map.scrollWheelZoom.enable();
-        map.boxZoom.enable();
-        map.keyboard.enable();
-        if (map.tap) map.tap.enable();
+        map.dragging.enable(); map.touchZoom.enable(); map.doubleClickZoom.enable(); map.scrollWheelZoom.enable(); map.boxZoom.enable(); map.keyboard.enable(); if (map.tap) map.tap.disable();
     }
 
-    function toggleWalkthroughModal(show) {
-        const modal = document.getElementById('walkthroughModalOverlay');
-        modal.style.display = show ? 'flex' : 'none';
+    // MONETIZATION TESTING SUITE INTERACTIVE CHANGER
+    function toggleTestingTierMode() {
+        isPremiumUser = !isPremiumUser;
+        const badge = document.getElementById('tierStatusBadge');
+        if (isPremiumUser) {
+            badge.className = "tier-badge pro"; badge.innerText = "Pro Version Unlocked";
+        } else {
+            badge.className = "tier-badge free"; badge.innerText = "Free Version";
+            document.getElementById('rodLength').value = "12";
+            handleRodLengthSelectionChange();
+            document.getElementById('tacticalHotspotPanel').style.display = 'none';
+        }
     }
+
+    function togglePaywallModal(show) {
+        document.getElementById('premiumPaywallModalOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    function simulatePremiumPurchaseUnlock() {
+        togglePaywallModal(false);
+        isPremiumUser = false; 
+        toggleTestingTierMode(); // Safely fires master unlock states
+        alert("Transaction simulation complete! All Premium systems unlocked.");
+    }
+
+    function handleRodLengthSelectionChange() {
+        const value = document.getElementById('rodLength').value;
+        const customInput = document.getElementById('customRodInput');
+
+        if (!isPremiumUser && value !== "12") {
+            togglePaywallModal(true);
+            document.getElementById('rodLength').value = "12";
+            customInput.style.display = 'none';
+            return;
+        }
+
+        if (value === 'custom') {
+            customInput.style.display = 'block';
+            customInput.focus();
+        } else {
+            customInput.style.display = 'none';
+            calculateWraps();
+        }
+    }
+
+    function toggleWalkthroughModal(show) { document.getElementById('walkthroughModalOverlay').style.display = show ? 'flex' : 'none'; }
 
     function switchNavMode(targetMode) {
         currentNavMode = targetMode;
@@ -881,38 +647,24 @@
         const overlay = document.getElementById('savedOverlayPanel');
         const overlayTitle = document.getElementById('overlayPanelTitle');
 
-        findBtn.className = "nav-btn";
-        savedBtn.className = "nav-btn";
-        premierBtn.className = "nav-btn";
+        findBtn.className = "nav-btn"; savedBtn.className = "nav-btn"; premierBtn.className = "nav-btn";
 
         if (targetMode === 'find') {
-            findBtn.className = "nav-btn active-tab";
-            overlay.style.display = 'none';
+            findBtn.className = "nav-btn active-tab"; overlay.style.display = 'none';
         } else if (targetMode === 'saved') {
-            savedBtn.className = "nav-btn active-tab";
-            overlayTitle.innerText = "Your Saved Venues";
-            overlay.style.display = 'flex';
+            savedBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "Your Saved Venues"; overlay.style.display = 'flex';
             if (!isMapLocked) toggleSafetyLock();
             renderSavedLocationItems();
         } else if (targetMode === 'premier') {
-            premierBtn.className = "nav-btn active-tab";
-            overlayTitle.innerText = "UK Premier Fisheries";
-            overlay.style.display = 'flex';
+            premierBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "UK Premier Fisheries"; overlay.style.display = 'flex';
             if (!isMapLocked) toggleSafetyLock();
             renderPremierFisheriesItems();
         }
     }
 
     function handleMapInteraction(latlng) {
-        if (activePlacementMode === 'peg') {
-            pegLatLng = latlng;
-        } else if (activePlacementMode === 'spot') {
-            spotLatLng = latlng;
-        }
-
-        renderMapGraphicsLayers();
-        calculateWraps();
-        resetPlacementState();
+        if (activePlacementMode === 'peg') { pegLatLng = latlng; } else if (activePlacementMode === 'spot') { spotLatLng = latlng; }
+        renderMapGraphicsLayers(); calculateWraps(); resetPlacementState();
     }
 
     function renderMapGraphicsLayers() {
@@ -920,46 +672,33 @@
         const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 
-        if (pegMarker) map.removeLayer(pegMarker);
-        if (spotMarker) map.removeLayer(spotMarker);
-        if (flightPathLine) map.removeLayer(flightPathLine);
+        if (pegMarker) map.removeLayer(pegMarker); if (spotMarker) map.removeLayer(spotMarker); if (flightPathLine) map.removeLayer(flightPathLine);
 
         if (pegLatLng) {
             const pegHtml = `<div style="background-color: ${pegColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
-            pegMarker = L.marker(pegLatLng, {
-                icon: L.divIcon({ html: pegHtml, iconSize: [12, 12], iconAnchor: [6, 6] })
-            }).addTo(map);
+            pegMarker = L.marker(pegLatLng, { icon: L.divIcon({ html: pegHtml, iconSize: [12, 12], iconAnchor: [6, 6] }) }).addTo(map);
         }
-
         if (spotLatLng) {
             const spotHtml = `<div style="background-color: ${spotColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
-            spotMarker = L.marker(spotLatLng, {
-                icon: L.divIcon({ html: spotHtml, iconSize: [12, 12], iconAnchor: [6, 6] })
-            }).addTo(map);
+            spotMarker = L.marker(spotLatLng, { icon: L.divIcon({ html: spotHtml, iconSize: [12, 12], iconAnchor: [6, 6] }) }).addTo(map);
         }
-
         if (pegLatLng && spotLatLng) {
-            flightPathLine = L.polyline([pegLatLng, spotLatLng], {
-                color: accentColor,
-                weight: 3,
-                opacity: 0.9,
-                lineCap: 'round'
-            }).addTo(map);
+            flightPathLine = L.polyline([pegLatLng, spotLatLng], { color: accentColor, weight: 3, opacity: 0.9, lineCap: 'round' }).addTo(map);
         }
     }
 
     function calculateWraps() {
         if (!pegLatLng || !spotLatLng) return;
 
-        const rodLength = parseFloat(document.getElementById('rodLength').value);
+        let rodLength = parseFloat(document.getElementById('rodLength').value);
+        if (document.getElementById('rodLength').value === 'custom') {
+            rodLength = parseFloat(document.getElementById('customRodInput').value) || 12;
+        }
 
         const R = 6371000; 
         const dLat = (spotLatLng.lat - pegLatLng.lat) * Math.PI / 180;
         const dLon = (spotLatLng.lng - pegLatLng.lng) * Math.PI / 180;
-        
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos(pegLatLng.lat * Math.PI / 180) * Math.cos(spotLatLng.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                  
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(pegLatLng.lat * Math.PI / 180) * Math.cos(spotLatLng.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         const calculatedMetres = R * c; 
 
@@ -970,9 +709,7 @@
         document.getElementById('resultDistance').innerText = `Distance: ${calculatedMetres.toFixed(1)}m (${(calculatedMetres * 1.09361).toFixed(1)}yds)`;
 
         let outputText = `${fullWraps} wrap${fullWraps !== 1 ? 's' : ''}`;
-        if (remainingFeet > 0.05) {
-            outputText += ` + ${remainingFeet.toFixed(1)} ft`;
-        }
+        if (remainingFeet > 0.05) { outputText += ` + ${remainingFeet.toFixed(1)} ft`; }
         document.getElementById('resultValue').innerText = outputText;
 
         if (remainingFeet > 0.05) {
@@ -984,216 +721,145 @@
     }
 
     function fetchDeviceLocation() {
-        if (!navigator.geolocation) {
-            alert("Geolocation services are not supported by this browser client.");
-            return;
-        }
-
-        document.getElementById('instructionText').innerText = "🛰️ Querying system satellite arrays...";
-        
+        if (!navigator.geolocation) { alert("Geolocation not supported."); return; }
+        document.getElementById('instructionText').innerText = "🛰️ Querying satellite telemetry array...";
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                map.setView([lat, lng], 18);
-                document.getElementById('instructionText').innerText = "Location locked via GPS array telemetry.";
+                map.setView([position.coords.latitude, position.coords.longitude], 18);
+                document.getElementById('instructionText').innerText = "Location locked via GPS array.";
                 setTimeout(resetPlacementState, 2000);
             },
-            (error) => {
-                alert("GPS connection failed: " + error.message);
-                resetPlacementState();
-            },
+            (error) => { alert("GPS failure: " + error.message); resetPlacementState(); },
             { enableHighAccuracy: true, timeout: 10000 }
         );
     }
 
     function setupSearchSuggestionsEngine() {
-        const input = document.getElementById('searchInput');
-        const box = document.getElementById('suggestionsBox');
-
+        const input = document.getElementById('searchInput'); const box = document.getElementById('suggestionsBox');
         input.addEventListener('input', () => {
-            clearTimeout(searchDebounceTimeout);
-            const value = input.value.trim();
-
-            if (value.length < 3) {
-                box.innerHTML = '';
-                box.style.display = 'none';
-                return;
-            }
-
+            clearTimeout(searchDebounceTimeout); const value = input.value.trim();
+            if (value.length < 3) { box.innerHTML = ''; box.style.display = 'none'; return; }
             searchDebounceTimeout = setTimeout(async () => {
                 try {
                     const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}&limit=5&countrycodes=gb`);
                     const data = await response.json();
-
                     if (data && data.length > 0) {
                         box.innerHTML = '';
                         data.forEach(item => {
-                            const div = document.createElement('div');
-                            div.className = 'suggestion-item';
-                            div.innerText = item.display_name;
+                            const div = document.createElement('div'); div.className = 'suggestion-item'; div.innerText = item.display_name;
                             div.onclick = () => {
-                                const lat = parseFloat(item.lat);
-                                const lon = parseFloat(item.lon);
-                                map.setView([lat, lon], 17);
-                                input.value = item.display_name;
-                                box.innerHTML = '';
-                                box.style.display = 'none';
+                                map.setView([parseFloat(item.lat), parseFloat(item.lon)], 17);
+                                input.value = item.display_name; box.innerHTML = ''; box.style.display = 'none';
                                 document.getElementById('instructionText').innerText = "Moved map onto location.";
                                 setTimeout(resetPlacementState, 2000);
                             };
                             box.appendChild(div);
                         });
                         box.style.display = 'block';
-                    } else {
-                        box.innerHTML = '';
-                        box.style.display = 'none';
-                    }
-                } catch (e) {
-                    console.error("Suggestions retrieval failure:", e);
-                }
+                    } else { box.innerHTML = ''; box.style.display = 'none'; }
+                } catch (e) { console.error(e); }
             }, 450); 
         });
-
-        document.addEventListener('click', (e) => {
-            if (e.target !== input && e.target !== box) {
-                box.innerHTML = '';
-                box.style.display = 'none';
-            }
-        });
+        document.addEventListener('click', (e) => { if (e.target !== input && e.target !== box) { box.innerHTML = ''; box.style.display = 'none'; } });
     }
 
-    function clearInputFieldQuickly() {
-        const input = document.getElementById('searchInput');
-        const box = document.getElementById('suggestionsBox');
-        
-        input.value = '';
-        box.innerHTML = '';
-        box.style.display = 'none';
-        input.focus(); 
-    }
-
-    function clearActiveMapPins() {
-        pegLatLng = null;
-        spotLatLng = null;
-        
-        renderMapGraphicsLayers();
-        clearResultsDisplay();
-        
-        document.getElementById('instructionText').innerText = "Pins successfully reset.";
-        setTimeout(resetPlacementState, 1500);
-    }
+    function clearInputFieldQuickly() { const input = document.getElementById('searchInput'); const box = document.getElementById('suggestionsBox'); input.value = ''; box.innerHTML = ''; box.style.display = 'none'; input.focus(); }
+    function clearActiveMapPins() { pegLatLng = null; spotLatLng = null; renderMapGraphicsLayers(); clearResultsDisplay(); document.getElementById('instructionText').innerText = "Pins reset."; setTimeout(resetPlacementState, 1500); }
 
     function promptSaveCurrentLocation() {
-        const currentCenter = map.getCenter();
-        const currentZoom = map.getZoom();
-        
+        if (!isPremiumUser) { togglePaywallModal(true); return; }
+        const currentCenter = map.getCenter(); const currentZoom = map.getZoom();
         const locationName = prompt("Enter a memorable tag name for this venue position:");
         if (!locationName || !locationName.trim()) return;
 
-        const record = {
-            id: 'loc_' + Date.now(),
-            name: locationName.trim(),
-            lat: currentCenter.lat,
-            lng: currentCenter.lng,
-            zoom: currentZoom,
-            pegLatLng: pegLatLng,
-            spotLatLng: spotLatLng
-        };
-
-        savedLocations.push(record);
-        localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations));
-        alert("Location saved");
+        const record = { id: 'loc_' + Date.now(), name: locationName.trim(), lat: currentCenter.lat, lng: currentCenter.lng, zoom: currentZoom, pegLatLng: pegLatLng, spotLatLng: spotLatLng };
+        savedLocations.push(record); localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations)); alert("Location saved");
     }
 
-    function loadSavedLocationsFromCache() {
-        const cached = localStorage.getItem('hedge_saved_maps_cache');
-        if (cached) {
-            try {
-                savedLocations = JSON.parse(cached);
-            } catch(e) {
-                savedLocations = [];
-            }
-        }
-    }
+    function loadSavedLocationsFromCache() { const cached = localStorage.getItem('hedge_saved_maps_cache'); if (cached) { try { savedLocations = JSON.parse(cached); } catch(e) { savedLocations = []; } } }
 
     function renderSavedLocationItems() {
-        const container = document.getElementById('locationListContainer');
-        container.innerHTML = '';
-
-        if (savedLocations.length === 0) {
-            container.innerHTML = '<div class="no-locations-msg">No custom coordinate records saved yet. Navigate onto a venue and hit Save.</div>';
-            return;
-        }
-
+        const container = document.getElementById('locationListContainer'); container.innerHTML = '';
+        if (savedLocations.length === 0) { container.innerHTML = '<div class="no-locations-msg">No custom locations saved. Move map and hit Save.</div>'; return; }
         savedLocations.forEach(loc => {
-            const row = document.createElement('div');
-            row.className = 'location-item';
-            row.onclick = () => selectAndFlyToSavedLocation(loc.id);
-
-            row.innerHTML = `
-                <div class="location-info">
-                    <div class="location-name">${loc.name}</div>
-                    <div class="location-coords">Lat: ${loc.lat.toFixed(4)}, Lng: ${loc.lng.toFixed(4)}</div>
-                </div>
-                <button class="delete-loc-btn" onclick="event.stopPropagation(); deleteSavedLocationItem('${loc.id}')" title="Delete Location">✕</button>
-            `;
+            const row = document.createElement('div'); row.className = 'location-item'; row.onclick = () => selectAndFlyToSavedLocation(loc.id);
+            row.innerHTML = `<div class="location-info"><div class="location-name">${loc.name}</div><div class="location-coords">Lat: ${loc.lat.toFixed(4)}, Lng: ${loc.lng.toFixed(4)}</div></div><button class="delete-loc-btn" onclick="event.stopPropagation(); deleteSavedLocationItem('${loc.id}')">✕</button>`;
             container.appendChild(row);
         });
     }
 
     function renderPremierFisheriesItems() {
-        const container = document.getElementById('locationListContainer');
-        container.innerHTML = '';
-
+        const container = document.getElementById('locationListContainer'); container.innerHTML = '';
         PREMIER_FISHERIES_DATA.forEach(venue => {
-            const row = document.createElement('div');
-            row.className = 'location-item';
-            row.onclick = () => flyToPremierFisheryVector(venue.lat, venue.lng);
-
-            row.innerHTML = `
-                <div class="location-info">
-                    <div class="location-name">${venue.name}</div>
-                    <div class="location-coords">${venue.desc} &bull; Lat: ${venue.lat.toFixed(4)}, Lng: ${venue.lng.toFixed(4)}</div>
-                </div>
-                <div style="color: var(--accent-color); font-weight: bold; font-size: 0.9rem; padding-right: 4px;">🗺️</div>
-            `;
+            const row = document.createElement('div'); row.className = 'location-item';
+            row.onclick = () => flyToPremierFisheryVector(venue);
+            row.innerHTML = `<div class="location-info"><div class="location-name">${venue.name}</div><div class="location-coords">${venue.desc} &bull; Top 20 Premium</div></div><div style="color: var(--premium-gold); font-weight: bold; font-size: 0.9rem;">👑</div>`;
             container.appendChild(row);
         });
     }
 
-    function flyToPremierFisheryVector(lat, lng) {
-        map.setView([lat, lng], 16);
-        
-        pegLatLng = null;
-        spotLatLng = null;
-        renderMapGraphicsLayers();
-        clearResultsDisplay();
+    function flyToPremierFisheryVector(venue) {
+        if (!isPremiumUser) { togglePaywallModal(true); return; }
 
+        map.setView([venue.lat, venue.lng], 16);
+        pegLatLng = null; spotLatLng = null;
+        renderMapGraphicsLayers(); clearResultsDisplay();
         switchNavMode('find');
-        document.getElementById('instructionText').innerText = "Moved layout onto target fishery.";
-        setTimeout(resetPlacementState, 2000);
+
+        // Dynamically populate the premium hotspots panel
+        const panel = document.getElementById('tacticalHotspotPanel');
+        const dropdown = document.getElementById('tacticalSpotsDropdown');
+        dropdown.innerHTML = '<option value="">-- Choose a Swimming Hot Spot --</option>';
+
+        venue.spots.forEach((spot, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.innerText = spot.name;
+            dropdown.appendChild(opt);
+        });
+
+        // Cache the active venue reference on the dropdown element memory bank
+        dropdown.activeVenueRef = venue;
+        panel.style.display = 'flex';
+
+        document.getElementById('instructionText').innerText = "Loaded " + venue.name + ". Select a tactical hotspot below!";
     }
 
-    function selectAndFlyToSavedLocation(locationId) {
-        const loc = savedLocations.find(l => l.id === locationId);
-        if (!loc) return;
+    // PREMIUM SYSTEM: AUTOMATIC MARKER PLACEMENT FOR TACTICAL SPOTS
+    function loadSelectedTacticalSpotLine() {
+        const dropdown = document.getElementById('tacticalSpotsDropdown');
+        const venue = dropdown.activeVenueRef;
+        const selectedIdx = dropdown.value;
 
-        map.setView([loc.lat, loc.lng], loc.zoom || 17);
+        if (selectedIdx === "" || !venue) return;
+        const spot = venue.spots[selectedIdx];
 
-        pegLatLng = loc.pegLatLng ? L.latLng(loc.pegLatLng.lat, loc.pegLatLng.lng) : null;
-        spotLatLng = loc.spotLatLng ? L.latLng(loc.spotLatLng.lat, loc.spotLatLng.lng) : null;
+        // Automatic vector placement logic overrides manual clicks cleanly
+        pegLatLng = L.latLng(spot.peg_lat, spot.peg_lng);
+        spotLatLng = L.latLng(spot.spot_lat, spot.spot_lng);
 
         renderMapGraphicsLayers();
         calculateWraps();
-        switchNavMode('find');
+
+        // Enforce focus directly onto the targeting line matrix
+        map.fitBounds(L.polyline([pegLatLng, spotLatLng]).getBounds(), { padding: [40, 40] });
+
+        // Populate bank readout container with advanced advice strings
+        document.getElementById('resultNote').innerText = `👑 PRO TACTICAL LINE:\n${venue.vibe}\n\nSWIM ADVICE:\n${spot.advice}`;
+    }
+
+    function selectAndFlyToSavedLocation(locationId) {
+        const loc = savedLocations.find(l => l.id === locationId); if (!loc) return;
+        map.setView([loc.lat, loc.lng], loc.zoom || 17);
+        pegLatLng = loc.pegLatLng ? L.latLng(loc.pegLatLng.lat, loc.pegLatLng.lng) : null;
+        spotLatLng = loc.spotLatLng ? L.latLng(loc.spotLatLng.lat, loc.spotLatLng.lng) : null;
+        renderMapGraphicsLayers(); calculateWraps(); switchNavMode('find');
     }
 
     function deleteSavedLocationItem(locationId) {
-        if (!confirm("Are you certain you wish to delete this saved location record?")) return;
+        if (!confirm("Delete location?")) return;
         savedLocations = savedLocations.filter(l => l.id !== locationId);
-        localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations));
-        renderSavedLocationItems();
+        localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations)); renderSavedLocationItems();
     }
 
     function toggleSafetyLock() {
@@ -1205,65 +871,29 @@
         const instructionText = document.getElementById('instructionText');
 
         if (isMapLocked) {
-            lockBtn.className = "lock-btn state-locked"; 
-            lockBtn.innerHTML = "🔓 Unlock Map";
-            pegBtn.disabled = true; 
-            targetBtn.disabled = true; 
-            resetBtn.disabled = true;
-            activePlacementMode = 'none';
-            resetPlacementState();
-            lockMapInteractions();
+            lockBtn.className = "lock-btn state-locked"; lockBtn.innerHTML = "🔓 Unlock Map";
+            pegBtn.disabled = true; targetBtn.disabled = true; resetBtn.disabled = true;
+            activePlacementMode = 'none'; resetPlacementState(); lockMapInteractions();
             instructionText.innerText = "Map is locked. Unlock above to drop markers.";
         } else {
-            lockBtn.className = "lock-btn state-unlocked"; 
-            lockBtn.innerHTML = "🔒 Lock Map";
-            pegBtn.disabled = false; 
-            targetBtn.disabled = false; 
-            resetBtn.disabled = false;
-            resetPlacementState(); 
-            unlockMapInteractions();
+            lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔒 Lock Map";
+            pegBtn.disabled = false; targetBtn.disabled = false; resetBtn.disabled = false;
+            resetPlacementState(); unlockMapInteractions();
             instructionText.innerText = "Ready. Arm 'Peg' or 'Target' to update locations.";
         }
     }
 
     function togglePlacementMode(mode) {
         if (isMapLocked) return;
-        
-        const pegBtn = document.getElementById('btnSetPeg');
-        const targetBtn = document.getElementById('btnSetTarget');
-        const text = document.getElementById('instructionText');
-
-        if (activePlacementMode === mode) {
-            activePlacementMode = 'none';
-            resetPlacementState();
-            return;
-        }
-
+        const pegBtn = document.getElementById('btnSetPeg'); const targetBtn = document.getElementById('btnSetTarget'); const text = document.getElementById('instructionText');
+        if (activePlacementMode === mode) { activePlacementMode = 'none'; resetPlacementState(); return; }
         activePlacementMode = mode;
-
-        if (mode === 'peg') {
-            pegBtn.className = "mode-btn active-peg"; targetBtn.className = "mode-btn";
-            text.innerText = "Armed: Placing Peg (Orange). Tap satellite to mark your swim.";
-        } else {
-            pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn active-spot";
-            text.innerText = "Armed: Placing Target (Red). Tap satellite to mark your spot.";
-        }
+        if (mode === 'peg') { pegBtn.className = "mode-btn active-peg"; targetBtn.className = "mode-btn"; text.innerText = "Armed: Placing Peg (Orange). Tap map."; }
+        else { pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn active-spot"; text.innerText = "Armed: Placing Target (Red). Tap map."; }
     }
 
-    function resetPlacementState() {
-        activePlacementMode = 'none';
-        const pegBtn = document.getElementById('btnSetPeg');
-        const targetBtn = document.getElementById('btnSetTarget');
-
-        pegBtn.className = "mode-btn";
-        targetBtn.className = "mode-btn";
-    }
-
-    function clearResultsDisplay() {
-        document.getElementById('resultValue').innerText = "0 wraps";
-        document.getElementById('resultDistance').innerText = "Distance: --";
-        document.getElementById('resultNote').innerText = "Ensure both Peg and Target positions are marked on the map layout.";
-    }
+    function resetPlacementState() { activePlacementMode = 'none'; document.getElementById('btnSetPeg').className = "mode-btn"; document.getElementById('btnSetTarget').className = "mode-btn"; }
+    function clearResultsDisplay() { document.getElementById('resultValue').innerText = "0 wraps"; document.getElementById('resultDistance').innerText = "Distance: --"; document.getElementById('resultNote').innerText = "Ensure both Peg and Target positions are marked on the map layout."; }
 </script>
 
 </body>
