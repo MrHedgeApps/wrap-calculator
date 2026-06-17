@@ -19,7 +19,6 @@
             --input-bg: #262626;
             --border-color: #333333;
             
-            /* UI Color Variable Matrices */
             --info-blue: #0288d1;
             --info-blue-border: #01579b;
             --info-blue-hover: #03a9f4;
@@ -129,7 +128,6 @@
             text-transform: uppercase;
         }
 
-        /* Testing Mode Status Badge Tracker */
         .tier-badge {
             font-size: 0.65rem;
             font-weight: bold;
@@ -160,8 +158,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.4);
             transition: all 0.2s ease;
         }
-
-        .info-toggle-btn:hover { background-color: var(--info-blue-hover); border-color: var(--info-blue); }
 
         .nav-container { display: flex; gap: 6px; margin-bottom: 12px; }
 
@@ -216,7 +212,6 @@
             letter-spacing: 0.5px;
         }
 
-        .clear-input-btn:hover { border-color: var(--spot-color); color: var(--spot-color); background-color: rgba(244, 67, 54, 0.05); }
         .suggestions-panel { position: absolute; top: 100%; left: 0; width: 100%; background-color: #222222; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 4px; max-height: 220px; overflow-y: auto; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.8); display: none; }
         .suggestion-item { padding: 10px 12px; font-size: 0.85rem; color: var(--text-color); cursor: pointer; border-bottom: 1px solid #2d2d2d; line-height: 1.4; }
         .suggestion-item:hover { background-color: #2d2d2d; color: #fff; }
@@ -284,7 +279,7 @@
         .saved-overlay-title { font-size: 0.9rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
         .location-list { display: flex; flex-direction: column; gap: 8px; }
 
-        .location-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
+        .location-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; cursor: pointer; }
         .location-item:hover { border-color: var(--text-muted); }
         .location-info { display: flex; flex-direction: column; gap: 2px; }
         .location-name { font-size: 0.95rem; font-weight: bold; color: #fff; }
@@ -292,7 +287,6 @@
         .delete-loc-btn { background: transparent; border: none; color: var(--spot-color); cursor: pointer; font-size: 1.1rem; font-weight: bold; padding: 4px 8px; }
         .no-locations-msg { color: var(--text-muted); font-size: 0.85rem; text-align: center; font-style: italic; margin-top: 20px; }
 
-        /* Premium Tactical Hotspots Dashboard Styles */
         .tactical-panel { display: none; flex-direction: column; gap: 10px; margin-top: 12px; padding: 14px; border: 1px dashed var(--premium-gold); background: rgba(255, 215, 0, 0.02); border-radius: 10px; }
         .tactical-title { font-size: 0.8rem; font-weight: bold; color: var(--premium-gold); text-transform: uppercase; letter-spacing: 1px; }
 
@@ -306,11 +300,9 @@
 
         .walkthrough-modal, .paywall-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 10, 0.96); z-index: 10000; display: none; flex-direction: column; padding: 24px 12px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; max-width: 100%; }
         
-        /* Premium Upgrade Paywall Modal Styles */
         .paywall-card { max-width: 500px; margin: auto; width: 100%; border: 1px solid var(--premium-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.1); }
         .paywall-gold-text { color: var(--premium-gold) !important; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        .paywall-btn { background: var(--premium-gold); color: #000; font-weight: 800; border: none; padding: 14px; border-radius: 8px; width: 100%; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; cursor: pointer; transition: transform 0.2s; margin-top: 16px; }
-        .paywall-btn:hover { transform: scale(1.02); }
+        .paywall-btn { background: var(--premium-gold); color: #000; font-weight: 800; border: none; padding: 14px; border-radius: 8px; width: 100%; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; cursor: pointer; margin-top: 16px; }
 
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; }
         .modal-title { font-size: 1.1rem; font-weight: bold; color: var(--accent-color); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -398,20 +390,23 @@
     </div>
 
     <div class="card" style="padding: 14px;">
-        <label for="rodLength">ROD LENGTH</label>
-        <select id="rodLength" onchange="handleRodLengthSelectionChange()">
-            <option value="9">9 ft (Premium)</option>
-            <option value="10">10 ft (Premium)</option>
-            <option value="11">11 ft (Premium)</option>
-            <option value="12" selected>12 ft (Free Starter)</option>
-            <option value="13">13 ft (Premium)</option>
-            <option value="custom">Custom Dimensions... (Premium)</option>
+        <label for="anglingStyle">ANGLING STYLE</label>
+        <select id="anglingStyle" onchange="handleAnglingStyleChange()">
+            <option value="carp">Carp & Specialist (Distance Sticks)</option>
+            <option value="match">Match & F1 (Precision Pole Shipping)</option>
+            <option value="predator">Predator & River (Yards/Feet Matrix)</option>
         </select>
-        <input type="number" id="customRodInput" class="custom-input-box" placeholder="Enter custom length in feet (e.g. 12.6)" step="0.1" oninput="calculateWraps()">
+    </div>
+
+    <div class="card" style="padding: 14px;">
+        <label id="tackleBoxLabel" for="rodLength">ROD LENGTH</label>
+        <select id="rodLength" onchange="handleTackleSelectionChange()">
+            </select>
+        <input type="number" id="customRodInput" class="custom-input-box" placeholder="Enter dimension value (e.g. 12.6)" step="0.1" oninput="calculateWraps()">
     </div>
 
     <div class="card result-container">
-        <div class="result-title">Target Geometry</div>
+        <div id="resultBoxTitle" class="result-title">Target Geometry</div>
         <div id="resultValue" class="result-value">0 wraps</div>
         <div id="resultDistance" class="result-distance">Distance: --</div>
         <div id="resultNote" class="result-note">Ensure both Peg and Target positions are marked on the map layout.</div>
@@ -431,12 +426,12 @@
         </div>
         <div class="guide-section">
             <p style="color: #fff; font-size: 0.95rem; font-weight: bold;">One-time payment of £3.99. Yours forever.</p>
-            <p>Upgrade your bankside toolkit with our highly comprehensive tracking and tactical analytics systems:</p>
+            <p>Upgrade your bankside toolkit with our comprehensive multi-species analysis configurations:</p>
             <ul class="guide-list">
-                <li><strong>Full Tackle Box Unlock:</strong> Instantly unlock calculations for 9ft, 10ft, 11ft, and 13ft rod setups.</li>
-                <li><strong>Custom Dimensions Entry:</strong> Input custom specifications to decimal places for spod, marker, or specialized rods.</li>
-                <li><strong>Top 20 UK Hot Spots Guide:</strong> Instant access to hardcoded, verified hotspots on the country's most legendary lakes.</li>
-                <li><strong>Unlimited Personal Swim Saves:</strong> Catalog your home club waters and secret spots directly to local storage layers.</li>
+                <li><strong>Full Tackle Box Unlock:</strong> Instantly unlock calculations for all rod lengths and custom pole shipping extensions.</li>
+                <li><strong>Custom Dimensions Entry:</strong> Input custom sizes for spod rods, whips, or European setups down to decimals.</li>
+                <li><strong>Top 20 Multispecies Hot Spots:</strong> Access verified hotspot vectors across top carp, match, river, and pike waters.</li>
+                <li><strong>Unlimited Personal Swim Saves:</strong> Catalog your home club waters and secret spots directly to local storage.</li>
             </ul>
             <button class="paywall-btn" onclick="simulatePremiumPurchaseUnlock()">Upgrade to Pro &bull; £3.99</button>
         </div>
@@ -468,13 +463,6 @@
                 <li>Tap <strong>✕ Reset Pins</strong> at any time to flush your active lines clean.</li>
             </ul>
         </div>
-        <div class="guide-section" style="margin-bottom: 0;">
-            <h3>📏 3. Selecting Tackle & Results</h3>
-            <ul class="guide-list">
-                <li>Select your active <strong>Rod Length</strong> using the dropdown menu below the map.</li>
-                <li>The <strong>Target Geometry</strong> panel instantly displays the exact distance alongside the exact number of wrap revolutions to clip up to on your distance sticks.</li>
-            </ul>
-        </div>
     </div>
 </div>
 
@@ -494,71 +482,68 @@
     let savedLocations = [];
     let searchDebounceTimeout = null;
 
-    // FREEMIUM CONTROL MONITOR MATRIX SWITCH VARIABLE
     let isPremiumUser = false;
 
-    // CONDENSED HYPER-CURATED TOP 20 PREMIUM TACTICAL DATA MATRIX
+    // MULTISPECIES DIVERSIFIED TOP 20 TACTICAL DATA MATRIX
     const PREMIER_FISHERIES_DATA = [
         {
-            id: "linear_oxlease", name: "Linear Fisheries (Oxlease Lake)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire",
-            vibe: "A highly productive 26-acre gravel pit holding over 1,600 carp with an immense head of 30lb and 40lb fish.",
+            id: "linear_oxlease", name: "Linear Fisheries (Oxlease) - Carp", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire",
+            vibe: "Highly productive 26-acre gravel pit holding over 1,600 carp. Responds well to heavy baiting layouts.",
             spots: [
                 { name: "Witney Point (Swim 9) -> Silt Channel", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Fish on a South-Easterly wind. Targets a natural bloodworm silt bed that fish track constantly." },
                 { name: "The Dugout -> Gravel Hump", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Located along deep road bank. Drops right onto a distinct, hard polished gravel hump." }
             ]
         },
         {
-            id: "linear_b1", name: "Linear Fisheries (Brasenose 1)", lat: 51.7165, lng: -1.4245, desc: "Oxfordshire",
+            id: "partridge_match", name: "Partridge Lakes (Covey 5) - Match", lat: 53.4611, lng: -2.5186, desc: "Cheshire",
+            vibe: "The high-profile northern match angling circuit. Narrow canal channels requiring ultimate pole placement finesse.",
+            spots: [
+                { name: "Peg 101 -> Far Mud Bank Shelf", distance_yds: 14.2, peg_lat: 53.4608, peg_lng: -2.5190, spot_lat: 53.4609, spot_lng: -2.5189, advice: "Perfect far-bank transition. Line up a 13.0m pole setup exactly to drop pellets on the shallow mud shelf." }
+            ]
+        },
+        {
+            id: "loch_ken_pred", name: "Loch Ken - Predator/Pike", lat: 55.0485, lng: -4.0125, desc: "Dumfries & Galloway",
+            vibe: "Expansive, wild 9-mile loch system housing true monster predator pike well over the 30lb threshold.",
+            spots: [
+                { name: "Boat House Bay -> Drop-Off Ledge", distance_yds: 45, peg_lat: 55.0480, peg_lng: -4.0130, spot_lat: 55.0483, spot_lng: -4.0122, advice: "Drop a ledgered deadbait mackerel tail right where the shallow weed beds shelf off sharply into the 15ft channel." }
+            ]
+        },
+        {
+            id: "thames_river", name: "River Thames (Clifton Hampden) - River", lat: 51.6442, lng: -1.2115, desc: "Oxfordshire",
+            vibe: "Classic fast-flowing Thames weir block holding powerful specimen barbel, chub, and massive river pike.",
+            spots: [
+                { name: "The Weir Pool -> Gravel Tailcrease", distance_yds: 35, peg_lat: 51.6445, peg_lng: -1.2120, spot_lat: 51.6440, spot_lng: -1.2112, advice: "Cast a heavy feeder or deadbait setup exactly into the boiling crease where fast water shears into the slack eddy." }
+            ]
+        },
+        {
+            id: "linear_b1", name: "Linear Fisheries (Brasenose 1) - Carp", lat: 51.7165, lng: -1.4245, desc: "Oxfordshire",
             vibe: "The ultimate numbers water. Massive depth transitions averaging 14ft. Responds heavily to high-volume spodding.",
             spots: [
-                { name: "First Bay -> Clay Patch", distance_yds: 85, peg_lat: 51.7155, peg_lng: -1.4255, spot_lat: 51.7161, spot_lng: -1.4248, advice: "Shallower water area (around 10ft deep). High attraction spots show rapid bite conversions." },
-                { name: "The Far Spit -> Silt Beds", distance_yds: 110, peg_lat: 51.7172, peg_lng: -1.4230, spot_lat: 51.7168, spot_lng: -1.4245, advice: "Controls massive expanse of open water. Target long-range central channels." }
+                { name: "First Bay -> Clay Patch", distance_yds: 85, peg_lat: 51.7155, peg_lng: -1.4255, spot_lat: 51.7161, spot_lng: -1.4248, advice: "Shallower water area (around 10ft deep). High attraction spots show rapid bite conversions." }
             ]
         },
-        {
-            id: "farlows_l1", name: "Farlows Lake (Lake 1)", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire",
-            vibe: "Historic Colne Valley crown jewel day-ticket mecca. Deeply mature topographies with complex margin shelves.",
-            spots: [
-                { name: "Island Swim -> Margins", distance_yds: 65, peg_lat: 51.5170, peg_lng: -0.5060, spot_lat: 51.5174, spot_lng: -0.5054, advice: "Cast ultra tight under overhanging tree lines on the point of the small island structure." },
-                { name: "Carp Alley -> Deep Channel", distance_yds: 45, peg_lat: 51.5182, peg_lng: -0.5048, spot_lat: 51.5179, spot_lng: -0.5052, advice: "A legendary cold weather winter patrol route holding consistent temperatures." }
-            ]
-        },
-        {
-            id: "sandhurst", name: "Sandhurst Lake", lat: 51.3415, lng: -0.7932, desc: "Berkshire",
-            vibe: "Famous Yateley complex resident. Shallow 14-acre layout averaging 5-7ft depths with sharp sandbars.",
-            spots: [
-                { name: "The Pipes (Peg 31) -> Sandbar", distance_yds: 70, peg_lat: 51.3410, peg_lng: -0.7940, spot_lat: 51.3414, spot_lng: -0.7933, advice: "Prolific warm weather sector spot. Highly reactive to high attraction washed-out singles." },
-                { name: "Secrets (Peg 1) -> Margin Track", distance_yds: 60, peg_lat: 51.3422, peg_lng: -0.7930, spot_lat: 51.3418, spot_lng: -0.7935, advice: "Commanding angle tracking natural wind movements down the historical hedge margins." }
-            ]
-        },
-        {
-            id: "monument", name: "The Monument (RH Fisheries)", lat: 52.6841, lng: -2.3552, desc: "Shropshire",
-            vibe: "Premium engineered specimen pool purpose built to support massive, rapid weight gains and big carp.",
-            spots: [
-                { name: "Christmas Tree -> Gravel Ridge", distance_yds: 70, peg_lat: 52.6836, peg_lng: -2.3559, spot_lat: 52.6840, spot_lng: -2.3551, advice: "The single most consistent sector point on the lake. Spomb instantly after runs to pin shoals." }
-            ]
-        },
-        { id: "drayton", name: "Drayton Reservoir", lat: 52.2682, lng: -1.1735, desc: "Northamptonshire", vibe: "The high-octane pouch-pult capital of England. Heavy surface cruising patterns in summer.", spots: [{ name: "Dam Wall -> Silt Line", distance_yds: 80, peg_lat: 52.2675, peg_lng: -1.1740, spot_lat: 52.2681, spot_lng: -1.1732, advice: "Pouch-pult 8mm pellets continuously over short zig setups to create competitive feeding frenzies." }] },
-        { id: "makins", name: "Makins Fishery (Phase 1)", lat: 52.4937, lng: -1.3912, desc: "Warwickshire", vibe: "Historical home blueprint of modern UK match venues. Complex island cuts and clay drops.", spots: [{ name: "Lake 1 -> Island Shelf", distance_yds: 55, peg_lat: 52.4932, peg_lng: -1.3920, spot_lat: 52.4935, spot_lng: -1.3914, advice: "Method setups with mini wafters dominate patrolling routes along island drops." }] },
-        { id: "barston", name: "Barston Lakes", lat: 52.4172, lng: -1.6881, desc: "West Midlands", vibe: "Colossal 25-acre hybrid venue. Giant bags of skimmers alongside specimen carp past 30lbs.", spots: [{ name: "Golf Course Bank -> Margins", distance_yds: 75, peg_lat: 52.4165, peg_lng: -1.6890, spot_lat: 52.4170, spot_lng: -1.6882, advice: "Cast pellet cones tight to the far reeds. Use heavy baits to bypass match species." }] },
-        { id: "partridge", name: "Partridge Lakes (The Covey)", lat: 53.4611, lng: -2.5186, desc: "Cheshire", vibe: "The absolute northern match epicentre. Narrow canalized designs requiring ultimate pinpoint feeding accuracy.", spots: [{ name: "Covey 5 -> Far Mud Bank", distance_yds: 16, peg_lat: 53.4608, peg_lng: -2.5190, spot_lat: 53.4609, spot_lng: -2.5189, advice: "Ship poles precisely to shallow mud shelves. Loose feed micros sparingly via cad pots." }] },
-        { id: "elphicks", name: "Elphicks Fisheries (North Lake)", lat: 51.1118, lng: 0.4491, desc: "Kent", vibe: "Immaculate Kent complex holding absolute pristine, highly catalogued monster residents to over 50lbs.", spots: [{ name: "Peg 1 -> Island Bushlines", distance_yds: 50, peg_lat: 51.1112, peg_lng: -0.4498, spot_lat: 51.1116, spot_lng: -0.4493, advice: "Strict boilie water focus. High quality food sources fished tightly draw out specimens." }] },
-        { id: "manorfarm", name: "Manor Farm Lakes (Boone's)", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire", vibe: "Beautifully mature Beds complex offering premium gravel transitions and massive lily fields.", spots: [{ name: "Lily Corner -> Pad Margins", distance_yds: 40, peg_lat: 52.0728, peg_lng: -0.2792, spot_lat: 52.0731, spot_lng: -0.2787, advice: "Run light leads with completely slack lines in high clarity margin areas to hide terminal tackle." }] },
-        { id: "buryhill", name: "Bury Hill (The Old Lake)", lat: 51.2185, lng: -0.3475, desc: "Surrey", vibe: "Stunning old English estate layout surrounded by thick forests. Premium tench and ancient mirrors.", spots: [{ name: "Long Bank -> Overhanging Jungle", distance_yds: 80, peg_lat: 51.2178, peg_lng: -0.3482, spot_lat: 51.2183, spot_lng: -0.3476, advice: "Traditional particle strategies pin large traveling bream and tench columns perfectly." }] },
-        { id: "wyreside", name: "Wyreside Lakes (Wyre Lake)", lat: 53.9665, lng: -2.7665, desc: "Lancashire", vibe: "The premier northern day-ticket arena. Wild, cold gravel layout with steep drop-offs.", spots: [{ name: "The Lawn Swim -> Silt Gully", distance_yds: 55, peg_lat: 53.9659, peg_lng: -2.7672, spot_lat: 53.9663, spot_lng: -2.7666, advice: "Find the base of the bars where natural food gathers. Precision tracking is critical here." }] },
-        { id: "larford", name: "Larford Lakes (Specimen)", lat: 52.3275, lng: -2.2514, desc: "Worcestershire", vibe: "Incredible weights captured across all blocks. Deep water bowls that react violently to wind changes.", spots: [{ name: "Chalet Bank -> Sunken Island", distance_yds: 60, peg_lat: 52.3269, peg_lng: -2.2522, spot_lat: 52.3273, spot_lng: -2.2516, advice: "If bottom setups dry up, deploy a pellet waggler shallow to secure rapid tracking strikes." }] },
-        { id: "todber", name: "Todber Manor (Big Fowler)", lat: 50.9785, lng: -2.3115, desc: "Dorset", vibe: "The South West's flagship fast action runs lake. Thick stocking density keeps action high year round.", spots: [{ name: "Peg 1 Corner -> Reed Feature", distance_yds: 35, peg_lat: 50.9779, peg_lng: -2.3122, spot_lat: 50.9783, spot_lng: -2.3117, advice: "Solid PVA bags packed with mixed pellets and neon dumbbell wafters convert instantly." }] },
-        { id: "tunnelbarn", name: "Tunnel Barn Farm (Extension)", lat: 52.2985, lng: -1.6885, desc: "Warwickshire", vibe: "Immaculate custom match canals. Elite winter venue where small details differentiate bags.", spots: [{ name: "Peg 7 -> Far Shelf Track", distance_yds: 14, peg_lat: 52.2980, peg_lng: -1.6892, spot_lat: 52.2983, spot_lng: -1.6887, advice: "Deploy hyper light wire hooks and light pole lines. Cad pot freebies directly on float tips." }] },
-        { id: "orchid", name: "Orchid Lakes", lat: 51.6571, lng: -1.1632, desc: "Oxfordshire", vibe: "The historic 'Home of the Log Cabin'. Ancient oak trees surround old heavily scaled mirrors.", spots: [{ name: "Log Cabin Swim -> Gravel Bar", distance_yds: 55, peg_lat: 51.6565, peg_lng: -1.1640, spot_lat: 51.6569, spot_lng: -1.1634, advice: "Nut food source boilies track well across 48hr sessions to pull fish from central silt fields." }] },
-        { id: "coombe", name: "Coombe Abbey Pool", lat: 52.4116, lng: -1.4172, desc: "Warwickshire", vibe: "Massive 80-acre ancient landscape pool. Challenging silty basins tracking large roaming packs.", spots: [{ name: "Deep Track -> Old River Bed", distance_yds: 80, peg_lat: 52.4110, peg_lng: -1.4180, spot_lat: 52.4114, spot_lng: -1.4174, advice: "Heavily pre-bait particles to anchor roaming columns inside historical river seams." }] },
-        { id: "walthamstow", name: "Walthamstow Reservoirs (No. 1/2)", lat: 51.5832, lng: -0.0461, desc: "North London", vibe: "Gritty, wind-swept concrete bowls holding massive urban historical monsters. Closely follows wind patterns.", spots: [{ name: "Island Channel -> Drop-Off", distance_yds: 90, peg_lat: 51.5826, peg_lng: -0.0469, spot_lat: 51.5830, spot_lng: -0.0463, advice: "If heavy gales lash the concrete banks, fish short right at your feet in the crashing undertow." }] },
-        { id: "heronbrook", name: "Heronbrook Fisheries", lat: 52.9552, lng: -2.3251, desc: "Staffordshire", vibe: "Beautifully maintained match maze. High island distributions providing incredibly consistent returns.", spots: [{ name: "Peg 12 -> Island Shelf Point", distance_yds: 45, peg_lat: 52.9546, peg_lng: -2.3259, spot_lat: 52.9550, spot_lng: -2.3253, advice: "Juggle lines between far island steps and close margin vegetation fields dynamically." }] }
+        { id: "farlows_l1", name: "Farlows Lake (Lake 1) - Carp", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire", vibe: "Historic Colne Valley mecca. Deeply mature topographies with complex margin shelves.", spots: [{ name: "Island Swim -> Margins", distance_yds: 65, peg_lat: 51.5170, peg_lng: -0.5060, spot_lat: 51.5174, spot_lng: -0.5054, advice: "Cast ultra tight under overhanging tree lines on the point of the small island structure." }] },
+        { id: "sandhurst", name: "Sandhurst Lake - Carp", lat: 51.3415, lng: -0.7932, desc: "Berkshire", vibe: "Famous Yateley complex resident. Shallow 14-acre layout averaging 5-7ft depths with sharp sandbars.", spots: [{ name: "The Pipes (Peg 31) -> Sandbar", distance_yds: 70, peg_lat: 51.3410, peg_lng: -0.7940, spot_lat: 51.3414, spot_lng: -0.7933, advice: "Prolific warm weather sector spot. Highly reactive to high attraction washed-out singles." }] },
+        { id: "monument", name: "The Monument (RH Fisheries) - Carp", lat: 52.6841, lng: -2.3552, desc: "Shropshire", vibe: "Premium engineered specimen pool purpose built to support massive, rapid weight gains and big carp.", spots: [{ name: "Christmas Tree -> Gravel Ridge", distance_yds: 70, peg_lat: 52.6836, peg_lng: -2.3559, spot_lat: 52.6840, spot_lng: -2.3551, advice: "The single most consistent sector point on the lake. Spomb instantly after runs to pin shoals." }] },
+        { id: "drayton", name: "Drayton Reservoir - Carp", lat: 52.2682, lng: -1.1735, desc: "Northamptonshire", vibe: "The high-octane pouch-pult capital of England. Heavy surface cruising patterns in summer.", spots: [{ name: "Dam Wall -> Silt Line", distance_yds: 80, peg_lat: 52.2675, peg_lng: -1.1740, spot_lat: 52.2681, spot_lng: -1.1732, advice: "Pouch-pult 8mm pellets continuously over short zig setups to create competitive feeding frenzies." }] },
+        { id: "makins", name: "Makins Fishery (Phase 1) - Match", lat: 52.4937, lng: -1.3912, desc: "Warwickshire", vibe: "Historical home blueprint of modern UK match venues. Complex island cuts and clay drops.", spots: [{ name: "Lake 1 -> Island Shelf", distance_yds: 55, peg_lat: 52.4932, peg_lng: -1.3920, spot_lat: 52.4935, spot_lng: -1.3914, advice: "Method setups with mini wafters dominate patrolling routes along island drops." }] },
+        { id: "barston", name: "Barston Lakes - Match", lat: 52.4172, lng: -1.6881, desc: "West Midlands", vibe: "Colossal 25-acre hybrid venue. Giant bags of skimmers alongside specimen carp past 30lbs.", spots: [{ name: "Golf Course Bank -> Margins", distance_yds: 75, peg_lat: 52.4165, peg_lng: -1.6890, spot_lat: 52.4170, spot_lng: -1.6882, advice: "Cast pellet cones tight to the far reeds. Use heavy baits to bypass match species." }] },
+        { id: "elphicks", name: "Elphicks Fisheries (North Lake) - Carp", lat: 51.1118, lng: 0.4491, desc: "Kent", vibe: "Immaculate Kent complex holding absolute pristine, highly catalogued monster residents to over 50lbs.", spots: [{ name: "Peg 1 -> Island Bushlines", distance_yds: 50, peg_lat: 51.1112, peg_lng: -0.4498, spot_lat: 51.1116, spot_lng: -0.4493, advice: "Strict boilie water focus. High quality food sources fished tightly draw out specimens." }] },
+        { id: "manorfarm", name: "Manor Farm Lakes (Boone's) - Carp", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire", vibe: "Beautifully mature Beds complex offering premium gravel transitions and massive lily fields.", spots: [{ name: "Lily Corner -> Pad Margins", distance_yds: 40, peg_lat: 52.0728, peg_lng: -0.2792, spot_lat: 52.0731, spot_lng: -0.2787, advice: "Run light leads with completely slack lines in high clarity margin areas to hide terminal tackle." }] },
+        { id: "buryhill", name: "Bury Hill (The Old Lake) - Match", lat: 51.2185, lng: -0.3475, desc: "Surrey", vibe: "Stunning old English estate layout surrounded by thick forests. Premium tench and ancient mirrors.", spots: [{ name: "Long Bank -> Overhanging Jungle", distance_yds: 80, peg_lat: 51.2178, peg_lng: -0.3482, spot_lat: 51.2183, spot_lng: -0.3476, advice: "Traditional particle strategies pin large traveling bream and tench columns perfectly." }] },
+        { id: "wyreside", name: "Wyreside Lakes (Wyre Lake) - Carp", lat: 53.9665, lng: -2.7665, desc: "Lancashire", vibe: "The premier northern day-ticket arena. Wild, cold gravel layout with steep drop-offs.", spots: [{ name: "The Lawn Swim -> Silt Gully", distance_yds: 55, peg_lat: 53.9659, peg_lng: -2.7672, spot_lat: 53.9663, spot_lng: -2.7666, advice: "Find the base of the bars where natural food gathers. Precision tracking is critical here." }] },
+        { id: "larford", name: "Larford Lakes (Specimen) - Match", lat: 52.3275, lng: -2.2514, desc: "Worcestershire", vibe: "Incredible weights captured across all blocks. Deep water bowls that react violently to wind changes.", spots: [{ name: "Chalet Bank -> Sunken Island", distance_yds: 60, peg_lat: 52.3269, peg_lng: -2.2522, spot_lat: 52.3273, spot_lng: -2.2516, advice: "If bottom setups dry up, deploy a pellet waggler shallow to secure rapid tracking strikes." }] },
+        { id: "todber", name: "Todber Manor (Big Fowler) - Carp", lat: 50.9785, lng: -2.3115, desc: "Dorset", vibe: "The South West's flagship fast action runs lake. Thick stocking density keeps action high year round.", spots: [{ name: "Peg 1 Corner -> Reed Feature", distance_yds: 35, peg_lat: 50.9779, peg_lng: -2.3122, spot_lat: 50.9783, spot_lng: -2.3117, advice: "Solid PVA bags packed with mixed pellets and neon dumbbell wafters convert instantly." }] },
+        { id: "tunnelbarn", name: "Tunnel Barn Farm (Extension) - Match", lat: 52.2985, lng: -1.6885, desc: "Warwickshire", vibe: "Immaculate custom match canals. Elite winter venue where small details differentiate bags.", spots: [{ name: "Peg 7 -> Far Shelf Track", distance_yds: 14, peg_lat: 52.2980, peg_lng: -1.6892, spot_lat: 52.2983, spot_lng: -1.6887, advice: "Deploy hyper light wire hooks and light pole lines. Cad pot freebies directly on float tips." }] },
+        { id: "orchid", name: "Orchid Lakes - Carp", lat: 51.6571, lng: -1.1632, desc: "Oxfordshire", vibe: "The historic 'Home of the Log Cabin'. Ancient oak trees surround old heavily scaled mirrors.", spots: [{ name: "Log Cabin Swim -> Gravel Bar", distance_yds: 55, peg_lat: 51.6565, peg_lng: -1.1640, spot_lat: 51.6569, spot_lng: -1.1634, advice: "Nut food source boilies track well across 48hr sessions to pull fish from central silt fields." }] },
+        { id: "coombe", name: "Coombe Abbey Pool - Match", lat: 52.4116, lng: -1.4172, desc: "Warwickshire", vibe: "Massive 80-acre ancient landscape pool. Challenging silty basins tracking large roaming packs.", spots: [{ name: "Deep Track -> Old River Bed", distance_yds: 80, peg_lat: 52.4110, peg_lng: -1.4180, spot_lat: 52.4114, spot_lng: -1.4174, advice: "Heavily pre-bait particles to anchor roaming columns inside historical river seams." }] }
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
         initSatelliteMap();
         loadSavedLocationsFromCache();
         setupSearchSuggestionsEngine();
+        populateTackleOptionsBox(); // Initial load for default carp
         
         setTimeout(() => {
             const splash = document.getElementById('appSplashScreenFrame');
@@ -569,67 +554,81 @@
     });
 
     function initSatelliteMap() {
-        const defaultLat = 51.884;
-        const defaultLng = -0.520;
+        const defaultLat = 51.884; const defaultLng = -0.520;
         map = L.map('satelliteMap', { center: [defaultLat, defaultLng], zoom: 16, zoomControl: false, attributionControl: false });
-
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 19, maxNativeZoom: 19
-        }).addTo(map);
-
-        map.on('click', (e) => {
-            if (isMapLocked || activePlacementMode === 'none') return;
-            handleMapInteraction(e.latlng);
-        });
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 19 }).addTo(map);
+        map.on('click', (e) => { if (isMapLocked || activePlacementMode === 'none') return; handleMapInteraction(e.latlng); });
         lockMapInteractions();
     }
 
-    function lockMapInteractions() {
-        map.dragging.disable(); map.touchZoom.disable(); map.doubleClickZoom.disable(); map.scrollWheelZoom.disable(); map.boxZoom.disable(); map.keyboard.disable(); if (map.tap) map.tap.disable();
+    function lockMapInteractions() { map.dragging.disable(); map.touchZoom.disable(); map.doubleClickZoom.disable(); map.scrollWheelZoom.disable(); map.boxZoom.disable(); map.keyboard.disable(); if (map.tap) map.tap.disable(); }
+    function unlockMapInteractions() { map.dragging.enable(); map.touchZoom.enable(); map.doubleClickZoom.enable(); map.scrollWheelZoom.enable(); map.boxZoom.enable(); map.keyboard.enable(); if (map.tap) map.tap.enable(); }
+
+    // DYNAMIC MULTISPECIES TACKLE SELECTION DICTIONARIES
+    function handleAnglingStyleChange() {
+        populateTackleOptionsBox();
+        clearActiveMapPins();
     }
 
-    function unlockMapInteractions() {
-        map.dragging.enable(); map.touchZoom.enable(); map.doubleClickZoom.enable(); map.scrollWheelZoom.enable(); map.boxZoom.enable(); map.keyboard.enable(); if (map.tap) map.tap.disable();
-    }
+    function populateTackleOptionsBox() {
+        const style = document.getElementById('anglingStyle').value;
+        const dropdown = document.getElementById('rodLength');
+        const label = document.getElementById('tackleBoxLabel');
+        const customInput = document.getElementById('customRodInput');
+        
+        dropdown.innerHTML = '';
+        customInput.style.display = 'none';
+        customInput.value = '';
 
-    // MONETIZATION TESTING SUITE INTERACTIVE CHANGER
-    function toggleTestingTierMode() {
-        isPremiumUser = !isPremiumUser;
-        const badge = document.getElementById('tierStatusBadge');
-        if (isPremiumUser) {
-            badge.className = "tier-badge pro"; badge.innerText = "Pro Version Unlocked";
-        } else {
-            badge.className = "tier-badge free"; badge.innerText = "Free Version";
-            document.getElementById('rodLength').value = "12";
-            handleRodLengthSelectionChange();
-            document.getElementById('tacticalHotspotPanel').style.display = 'none';
+        if (style === 'carp') {
+            label.innerText = "ROD LENGTH";
+            dropdown.innerHTML = `
+                <option value="9">9 ft (Premium)</option>
+                <option value="10">10 ft (Premium)</option>
+                <option value="11">11 ft (Premium)</option>
+                <option value="12" selected>12 ft (Free Starter)</option>
+                <option value="13">13 ft (Premium)</option>
+                <option value="custom">Custom Dimensions... (Premium)</option>
+            `;
+            document.getElementById('resultBoxTitle').innerText = "Target Geometry";
+        } else if (style === 'match') {
+            label.innerText = "POLE / FEEDER EXTENSION LENGTH";
+            dropdown.innerHTML = `
+                <option value="13" selected>13.0 Meters (Free Starter)</option>
+                <option value="8.5">8.5 Meters (Premium)</option>
+                <option value="11">11.0 Meters (Premium)</option>
+                <option value="14.5">14.5 Meters (Premium)</option>
+                <option value="16">16.0 Meters (Premium)</option>
+                <option value="custom">Custom Pole Reach... (Premium)</option>
+            `;
+            document.getElementById('resultBoxTitle').innerText = "Match Logistics Matrix";
+        } else if (style === 'predator') {
+            label.innerText = "PREDATOR LEAD LINE REACH";
+            dropdown.innerHTML = `
+                <option value="12" selected>Standard Ledger Setup (Free)</option>
+                <option value="custom">Custom Casting Range... (Premium)</option>
+            `;
+            document.getElementById('resultBoxTitle').innerText = "Predator Structural Geometry";
         }
+        calculateWraps();
     }
 
-    function togglePaywallModal(show) {
-        document.getElementById('premiumPaywallModalOverlay').style.display = show ? 'flex' : 'none';
-    }
-
-    function simulatePremiumPurchaseUnlock() {
-        togglePaywallModal(false);
-        isPremiumUser = false; 
-        toggleTestingTierMode(); // Safely fires master unlock states
-        alert("Transaction simulation complete! All Premium systems unlocked.");
-    }
-
-    function handleRodLengthSelectionChange() {
+    function handleTackleSelectionChange() {
+        const style = document.getElementById('anglingStyle').value;
         const value = document.getElementById('rodLength').value;
         const customInput = document.getElementById('customRodInput');
 
-        if (!isPremiumUser && value !== "12") {
-            togglePaywallModal(true);
-            document.getElementById('rodLength').value = "12";
-            customInput.style.display = 'none';
-            return;
+        // Free tier lock checks
+        if (!isPremiumUser) {
+            if (style === 'carp' && value !== "12") { togglePaywallModal(true); document.getElementById('rodLength').value = "12"; return; }
+            if (style === 'match' && value !== "13") { togglePaywallModal(true); document.getElementById('rodLength').value = "13"; return; }
+            if (style === 'predator' && value === "custom") { togglePaywallModal(true); document.getElementById('rodLength').value = "12"; return; }
         }
 
         if (value === 'custom') {
             customInput.style.display = 'block';
+            if (style === 'match') customInput.placeholder = "Enter custom pole length in meters (e.g. 14.2)";
+            else customInput.placeholder = "Enter target reach dimensions in feet (e.g. 12.6)";
             customInput.focus();
         } else {
             customInput.style.display = 'none';
@@ -637,62 +636,14 @@
         }
     }
 
-    function toggleWalkthroughModal(show) { document.getElementById('walkthroughModalOverlay').style.display = show ? 'flex' : 'none'; }
-
-    function switchNavMode(targetMode) {
-        currentNavMode = targetMode;
-        const findBtn = document.getElementById('navFindBtn');
-        const savedBtn = document.getElementById('navSavedBtn');
-        const premierBtn = document.getElementById('navPremierBtn');
-        const overlay = document.getElementById('savedOverlayPanel');
-        const overlayTitle = document.getElementById('overlayPanelTitle');
-
-        findBtn.className = "nav-btn"; savedBtn.className = "nav-btn"; premierBtn.className = "nav-btn";
-
-        if (targetMode === 'find') {
-            findBtn.className = "nav-btn active-tab"; overlay.style.display = 'none';
-        } else if (targetMode === 'saved') {
-            savedBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "Your Saved Venues"; overlay.style.display = 'flex';
-            if (!isMapLocked) toggleSafetyLock();
-            renderSavedLocationItems();
-        } else if (targetMode === 'premier') {
-            premierBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "UK Premier Fisheries"; overlay.style.display = 'flex';
-            if (!isMapLocked) toggleSafetyLock();
-            renderPremierFisheriesItems();
-        }
-    }
-
-    function handleMapInteraction(latlng) {
-        if (activePlacementMode === 'peg') { pegLatLng = latlng; } else if (activePlacementMode === 'spot') { spotLatLng = latlng; }
-        renderMapGraphicsLayers(); calculateWraps(); resetPlacementState();
-    }
-
-    function renderMapGraphicsLayers() {
-        const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim();
-        const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim();
-        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-
-        if (pegMarker) map.removeLayer(pegMarker); if (spotMarker) map.removeLayer(spotMarker); if (flightPathLine) map.removeLayer(flightPathLine);
-
-        if (pegLatLng) {
-            const pegHtml = `<div style="background-color: ${pegColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
-            pegMarker = L.marker(pegLatLng, { icon: L.divIcon({ html: pegHtml, iconSize: [12, 12], iconAnchor: [6, 6] }) }).addTo(map);
-        }
-        if (spotLatLng) {
-            const spotHtml = `<div style="background-color: ${spotColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`;
-            spotMarker = L.marker(spotLatLng, { icon: L.divIcon({ html: spotHtml, iconSize: [12, 12], iconAnchor: [6, 6] }) }).addTo(map);
-        }
-        if (pegLatLng && spotLatLng) {
-            flightPathLine = L.polyline([pegLatLng, spotLatLng], { color: accentColor, weight: 3, opacity: 0.9, lineCap: 'round' }).addTo(map);
-        }
-    }
-
+    // MULTISPECIES MATH COMPILATION MATRIX
     function calculateWraps() {
         if (!pegLatLng || !spotLatLng) return;
 
-        let rodLength = parseFloat(document.getElementById('rodLength').value);
+        const style = document.getElementById('anglingStyle').value;
+        let tackleSize = parseFloat(document.getElementById('rodLength').value);
         if (document.getElementById('rodLength').value === 'custom') {
-            rodLength = parseFloat(document.getElementById('customRodInput').value) || 12;
+            tackleSize = parseFloat(document.getElementById('customRodInput').value) || 12;
         }
 
         const R = 6371000; 
@@ -701,37 +652,74 @@
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(pegLatLng.lat * Math.PI / 180) * Math.cos(spotLatLng.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         const calculatedMetres = R * c; 
-
         const calculatedTotalFeet = calculatedMetres / 0.3048;
-        const fullWraps = Math.floor(calculatedTotalFeet / rodLength);
-        const remainingFeet = calculatedTotalFeet % rodLength;
+        const calculatedYards = calculatedMetres * 1.09361;
 
-        document.getElementById('resultDistance').innerText = `Distance: ${calculatedMetres.toFixed(1)}m (${(calculatedMetres * 1.09361).toFixed(1)}yds)`;
+        document.getElementById('resultDistance').innerText = `Distance: ${calculatedMetres.toFixed(1)}m (${calculatedYards.toFixed(1)}yds)`;
 
-        let outputText = `${fullWraps} wrap${fullWraps !== 1 ? 's' : ''}`;
-        if (remainingFeet > 0.05) { outputText += ` + ${remainingFeet.toFixed(1)} ft`; }
-        document.getElementById('resultValue').innerText = outputText;
+        if (style === 'carp') {
+            const fullWraps = Math.floor(calculatedTotalFeet / tackleSize);
+            const remainingFeet = calculatedTotalFeet % tackleSize;
+            let text = `${fullWraps} wrap${fullWraps !== 1 ? 's' : ''}`;
+            if (remainingFeet > 0.05) text += ` + ${remainingFeet.toFixed(1)} ft`;
+            document.getElementById('resultValue').innerText = text;
 
-        if (remainingFeet > 0.05) {
-            const shortOfStick = rodLength - remainingFeet;
-            document.getElementById('resultNote').innerText = `Target spot is ${calculatedMetres.toFixed(2)}m away.\nOn wrap ${fullWraps + 1}, stop ${shortOfStick.toFixed(1)} ft short of the opposite stick.`;
-        } else {
-            document.getElementById('resultNote').innerText = `Target spot is ${calculatedMetres.toFixed(2)}m away.\nExactly hit your stick mark on wrap ${fullWraps}.`;
+            if (remainingFeet > 0.05) {
+                document.getElementById('resultNote').innerText = `Target spot is ${calculatedMetres.toFixed(2)}m away.\nOn wrap ${fullWraps + 1}, stop ${(tackleSize - remainingFeet).toFixed(1)} ft short of your opposite distance stick.`;
+            } else {
+                document.getElementById('resultNote').innerText = `Target spot is ${calculatedMetres.toFixed(2)}m away.\nHit your stick clip cleanly on wrap ${fullWraps}.`;
+            }
+        } 
+        else if (style === 'match') {
+            // Pole Length Conversion Logic
+            document.getElementById('resultValue').innerText = `${calculatedMetres.toFixed(1)} Meters`;
+            const sectionsRequired = Math.ceil(calculatedMetres / 1.6); // Generates average section count
+            document.getElementById('resultNote').innerText = `Precision pole line reach detected.\nTo match this line completely, you will need approximately ${sectionsRequired} full carbon sections pieced together to drop onto the spot.`;
+        } 
+        else if (style === 'predator') {
+            // Predator/River Yards Output System
+            document.getElementById('resultValue').innerText = `${Math.floor(calculatedYards)} yds + ${(calculatedTotalFeet % 3).toFixed(1)} ft`;
+            document.getElementById('resultNote').innerText = `River ledger / Predator deployment telemetry.\nLine length requires exactly ${calculatedYards.toFixed(1)} yards of trace release to reach this specific underwater structure safely.`;
         }
     }
 
+    function toggleTestingTierMode() {
+        isPremiumUser = !isPremiumUser;
+        const badge = document.getElementById('tierStatusBadge');
+        if (isPremiumUser) { badge.className = "tier-badge pro"; badge.innerText = "Pro Version Unlocked"; } 
+        else {
+            badge.className = "tier-badge free"; badge.innerText = "Free Version";
+            document.getElementById('anglingStyle').value = "carp";
+            populateTackleOptionsBox();
+            document.getElementById('tacticalHotspotPanel').style.display = 'none';
+        }
+    }
+
+    function togglePaywallModal(show) { document.getElementById('premiumPaywallModalOverlay').style.display = show ? 'flex' : 'none'; }
+    function simulatePremiumPurchaseUnlock() { togglePaywallModal(false); isPremiumUser = false; toggleTestingTierMode(); alert("Pro unlocked for testing!"); }
+
+    function switchNavMode(targetMode) {
+        currentNavMode = targetMode;
+        const findBtn = document.getElementById('navFindBtn'); const savedBtn = document.getElementById('navSavedBtn'); const premierBtn = document.getElementById('navPremierBtn'); const overlay = document.getElementById('savedOverlayPanel'); const overlayTitle = document.getElementById('overlayPanelTitle');
+        findBtn.className = "nav-btn"; savedBtn.className = "nav-btn"; premierBtn.className = "nav-btn";
+        if (targetMode === 'find') { findBtn.className = "nav-btn active-tab"; overlay.style.display = 'none'; } 
+        else if (targetMode === 'saved') { savedBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "Your Saved Venues"; overlay.style.display = 'flex'; if (!isMapLocked) toggleSafetyLock(); renderSavedLocationItems(); } 
+        else if (targetMode === 'premier') { premierBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "UK Premier Fisheries"; overlay.style.display = 'flex'; if (!isMapLocked) toggleSafetyLock(); renderPremierFisheriesItems(); }
+    }
+
+    function handleMapInteraction(latlng) { if (activePlacementMode === 'peg') { pegLatLng = latlng; } else if (activePlacementMode === 'spot') { spotLatLng = latlng; } renderMapGraphicsLayers(); calculateWraps(); resetPlacementState(); }
+
+    function renderMapGraphicsLayers() {
+        const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim(); const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim(); const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        if (pegMarker) map.removeLayer(pegMarker); if (spotMarker) map.removeLayer(spotMarker); if (flightPathLine) map.removeLayer(flightPathLine);
+        if (pegLatLng) { const pegHtml = `<div style="background-color: ${pegColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`; pegMarker = L.marker(pegLatLng, { icon: L.divIcon({ html: pegHtml, iconSize: [12, 12], iconAnchor: [6, 6] }) }).addTo(map); }
+        if (spotLatLng) { const spotHtml = `<div style="background-color: ${spotColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(0,0,0,0.8);"></div>`; spotMarker = L.marker(spotLatLng, { icon: L.divIcon({ html: spotHtml, iconSize: [12, 12], iconAnchor: [6, 6] }) }).addTo(map); }
+        if (pegLatLng && spotLatLng) { flightPathLine = L.polyline([pegLatLng, spotLatLng], { color: accentColor, weight: 3, opacity: 0.9, lineCap: 'round' }).addTo(map); }
+    }
+
     function fetchDeviceLocation() {
-        if (!navigator.geolocation) { alert("Geolocation not supported."); return; }
-        document.getElementById('instructionText').innerText = "🛰️ Querying satellite telemetry array...";
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                map.setView([position.coords.latitude, position.coords.longitude], 18);
-                document.getElementById('instructionText').innerText = "Location locked via GPS array.";
-                setTimeout(resetPlacementState, 2000);
-            },
-            (error) => { alert("GPS failure: " + error.message); resetPlacementState(); },
-            { enableHighAccuracy: true, timeout: 10000 }
-        );
+        if (!navigator.geolocation) { alert("Geolocation error."); return; }
+        navigator.geolocation.getCurrentPosition((position) => { map.setView([position.coords.latitude, position.coords.longitude], 18); }, (e) => { alert(e.message); }, { enableHighAccuracy: true, timeout: 10000 });
     }
 
     function setupSearchSuggestionsEngine() {
@@ -747,43 +735,34 @@
                         box.innerHTML = '';
                         data.forEach(item => {
                             const div = document.createElement('div'); div.className = 'suggestion-item'; div.innerText = item.display_name;
-                            div.onclick = () => {
-                                map.setView([parseFloat(item.lat), parseFloat(item.lon)], 17);
-                                input.value = item.display_name; box.innerHTML = ''; box.style.display = 'none';
-                                document.getElementById('instructionText').innerText = "Moved map onto location.";
-                                setTimeout(resetPlacementState, 2000);
-                            };
+                            div.onclick = () => { map.setView([parseFloat(item.lat), parseFloat(item.lon)], 17); input.value = item.display_name; box.innerHTML = ''; box.style.display = 'none'; };
                             box.appendChild(div);
                         });
                         box.style.display = 'block';
-                    } else { box.innerHTML = ''; box.style.display = 'none'; }
+                    }
                 } catch (e) { console.error(e); }
             }, 450); 
         });
-        document.addEventListener('click', (e) => { if (e.target !== input && e.target !== box) { box.innerHTML = ''; box.style.display = 'none'; } });
     }
 
-    function clearInputFieldQuickly() { const input = document.getElementById('searchInput'); const box = document.getElementById('suggestionsBox'); input.value = ''; box.innerHTML = ''; box.style.display = 'none'; input.focus(); }
-    function clearActiveMapPins() { pegLatLng = null; spotLatLng = null; renderMapGraphicsLayers(); clearResultsDisplay(); document.getElementById('instructionText').innerText = "Pins reset."; setTimeout(resetPlacementState, 1500); }
+    function clearInputFieldQuickly() { document.getElementById('searchInput').value = ''; document.getElementById('suggestionsBox').style.display = 'none'; }
+    function clearActiveMapPins() { pegLatLng = null; spotLatLng = null; renderMapGraphicsLayers(); clearResultsDisplay(); }
 
     function promptSaveCurrentLocation() {
         if (!isPremiumUser) { togglePaywallModal(true); return; }
-        const currentCenter = map.getCenter(); const currentZoom = map.getZoom();
-        const locationName = prompt("Enter a memorable tag name for this venue position:");
-        if (!locationName || !locationName.trim()) return;
-
-        const record = { id: 'loc_' + Date.now(), name: locationName.trim(), lat: currentCenter.lat, lng: currentCenter.lng, zoom: currentZoom, pegLatLng: pegLatLng, spotLatLng: spotLatLng };
-        savedLocations.push(record); localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations)); alert("Location saved");
+        const name = prompt("Name this spot record:"); if (!name) return;
+        savedLocations.push({ id: 'loc_' + Date.now(), name: name.trim(), lat: map.getCenter().lat, lng: map.getCenter().lng, zoom: map.getZoom(), pegLatLng, spotLatLng });
+        localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations));
     }
 
-    function loadSavedLocationsFromCache() { const cached = localStorage.getItem('hedge_saved_maps_cache'); if (cached) { try { savedLocations = JSON.parse(cached); } catch(e) { savedLocations = []; } } }
+    function loadSavedLocationsFromCache() { const cached = localStorage.getItem('hedge_saved_maps_cache'); if (cached) { try { savedLocations = JSON.parse(cached); } catch(e) {} } }
 
     function renderSavedLocationItems() {
         const container = document.getElementById('locationListContainer'); container.innerHTML = '';
-        if (savedLocations.length === 0) { container.innerHTML = '<div class="no-locations-msg">No custom locations saved. Move map and hit Save.</div>'; return; }
+        if (savedLocations.length === 0) { container.innerHTML = '<div class="no-locations-msg">No custom coordinate locations saved yet.</div>'; return; }
         savedLocations.forEach(loc => {
             const row = document.createElement('div'); row.className = 'location-item'; row.onclick = () => selectAndFlyToSavedLocation(loc.id);
-            row.innerHTML = `<div class="location-info"><div class="location-name">${loc.name}</div><div class="location-coords">Lat: ${loc.lat.toFixed(4)}, Lng: ${loc.lng.toFixed(4)}</div></div><button class="delete-loc-btn" onclick="event.stopPropagation(); deleteSavedLocationItem('${loc.id}')">✕</button>`;
+            row.innerHTML = `<div class="location-info"><div class="location-name">${loc.name}</div></div><button class="delete-loc-btn" onclick="event.stopPropagation(); deleteSavedLocationItem('${loc.id}')">✕</button>`;
             container.appendChild(row);
         });
     }
@@ -791,110 +770,42 @@
     function renderPremierFisheriesItems() {
         const container = document.getElementById('locationListContainer'); container.innerHTML = '';
         PREMIER_FISHERIES_DATA.forEach(venue => {
-            const row = document.createElement('div'); row.className = 'location-item';
-            row.onclick = () => flyToPremierFisheryVector(venue);
-            row.innerHTML = `<div class="location-info"><div class="location-name">${venue.name}</div><div class="location-coords">${venue.desc} &bull; Top 20 Premium</div></div><div style="color: var(--premium-gold); font-weight: bold; font-size: 0.9rem;">👑</div>`;
+            const row = document.createElement('div'); row.className = 'location-item'; row.onclick = () => flyToPremierFisheryVector(venue);
+            row.innerHTML = `<div class="location-info"><div class="location-name">${venue.name}</div><div class="location-coords">${venue.desc}</div></div><div style="color: var(--premium-gold);">👑</div>`;
             container.appendChild(row);
         });
     }
 
     function flyToPremierFisheryVector(venue) {
         if (!isPremiumUser) { togglePaywallModal(true); return; }
-
-        map.setView([venue.lat, venue.lng], 16);
-        pegLatLng = null; spotLatLng = null;
-        renderMapGraphicsLayers(); clearResultsDisplay();
-        switchNavMode('find');
-
-        // Dynamically populate the premium hotspots panel
-        const panel = document.getElementById('tacticalHotspotPanel');
-        const dropdown = document.getElementById('tacticalSpotsDropdown');
-        dropdown.innerHTML = '<option value="">-- Choose a Swimming Hot Spot --</option>';
-
-        venue.spots.forEach((spot, idx) => {
-            const opt = document.createElement('option');
-            opt.value = idx;
-            opt.innerText = spot.name;
-            dropdown.appendChild(opt);
-        });
-
-        // Cache the active venue reference on the dropdown element memory bank
-        dropdown.activeVenueRef = venue;
-        panel.style.display = 'flex';
-
-        document.getElementById('instructionText').innerText = "Loaded " + venue.name + ". Select a tactical hotspot below!";
+        map.setView([venue.lat, venue.lng], 16); pegLatLng = null; spotLatLng = null; renderMapGraphicsLayers(); clearResultsDisplay(); switchNavMode('find');
+        const panel = document.getElementById('tacticalHotspotPanel'); const dropdown = document.getElementById('tacticalSpotsDropdown');
+        dropdown.innerHTML = '<option value="">-- Choose a Tactical Hot Spot --</option>';
+        venue.spots.forEach((spot, idx) => { const opt = document.createElement('option'); opt.value = idx; opt.innerText = spot.name; dropdown.appendChild(opt); });
+        dropdown.activeVenueRef = venue; panel.style.display = 'flex';
     }
 
-    // PREMIUM SYSTEM: AUTOMATIC MARKER PLACEMENT FOR TACTICAL SPOTS
     function loadSelectedTacticalSpotLine() {
-        const dropdown = document.getElementById('tacticalSpotsDropdown');
-        const venue = dropdown.activeVenueRef;
-        const selectedIdx = dropdown.value;
-
-        if (selectedIdx === "" || !venue) return;
-        const spot = venue.spots[selectedIdx];
-
-        // Automatic vector placement logic overrides manual clicks cleanly
-        pegLatLng = L.latLng(spot.peg_lat, spot.peg_lng);
-        spotLatLng = L.latLng(spot.spot_lat, spot.spot_lng);
-
-        renderMapGraphicsLayers();
-        calculateWraps();
-
-        // Enforce focus directly onto the targeting line matrix
+        const dropdown = document.getElementById('tacticalSpotsDropdown'); const venue = dropdown.activeVenueRef; const idx = dropdown.value;
+        if (idx === "" || !venue) return; const spot = venue.spots[idx];
+        pegLatLng = L.latLng(spot.peg_lat, spot.peg_lng); spotLatLng = L.latLng(spot.spot_lat, spot.spot_lng);
+        renderMapGraphicsLayers(); calculateWraps();
         map.fitBounds(L.polyline([pegLatLng, spotLatLng]).getBounds(), { padding: [40, 40] });
-
-        // Populate bank readout container with advanced advice strings
         document.getElementById('resultNote').innerText = `👑 PRO TACTICAL LINE:\n${venue.vibe}\n\nSWIM ADVICE:\n${spot.advice}`;
     }
 
-    function selectAndFlyToSavedLocation(locationId) {
-        const loc = savedLocations.find(l => l.id === locationId); if (!loc) return;
-        map.setView([loc.lat, loc.lng], loc.zoom || 17);
-        pegLatLng = loc.pegLatLng ? L.latLng(loc.pegLatLng.lat, loc.pegLatLng.lng) : null;
-        spotLatLng = loc.spotLatLng ? L.latLng(loc.spotLatLng.lat, loc.spotLatLng.lng) : null;
-        renderMapGraphicsLayers(); calculateWraps(); switchNavMode('find');
-    }
-
-    function deleteSavedLocationItem(locationId) {
-        if (!confirm("Delete location?")) return;
-        savedLocations = savedLocations.filter(l => l.id !== locationId);
-        localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations)); renderSavedLocationItems();
-    }
+    function selectAndFlyToSavedLocation(id) { const loc = savedLocations.find(l => l.id === id); if (!loc) return; map.setView([loc.lat, loc.lng], loc.zoom); pegLatLng = loc.pegLatLng; spotLatLng = loc.spotLatLng; renderMapGraphicsLayers(); calculateWraps(); switchNavMode('find'); }
+    function deleteSavedLocationItem(id) { savedLocations = savedLocations.filter(l => l.id !== id); localStorage.setItem('hedge_saved_maps_cache', JSON.stringify(savedLocations)); renderSavedLocationItems(); }
 
     function toggleSafetyLock() {
-        isMapLocked = !isMapLocked;
-        const lockBtn = document.getElementById('btnLockToggle');
-        const pegBtn = document.getElementById('btnSetPeg');
-        const targetBtn = document.getElementById('btnSetTarget');
-        const resetBtn = document.getElementById('btnResetPins');
-        const instructionText = document.getElementById('instructionText');
-
-        if (isMapLocked) {
-            lockBtn.className = "lock-btn state-locked"; lockBtn.innerHTML = "🔓 Unlock Map";
-            pegBtn.disabled = true; targetBtn.disabled = true; resetBtn.disabled = true;
-            activePlacementMode = 'none'; resetPlacementState(); lockMapInteractions();
-            instructionText.innerText = "Map is locked. Unlock above to drop markers.";
-        } else {
-            lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔒 Lock Map";
-            pegBtn.disabled = false; targetBtn.disabled = false; resetBtn.disabled = false;
-            resetPlacementState(); unlockMapInteractions();
-            instructionText.innerText = "Ready. Arm 'Peg' or 'Target' to update locations.";
-        }
+        isMapLocked = !isMapLocked; const lockBtn = document.getElementById('btnLockToggle');
+        if (isMapLocked) { lockBtn.className = "lock-btn state-locked"; lockBtn.innerHTML = "🔓 Unlock Map"; document.getElementById('btnSetPeg').disabled = true; document.getElementById('btnSetTarget').disabled = true; document.getElementById('btnResetPins').disabled = true; lockMapInteractions(); } 
+        else { lockBtn.className = "lock-btn state-unlocked"; lockBtn.innerHTML = "🔒 Lock Map"; document.getElementById('btnSetPeg').disabled = false; document.getElementById('btnSetTarget').disabled = false; document.getElementById('btnResetPins').disabled = false; unlockMapInteractions(); }
     }
 
-    function togglePlacementMode(mode) {
-        if (isMapLocked) return;
-        const pegBtn = document.getElementById('btnSetPeg'); const targetBtn = document.getElementById('btnSetTarget'); const text = document.getElementById('instructionText');
-        if (activePlacementMode === mode) { activePlacementMode = 'none'; resetPlacementState(); return; }
-        activePlacementMode = mode;
-        if (mode === 'peg') { pegBtn.className = "mode-btn active-peg"; targetBtn.className = "mode-btn"; text.innerText = "Armed: Placing Peg (Orange). Tap map."; }
-        else { pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn active-spot"; text.innerText = "Armed: Placing Target (Red). Tap map."; }
-    }
-
+    function togglePlacementMode(mode) { if (isMapLocked) return; const pegBtn = document.getElementById('btnSetPeg'); const targetBtn = document.getElementById('btnSetTarget'); if (activePlacementMode === mode) { activePlacementMode = 'none'; resetPlacementState(); return; } activePlacementMode = mode; if (mode === 'peg') { pegBtn.className = "mode-btn active-peg"; targetBtn.className = "mode-btn"; } else { pegBtn.className = "mode-btn"; targetBtn.className = "mode-btn active-spot"; } }
     function resetPlacementState() { activePlacementMode = 'none'; document.getElementById('btnSetPeg').className = "mode-btn"; document.getElementById('btnSetTarget').className = "mode-btn"; }
     function clearResultsDisplay() { document.getElementById('resultValue').innerText = "0 wraps"; document.getElementById('resultDistance').innerText = "Distance: --"; document.getElementById('resultNote').innerText = "Ensure both Peg and Target positions are marked on the map layout."; }
 </script>
-
 </body>
 </html>
