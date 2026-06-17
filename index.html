@@ -395,6 +395,7 @@
             <option value="carp">Carp & Specialist (Distance Sticks)</option>
             <option value="match">Match & F1 (Precision Pole Shipping)</option>
             <option value="predator">Predator & River (Yards/Feet Matrix)</option>
+            <option value="coarse">Coarse & Pleasure (Day Ticket Chill)</option>
         </select>
     </div>
 
@@ -428,9 +429,9 @@
             <p style="color: #fff; font-size: 0.95rem; font-weight: bold;">One-time payment of £3.99. Yours forever.</p>
             <p>Upgrade your bankside toolkit with our comprehensive multi-species analysis configurations:</p>
             <ul class="guide-list">
-                <li><strong>Full Tackle Box Unlock:</strong> Instantly unlock calculations for all rod lengths and custom pole shipping extensions.</li>
+                <li><strong>Full Tackle Box Unlock:</strong> Instantly unlock calculations for all rod lengths, custom parameters, and pole shipping reaches.</li>
                 <li><strong>Custom Dimensions Entry:</strong> Input custom sizes for spod rods, whips, or European setups down to decimals.</li>
-                <li><strong>Top 20 Multispecies Hot Spots:</strong> Access verified hotspot vectors across top carp, match, river, and pike waters.</li>
+                <li><strong>Targeted Discipline Checklists:</strong> Access completely separated hotspot databases tailored individually for Carp, Match, Predator, and Coarse fishing styles.</li>
                 <li><strong>Unlimited Personal Swim Saves:</strong> Catalog your home club waters and secret spots directly to local storage.</li>
             </ul>
             <button class="paywall-btn" onclick="simulatePremiumPurchaseUnlock()">Upgrade to Pro &bull; £3.99</button>
@@ -450,7 +451,7 @@
             <ul class="guide-list">
                 <li><strong>Search Bar:</strong> Type a lake name, town, or postcode. Tap a suggestion to fly there.</li>
                 <li><strong>📍 My Location:</strong> Snaps the map layout straight onto your active bankside position.</li>
-                <li><strong>🏆 Premier Venues Tab:</strong> Select from a pre-loaded matrix of the Top 20 UK fisheries.</li>
+                <li><strong>🏆 Premier Venues Tab:</strong> Select from a pre-loaded matrix of the Top UK fisheries.</li>
             </ul>
         </div>
         <div class="guide-section">
@@ -484,71 +485,42 @@
 
     let isPremiumUser = false;
 
-    // MULTISPECIES DIVERSIFIED TOP 20 TACTICAL DATA MATRIX
-    const PREMIER_FISHERIES_DATA = [
-        {
-            id: "linear_oxlease", name: "Linear Fisheries (Oxlease) - Carp", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire",
-            vibe: "Highly productive 26-acre gravel pit holding over 1,600 carp. Responds well to heavy baiting layouts.",
-            spots: [
-                { name: "Witney Point (Swim 9) -> Silt Channel", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Fish on a South-Easterly wind. Targets a natural bloodworm silt bed that fish track constantly." },
-                { name: "The Dugout -> Gravel Hump", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Located along deep road bank. Drops right onto a distinct, hard polished gravel hump." }
-            ]
-        },
-        {
-            id: "partridge_match", name: "Partridge Lakes (Covey 5) - Match", lat: 53.4611, lng: -2.5186, desc: "Cheshire",
-            vibe: "The high-profile northern match angling circuit. Narrow canal channels requiring ultimate pole placement finesse.",
-            spots: [
-                { name: "Peg 101 -> Far Mud Bank Shelf", distance_yds: 14.2, peg_lat: 53.4608, peg_lng: -2.5190, spot_lat: 53.4609, spot_lng: -2.5189, advice: "Perfect far-bank transition. Line up a 13.0m pole setup exactly to drop pellets on the shallow mud shelf." }
-            ]
-        },
-        {
-            id: "loch_ken_pred", name: "Loch Ken - Predator/Pike", lat: 55.0485, lng: -4.0125, desc: "Dumfries & Galloway",
-            vibe: "Expansive, wild 9-mile loch system housing true monster predator pike well over the 30lb threshold.",
-            spots: [
-                { name: "Boat House Bay -> Drop-Off Ledge", distance_yds: 45, peg_lat: 55.0480, peg_lng: -4.0130, spot_lat: 55.0483, spot_lng: -4.0122, advice: "Drop a ledgered deadbait mackerel tail right where the shallow weed beds shelf off sharply into the 15ft channel." }
-            ]
-        },
-        {
-            id: "thames_river", name: "River Thames (Clifton Hampden) - River", lat: 51.6442, lng: -1.2115, desc: "Oxfordshire",
-            vibe: "Classic fast-flowing Thames weir block holding powerful specimen barbel, chub, and massive river pike.",
-            spots: [
-                { name: "The Weir Pool -> Gravel Tailcrease", distance_yds: 35, peg_lat: 51.6445, peg_lng: -1.2120, spot_lat: 51.6440, spot_lng: -1.2112, advice: "Cast a heavy feeder or deadbait setup exactly into the boiling crease where fast water shears into the slack eddy." }
-            ]
-        },
-        {
-            id: "linear_b1", name: "Linear Fisheries (Brasenose 1) - Carp", lat: 51.7165, lng: -1.4245, desc: "Oxfordshire",
-            vibe: "The ultimate numbers water. Massive depth transitions averaging 14ft. Responds heavily to high-volume spodding.",
-            spots: [
-                { name: "First Bay -> Clay Patch", distance_yds: 85, peg_lat: 51.7155, peg_lng: -1.4255, spot_lat: 51.7161, spot_lng: -1.4248, advice: "Shallower water area (around 10ft deep). High attraction spots show rapid bite conversions." }
-            ]
-        },
-        { id: "farlows_l1", name: "Farlows Lake (Lake 1) - Carp", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire", vibe: "Historic Colne Valley mecca. Deeply mature topographies with complex margin shelves.", spots: [{ name: "Island Swim -> Margins", distance_yds: 65, peg_lat: 51.5170, peg_lng: -0.5060, spot_lat: 51.5174, spot_lng: -0.5054, advice: "Cast ultra tight under overhanging tree lines on the point of the small island structure." }] },
-        { id: "sandhurst", name: "Sandhurst Lake - Carp", lat: 51.3415, lng: -0.7932, desc: "Berkshire", vibe: "Famous Yateley complex resident. Shallow 14-acre layout averaging 5-7ft depths with sharp sandbars.", spots: [{ name: "The Pipes (Peg 31) -> Sandbar", distance_yds: 70, peg_lat: 51.3410, peg_lng: -0.7940, spot_lat: 51.3414, spot_lng: -0.7933, advice: "Prolific warm weather sector spot. Highly reactive to high attraction washed-out singles." }] },
-        { id: "monument", name: "The Monument (RH Fisheries) - Carp", lat: 52.6841, lng: -2.3552, desc: "Shropshire", vibe: "Premium engineered specimen pool purpose built to support massive, rapid weight gains and big carp.", spots: [{ name: "Christmas Tree -> Gravel Ridge", distance_yds: 70, peg_lat: 52.6836, peg_lng: -2.3559, spot_lat: 52.6840, spot_lng: -2.3551, advice: "The single most consistent sector point on the lake. Spomb instantly after runs to pin shoals." }] },
-        { id: "drayton", name: "Drayton Reservoir - Carp", lat: 52.2682, lng: -1.1735, desc: "Northamptonshire", vibe: "The high-octane pouch-pult capital of England. Heavy surface cruising patterns in summer.", spots: [{ name: "Dam Wall -> Silt Line", distance_yds: 80, peg_lat: 52.2675, peg_lng: -1.1740, spot_lat: 52.2681, spot_lng: -1.1732, advice: "Pouch-pult 8mm pellets continuously over short zig setups to create competitive feeding frenzies." }] },
-        { id: "makins", name: "Makins Fishery (Phase 1) - Match", lat: 52.4937, lng: -1.3912, desc: "Warwickshire", vibe: "Historical home blueprint of modern UK match venues. Complex island cuts and clay drops.", spots: [{ name: "Lake 1 -> Island Shelf", distance_yds: 55, peg_lat: 52.4932, peg_lng: -1.3920, spot_lat: 52.4935, spot_lng: -1.3914, advice: "Method setups with mini wafters dominate patrolling routes along island drops." }] },
-        { id: "barston", name: "Barston Lakes - Match", lat: 52.4172, lng: -1.6881, desc: "West Midlands", vibe: "Colossal 25-acre hybrid venue. Giant bags of skimmers alongside specimen carp past 30lbs.", spots: [{ name: "Golf Course Bank -> Margins", distance_yds: 75, peg_lat: 52.4165, peg_lng: -1.6890, spot_lat: 52.4170, spot_lng: -1.6882, advice: "Cast pellet cones tight to the far reeds. Use heavy baits to bypass match species." }] },
-        { id: "elphicks", name: "Elphicks Fisheries (North Lake) - Carp", lat: 51.1118, lng: 0.4491, desc: "Kent", vibe: "Immaculate Kent complex holding absolute pristine, highly catalogued monster residents to over 50lbs.", spots: [{ name: "Peg 1 -> Island Bushlines", distance_yds: 50, peg_lat: 51.1112, peg_lng: -0.4498, spot_lat: 51.1116, spot_lng: -0.4493, advice: "Strict boilie water focus. High quality food sources fished tightly draw out specimens." }] },
-        { id: "manorfarm", name: "Manor Farm Lakes (Boone's) - Carp", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire", vibe: "Beautifully mature Beds complex offering premium gravel transitions and massive lily fields.", spots: [{ name: "Lily Corner -> Pad Margins", distance_yds: 40, peg_lat: 52.0728, peg_lng: -0.2792, spot_lat: 52.0731, spot_lng: -0.2787, advice: "Run light leads with completely slack lines in high clarity margin areas to hide terminal tackle." }] },
-        { id: "buryhill", name: "Bury Hill (The Old Lake) - Match", lat: 51.2185, lng: -0.3475, desc: "Surrey", vibe: "Stunning old English estate layout surrounded by thick forests. Premium tench and ancient mirrors.", spots: [{ name: "Long Bank -> Overhanging Jungle", distance_yds: 80, peg_lat: 51.2178, peg_lng: -0.3482, spot_lat: 51.2183, spot_lng: -0.3476, advice: "Traditional particle strategies pin large traveling bream and tench columns perfectly." }] },
-        { id: "wyreside", name: "Wyreside Lakes (Wyre Lake) - Carp", lat: 53.9665, lng: -2.7665, desc: "Lancashire", vibe: "The premier northern day-ticket arena. Wild, cold gravel layout with steep drop-offs.", spots: [{ name: "The Lawn Swim -> Silt Gully", distance_yds: 55, peg_lat: 53.9659, peg_lng: -2.7672, spot_lat: 53.9663, spot_lng: -2.7666, advice: "Find the base of the bars where natural food gathers. Precision tracking is critical here." }] },
-        { id: "larford", name: "Larford Lakes (Specimen) - Match", lat: 52.3275, lng: -2.2514, desc: "Worcestershire", vibe: "Incredible weights captured across all blocks. Deep water bowls that react violently to wind changes.", spots: [{ name: "Chalet Bank -> Sunken Island", distance_yds: 60, peg_lat: 52.3269, peg_lng: -2.2522, spot_lat: 52.3273, spot_lng: -2.2516, advice: "If bottom setups dry up, deploy a pellet waggler shallow to secure rapid tracking strikes." }] },
-        { id: "todber", name: "Todber Manor (Big Fowler) - Carp", lat: 50.9785, lng: -2.3115, desc: "Dorset", vibe: "The South West's flagship fast action runs lake. Thick stocking density keeps action high year round.", spots: [{ name: "Peg 1 Corner -> Reed Feature", distance_yds: 35, peg_lat: 50.9779, peg_lng: -2.3122, spot_lat: 50.9783, spot_lng: -2.3117, advice: "Solid PVA bags packed with mixed pellets and neon dumbbell wafters convert instantly." }] },
-        { id: "tunnelbarn", name: "Tunnel Barn Farm (Extension) - Match", lat: 52.2985, lng: -1.6885, desc: "Warwickshire", vibe: "Immaculate custom match canals. Elite winter venue where small details differentiate bags.", spots: [{ name: "Peg 7 -> Far Shelf Track", distance_yds: 14, peg_lat: 52.2980, peg_lng: -1.6892, spot_lat: 52.2983, spot_lng: -1.6887, advice: "Deploy hyper light wire hooks and light pole lines. Cad pot freebies directly on float tips." }] },
-        { id: "orchid", name: "Orchid Lakes - Carp", lat: 51.6571, lng: -1.1632, desc: "Oxfordshire", vibe: "The historic 'Home of the Log Cabin'. Ancient oak trees surround old heavily scaled mirrors.", spots: [{ name: "Log Cabin Swim -> Gravel Bar", distance_yds: 55, peg_lat: 51.6565, peg_lng: -1.1640, spot_lat: 51.6569, spot_lng: -1.1634, advice: "Nut food source boilies track well across 48hr sessions to pull fish from central silt fields." }] },
-        { id: "coombe", name: "Coombe Abbey Pool - Match", lat: 52.4116, lng: -1.4172, desc: "Warwickshire", vibe: "Massive 80-acre ancient landscape pool. Challenging silty basins tracking large roaming packs.", spots: [{ name: "Deep Track -> Old River Bed", distance_yds: 80, peg_lat: 52.4110, peg_lng: -1.4180, spot_lat: 52.4114, spot_lng: -1.4174, advice: "Heavily pre-bait particles to anchor roaming columns inside historical river seams." }] }
-    ];
+    // SEPARATED SECTOR TARGET DATA MATRIX ARRAYS
+    const DISCIPLINE_PREMIER_DATABASES = {
+        carp: [
+            { name: "Linear Fisheries (Oxlease Lake)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire", vibe: "Massive head of 30lb and 40lb mirrors. Highly responsive to high-volume spod groups.", spots: [{ name: "Witney Point (Swim 9) -> Silt Channel", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Targets a natural bloodworm silt channel. Effective on strong South-Easterly wind channels." }, { name: "The Dugout -> Deep Gravel Hump", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Cast straight out onto a hard gravel plateau right off the road margin track." }] },
+            { name: "Linear Fisheries (Brasenose 1)", lat: 51.7165, lng: -1.4245, desc: "Oxfordshire", vibe: "The country's premium high-volume numbers pit. Deep waters averaging 14ft.", spots: [{ name: "First Bay -> Clay Patch", distance_yds: 85, peg_lat: 51.7155, peg_lng: -1.4255, spot_lat: 51.7161, spot_lng: -1.4248, advice: "Shallower 10ft clay shelf. Heavily responsive to finely crushed boilies and corn mixes." }] },
+            { name: "Farlows Lake (Lake 1)", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire", vibe: "Legendary Colne Valley gem. Highly mature topography with complex marginal bars.", spots: [{ name: "Island Swim -> Far Tree Overhang", distance_yds: 65, peg_lat: 51.5170, peg_lng: -0.5060, spot_lat: 51.5174, spot_lng: -0.5054, advice: "Drop traps ultra-tight under overhanging willow configurations on the island point." }] },
+            { name: "Sandhurst Lake", lat: 51.3415, lng: -0.7932, desc: "Berkshire", vibe: "Famous Yateley complex resident. Shallow clear basin averaging 5-7ft depths.", spots: [{ name: "The Pipes (Peg 31) -> Sandbar", distance_yds: 70, peg_lat: 51.3410, peg_lng: -0.7940, spot_lat: 51.3414, spot_lng: -0.7933, advice: "Fish line-shy singles over sparse pellet scatterings along the clean sandbar seam." }] },
+            { name: "The Monument (Lake 1)", lat: 52.6841, lng: -2.3552, desc: "Shropshire", vibe: "RH Fisheries specimen arena engineered to produce immense runs and fast-paced big carp sport.", spots: [{ name: "Christmas Tree -> Gravel Ridge", distance_yds: 70, peg_lat: 52.6836, peg_lng: -2.3559, spot_lat: 52.6840, spot_lng: -2.3551, advice: "The most consistent ridge on the lake. Spomb instantly after runs to anchor the shoal." }] }
+        ],
+        match: [
+            { name: "Partridge Lakes (Covey 5)", lat: 53.4611, lng: -2.5186, desc: "Cheshire", vibe: "The modern home of UK competitive match layouts. Narrow canal lines with steep mud shelves.", spots: [{ name: "Peg 101 -> Far Mud Bank Grassline", distance_yds: 14.2, peg_lat: 53.4608, peg_lng: -2.5190, spot_lat: 53.4609, spot_lng: -2.5189, advice: "Ship a 13m pole setup straight to the far shelf. Clip a shallow rig to place pellets directly under grass lines." }] },
+            { name: "Tunnel Barn Farm (Extension Pool)", lat: 52.2985, lng: -1.6885, desc: "Warwickshire", vibe: "Thin, highly custom match channels built for high-precision silverfish and winter F1 weights.", spots: [{ name: "Peg 7 -> Central Silt Track", distance_yds: 11, peg_lat: 52.2980, peg_lng: -1.6892, spot_lat: 52.2983, spot_lng: -1.6887, advice: "Precision setup. Feed micros sparingly via cad pots directly above fine-wire hooks." }] },
+            { name: "Makins Fishery (Phase 1)", lat: 52.4937, lng: -1.3912, desc: "Warwickshire", vibe: "The iconic birthplace of commercial match circuits. Highly varied underwater island drops.", spots: [{ name: "Lake 1 -> Sunken Plateau", distance_yds: 55, peg_lat: 52.4932, peg_lng: -1.3920, spot_lat: 52.4935, spot_lng: -1.3914, advice: "Cast hybrid or method layouts loaded with mini wafters to trap cruising island columns." }] },
+            { name: "Barston Lakes (Main Match Lake)", lat: 52.4172, lng: -1.6881, desc: "West Midlands", vibe: "Giant 25-acre hybrid venue. Mass skimmer weights alongside massive margins facing the golf tracks.", spots: [{ name: "Golf Course Bank -> Far Reeds", distance_yds: 75, peg_lat: 52.4165, peg_lng: -1.6890, spot_lat: 52.4170, spot_lng: -1.6882, advice: "Launch pellet cones right to the far margins. Essential to lock clip parameters perfectly." }] },
+            { name: "Heronbrook Fisheries (Match Pool)", lat: 52.9552, lng: -2.3251, desc: "Staffordshire", vibe: "Immaculate commercial maze layout providing optimal fish distribution across all pegs.", spots: [{ name: "Peg 12 -> Island Corner step", distance_yds: 45, peg_lat: 52.9546, peg_lng: -2.3259, spot_lat: 52.9550, spot_lng: -2.3253, advice: "Juggle lines between far island cuts and near margins dynamically to keep the tip moving." }] }
+        ],
+        predator: [
+            { name: "Loch Ken (Boat House Sector)", lat: 55.0485, lng: -4.0125, desc: "Dumfries & Galloway", vibe: "Expansive wild 9-mile loch housing true prehistoric monster northern pike past 30lbs.", spots: [{ name: "Boat House Bay -> Deep Drop-off Ledge", distance_yds: 45, peg_lat: 55.0480, peg_lng: -4.0130, spot_lat: 55.0483, spot_lng: -4.0122, advice: "Position deadbait herring or mackerel right at the base of the weed drop where deep water starts." }] },
+            { name: "River Thames (Clifton Hampden Weir)", lat: 51.6442, lng: -1.2115, desc: "Oxfordshire", vibe: "Powerful classic Thames weir section holding large specimen river chub, barbel, and pike.", spots: [{ name: "Weir Pool Tail -> Fast Crease Eddy", distance_yds: 35, peg_lat: 51.6445, peg_lng: -1.2120, spot_lat: 51.6440, spot_lng: -1.2112, advice: "Cast a heavy deadbait ledger clean into the foam seam where the fast run splits into slack water." }] },
+            { name: "Loch Lomond (Balmaha Basin)", lat: 56.0845, lng: -4.5421, desc: "Stirlingshire", vibe: "Vast, deep glacier loch famous for massive winter pike tracks following salmon migration paths.", spots: [{ name: "Balmaha Pier -> Dropping Slate Shelf", distance_yds: 60, peg_lat: 56.0840, peg_lng: -4.5430, spot_lat: 56.0844, spot_lng: -4.5415, advice: "Cast long range into 20ft deep dropouts. Use trout or smelt oil injects to create massive scent tracks." }] },
+            { name: "River Wye (Symonds Yat section)", lat: 51.8415, lng: -2.6412, desc: "Herefordshire", vibe: "Fast, rocky, highly oxygenated river system housing dense pockets of hard-fighting river predators.", spots: [{ name: "The Saracens Drop -> Sunken Boulder Line", distance_yds: 25, peg_lat: 51.8410, peg_lng: -2.6420, spot_lat: 51.8413, spot_lng: -2.6410, advice: "Trot live bait or ledger deadbaits immediately behind underwater boulders where pike wait to ambush prey." }] },
+            { name: "Chew Valley Lake (North Lodge Bank)", lat: 51.3325, lng: -2.6112, desc: "Somerset", vibe: "The legendary birthplace of massive UK record specimen pike. Rich trout food sources produce giant weights.", spots: [{ name: "North Lodge -> Deep Silt Basin Front", distance_yds: 80, peg_lat: 51.3320, peg_lng: -2.6120, spot_lat: 51.3326, spot_lng: -2.6110, advice: "Maximum casting range required to find deep autumn basins. Pop up deadbaits to clear silkweed." }] }
+        ],
+        coarse: [
+            { name: "Manor Farm Lakes (Pleasure Pool)", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire", vibe: "Immaculate, highly relaxing day ticket mixed fishery loaded with tench, bream, and crucians.", spots: [{ name: "Lily Pad Bay -> Marginal Shelf", distance_yds: 30, peg_lat: 52.0728, peg_lng: -0.2792, spot_lat: 52.0731, spot_lng: -0.2787, advice: "Cast a traditional method feeder right to the lily boundary. Keep feed sweet and inputs tight." }] },
+            { name: "Bury Hill Fisheries (The Old Estate Lake)", lat: 51.2185, lng: -0.3475, desc: "Surrey", vibe: "Scenic traditional estate water lines surrounded by ancient forest. Giant shoals of bronze bream.", spots: [{ name: "The Long Bank -> Far Overhanging Woods", distance_yds: 55, peg_lat: 51.2178, peg_lng: -0.3482, spot_lat: 51.2181, spot_lng: -0.3478, advice: "Launch open-ended groundbait feeders into the tree margins to capture massive cruising roach and bream panels." }] },
+            { name: "Coombe Abbey Pool (Bream Bank)", lat: 52.4116, lng: -1.4172, desc: "Warwickshire", vibe: "Historic 80-acre massive estate layout offering incredible sport for casual day-ticket ledger sessions.", spots: [{ name: "Peg 24 -> Old River Channel Track", distance_yds: 65, peg_lat: 52.4110, peg_lng: -1.4180, spot_lat: 52.4114, spot_lng: -1.4174, advice: "Find the old deep river track. Heavy loose particle introduction pins roaming schools perfectly." }] },
+            { name: "Larford Lakes (Arena Pool)", lat: 52.3275, lng: -2.2514, desc: "Worcestershire", vibe: "Highly productive, scenic holiday pleasure lake packed with hard-fighting tench, carp, and silver fish.", spots: [{ name: "Weeping Willow Swims -> Far Margin Drop", distance_yds: 40, peg_lat: 52.3269, peg_lng: -2.2522, spot_lat: 52.3272, spot_lng: -2.2517, advice: "Place sweetcorn or maggots right along the clay dropout ledge for consistent, all-day sport." }] },
+            { name: "Todd Manor (Little Fowler Runs Water)", lat: 50.9785, lng: -2.3115, desc: "Dorset", vibe: "Action-packed pleasure pool designed for non-stop action, easy catches, and true bankside relaxation.", spots: [{ name: "Peg 4 -> Center Clay Feeding Gully", distance_yds: 35, peg_lat: 50.9779, peg_lng: -2.3122, spot_lat: 50.9782, spot_lng: -2.3116, advice: "Deploy simple inline hybrid pellet configurations. Wafter hookbaits show exceptionally high conversion speeds." }] }
+        ]
+    };
 
     window.addEventListener('DOMContentLoaded', () => {
-        initSatelliteMap();
-        loadSavedLocationsFromCache();
-        setupSearchSuggestionsEngine();
-        populateTackleOptionsBox(); // Initial load for default carp
-        
+        initSatelliteMap(); loadSavedLocationsFromCache(); setupSearchSuggestionsEngine(); populateTackleOptionsBox();
         setTimeout(() => {
-            const splash = document.getElementById('appSplashScreenFrame');
-            splash.style.opacity = '0';
-            splash.style.pointerEvents = 'none';
+            const splash = document.getElementById('appSplashScreenFrame'); splash.style.opacity = '0'; splash.style.pointerEvents = 'none';
             setTimeout(() => { splash.remove(); }, 400);
         }, 3000);
     });
@@ -564,10 +536,16 @@
     function lockMapInteractions() { map.dragging.disable(); map.touchZoom.disable(); map.doubleClickZoom.disable(); map.scrollWheelZoom.disable(); map.boxZoom.disable(); map.keyboard.disable(); if (map.tap) map.tap.disable(); }
     function unlockMapInteractions() { map.dragging.enable(); map.touchZoom.enable(); map.doubleClickZoom.enable(); map.scrollWheelZoom.enable(); map.boxZoom.enable(); map.keyboard.enable(); if (map.tap) map.tap.enable(); }
 
-    // DYNAMIC MULTISPECIES TACKLE SELECTION DICTIONARIES
     function handleAnglingStyleChange() {
         populateTackleOptionsBox();
         clearActiveMapPins();
+        
+        // Dynamically shift overlay contexts if the premier view overlay panel is currently visible
+        if (currentNavMode === 'premier') {
+            renderPremierFisheriesItems();
+        } else {
+            document.getElementById('tacticalHotspotPanel').style.display = 'none';
+        }
     }
 
     function populateTackleOptionsBox() {
@@ -576,39 +554,36 @@
         const label = document.getElementById('tackleBoxLabel');
         const customInput = document.getElementById('customRodInput');
         
-        dropdown.innerHTML = '';
-        customInput.style.display = 'none';
-        customInput.value = '';
+        dropdown.innerHTML = ''; customInput.style.display = 'none'; customInput.value = '';
 
         if (style === 'carp') {
             label.innerText = "ROD LENGTH";
             dropdown.innerHTML = `
-                <option value="9">9 ft (Premium)</option>
-                <option value="10">10 ft (Premium)</option>
-                <option value="11">11 ft (Premium)</option>
-                <option value="12" selected>12 ft (Free Starter)</option>
-                <option value="13">13 ft (Premium)</option>
-                <option value="custom">Custom Dimensions... (Premium)</option>
+                <option value="9">9 ft (Premium)</option> <option value="10">10 ft (Premium)</option> <option value="11">11 ft (Premium)</option>
+                <option value="12" selected>12 ft (Free Starter)</option> <option value="13">13 ft (Premium)</option> <option value="custom">Custom Dimensions... (Premium)</option>
             `;
             document.getElementById('resultBoxTitle').innerText = "Target Geometry";
         } else if (style === 'match') {
             label.innerText = "POLE / FEEDER EXTENSION LENGTH";
             dropdown.innerHTML = `
-                <option value="13" selected>13.0 Meters (Free Starter)</option>
-                <option value="8.5">8.5 Meters (Premium)</option>
-                <option value="11">11.0 Meters (Premium)</option>
-                <option value="14.5">14.5 Meters (Premium)</option>
-                <option value="16">16.0 Meters (Premium)</option>
-                <option value="custom">Custom Pole Reach... (Premium)</option>
+                <option value="13" selected>13.0 Meters (Free Starter)</option> <option value="8.5">8.5 Meters (Premium)</option>
+                <option value="11">11.0 Meters (Premium)</option> <option value="14.5">14.5 Meters (Premium)</option> <option value="16">16.0 Meters (Premium)</option> <option value="custom">Custom Pole Reach... (Premium)</option>
             `;
             document.getElementById('resultBoxTitle').innerText = "Match Logistics Matrix";
         } else if (style === 'predator') {
             label.innerText = "PREDATOR LEAD LINE REACH";
             dropdown.innerHTML = `
-                <option value="12" selected>Standard Ledger Setup (Free)</option>
-                <option value="custom">Custom Casting Range... (Premium)</option>
+                <option value="12" selected>Standard Ledger Setup (Free)</option> <option value="custom">Custom Casting Range... (Premium)</option>
             `;
             document.getElementById('resultBoxTitle').innerText = "Predator Structural Geometry";
+        } else if (style === 'coarse') {
+            label.innerText = "DAY TICKET ROD SETUP";
+            dropdown.innerHTML = `
+                <option value="11" selected>11 ft Float/Feeder Rod (Free)</option>
+                <option value="12">12 ft Heavy Feeder Rod (Premium)</option>
+                <option value="custom">Custom Pleasure Rod... (Premium)</option>
+            `;
+            document.getElementById('resultBoxTitle').innerText = "Pleasure Geometry Matrix";
         }
         calculateWraps();
     }
@@ -618,25 +593,21 @@
         const value = document.getElementById('rodLength').value;
         const customInput = document.getElementById('customRodInput');
 
-        // Free tier lock checks
         if (!isPremiumUser) {
             if (style === 'carp' && value !== "12") { togglePaywallModal(true); document.getElementById('rodLength').value = "12"; return; }
             if (style === 'match' && value !== "13") { togglePaywallModal(true); document.getElementById('rodLength').value = "13"; return; }
             if (style === 'predator' && value === "custom") { togglePaywallModal(true); document.getElementById('rodLength').value = "12"; return; }
+            if (style === 'coarse' && value !== "11") { togglePaywallModal(true); document.getElementById('rodLength').value = "11"; return; }
         }
 
         if (value === 'custom') {
             customInput.style.display = 'block';
             if (style === 'match') customInput.placeholder = "Enter custom pole length in meters (e.g. 14.2)";
-            else customInput.placeholder = "Enter target reach dimensions in feet (e.g. 12.6)";
+            else customInput.placeholder = "Enter target reach size in feet (e.g. 11.6)";
             customInput.focus();
-        } else {
-            customInput.style.display = 'none';
-            calculateWraps();
-        }
+        } else { customInput.style.display = 'none'; calculateWraps(); }
     }
 
-    // MULTISPECIES MATH COMPILATION MATRIX
     function calculateWraps() {
         if (!pegLatLng || !spotLatLng) return;
 
@@ -647,8 +618,7 @@
         }
 
         const R = 6371000; 
-        const dLat = (spotLatLng.lat - pegLatLng.lat) * Math.PI / 180;
-        const dLon = (spotLatLng.lng - pegLatLng.lng) * Math.PI / 180;
+        const dLat = (spotLatLng.lat - pegLatLng.lat) * Math.PI / 180; const dLon = (spotLatLng.lng - pegLatLng.lng) * Math.PI / 180;
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(pegLatLng.lat * Math.PI / 180) * Math.cos(spotLatLng.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         const calculatedMetres = R * c; 
@@ -658,41 +628,36 @@
         document.getElementById('resultDistance').innerText = `Distance: ${calculatedMetres.toFixed(1)}m (${calculatedYards.toFixed(1)}yds)`;
 
         if (style === 'carp') {
-            const fullWraps = Math.floor(calculatedTotalFeet / tackleSize);
-            const remainingFeet = calculatedTotalFeet % tackleSize;
+            const fullWraps = Math.floor(calculatedTotalFeet / tackleSize); const remainingFeet = calculatedTotalFeet % tackleSize;
             let text = `${fullWraps} wrap${fullWraps !== 1 ? 's' : ''}`;
             if (remainingFeet > 0.05) text += ` + ${remainingFeet.toFixed(1)} ft`;
             document.getElementById('resultValue').innerText = text;
-
-            if (remainingFeet > 0.05) {
-                document.getElementById('resultNote').innerText = `Target spot is ${calculatedMetres.toFixed(2)}m away.\nOn wrap ${fullWraps + 1}, stop ${(tackleSize - remainingFeet).toFixed(1)} ft short of your opposite distance stick.`;
-            } else {
-                document.getElementById('resultNote').innerText = `Target spot is ${calculatedMetres.toFixed(2)}m away.\nHit your stick clip cleanly on wrap ${fullWraps}.`;
-            }
+            document.getElementById('resultNote').innerText = remainingFeet > 0.05 ? `Target is ${calculatedMetres.toFixed(2)}m away.\nOn wrap ${fullWraps + 1}, stop ${(tackleSize - remainingFeet).toFixed(1)} ft short of the opposite stick.` : `Target is ${calculatedMetres.toFixed(2)}m away.\nHit line clip perfectly on wrap ${fullWraps}.`;
         } 
         else if (style === 'match') {
-            // Pole Length Conversion Logic
             document.getElementById('resultValue').innerText = `${calculatedMetres.toFixed(1)} Meters`;
-            const sectionsRequired = Math.ceil(calculatedMetres / 1.6); // Generates average section count
-            document.getElementById('resultNote').innerText = `Precision pole line reach detected.\nTo match this line completely, you will need approximately ${sectionsRequired} full carbon sections pieced together to drop onto the spot.`;
+            document.getElementById('resultNote').innerText = `Precision pole reach lines mapped.\nYou will need to lock together approximately ${Math.ceil(calculatedMetres / 1.6)} structural carbon pole sections to place rigs directly onto this target vector.`;
         } 
         else if (style === 'predator') {
-            // Predator/River Yards Output System
             document.getElementById('resultValue').innerText = `${Math.floor(calculatedYards)} yds + ${(calculatedTotalFeet % 3).toFixed(1)} ft`;
-            document.getElementById('resultNote').innerText = `River ledger / Predator deployment telemetry.\nLine length requires exactly ${calculatedYards.toFixed(1)} yards of trace release to reach this specific underwater structure safely.`;
+            document.getElementById('resultNote').innerText = `Predator / Ledger location tracked.\nLine deployment requires precisely ${calculatedYards.toFixed(1)} yards of line release out to this specific deep structural feature.`;
+        }
+        else if (style === 'coarse') {
+            // Coarse Fishing calculation outputs metrics in yards/feet format for easy pleasure lines
+            document.getElementById('resultValue').innerText = `${Math.floor(calculatedYards)} yds + ${(calculatedTotalFeet % 3).toFixed(1)} ft`;
+            const wrapsEq = Math.floor(calculatedTotalFeet / 12);
+            document.getElementById('resultNote').innerText = `Day Ticket / Pleasure Line casting range calculated.\nDistance tracks out to ${calculatedYards.toFixed(1)} yards (Approx. ${wrapsEq} standard wraps if using distance sticks for feeder clips).`;
         }
     }
 
     function toggleTestingTierMode() {
-        isPremiumUser = !isPremiumUser;
-        const badge = document.getElementById('tierStatusBadge');
+        isPremiumUser = !isPremiumUser; const badge = document.getElementById('tierStatusBadge');
         if (isPremiumUser) { badge.className = "tier-badge pro"; badge.innerText = "Pro Version Unlocked"; } 
         else {
-            badge.className = "tier-badge free"; badge.innerText = "Free Version";
-            document.getElementById('anglingStyle').value = "carp";
-            populateTackleOptionsBox();
-            document.getElementById('tacticalHotspotPanel').style.display = 'none';
+            badge.className = "tier-badge free"; badge.innerText = "Free Version"; document.getElementById('anglingStyle').value = "carp";
+            populateTackleOptionsBox(); document.getElementById('tacticalHotspotPanel').style.display = 'none';
         }
+        if (currentNavMode === 'premier') renderPremierFisheriesItems();
     }
 
     function togglePaywallModal(show) { document.getElementById('premiumPaywallModalOverlay').style.display = show ? 'flex' : 'none'; }
@@ -767,11 +732,21 @@
         });
     }
 
+    // DYNAMIC TARGET DISCIPLINE FILTER FOR PREMIER MATRIX OVERLAYS
     function renderPremierFisheriesItems() {
         const container = document.getElementById('locationListContainer'); container.innerHTML = '';
-        PREMIER_FISHERIES_DATA.forEach(venue => {
-            const row = document.createElement('div'); row.className = 'location-item'; row.onclick = () => flyToPremierFisheryVector(venue);
-            row.innerHTML = `<div class="location-info"><div class="location-name">${venue.name}</div><div class="location-coords">${venue.desc}</div></div><div style="color: var(--premium-gold);">👑</div>`;
+        const style = document.getElementById('anglingStyle').value;
+        const dataset = DISCIPLINE_PREMIER_DATABASES[style] || [];
+
+        if (dataset.length === 0) {
+            container.innerHTML = '<div class="no-locations-msg">No curated venues available for this technique.</div>';
+            return;
+        }
+
+        dataset.forEach(venue => {
+            const row = document.createElement('div'); row.className = 'location-item';
+            row.onclick = () => flyToPremierFisheryVector(venue);
+            row.innerHTML = `<div class="location-info"><div class="location-name">${venue.name}</div><div class="location-coords">${venue.desc} &bull; Specimen Guide</div></div><div style="color: var(--premium-gold);">👑</div>`;
             container.appendChild(row);
         });
     }
