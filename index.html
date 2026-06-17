@@ -116,7 +116,7 @@
         .title-block {
             display: flex;
             flex-direction: column;
-            text-align: left;
+Text-align: left;
         }
 
         h2 {
@@ -325,15 +325,25 @@
 </div>
 
 <div class="container">
-    <div class="card">
-        <div class="header-row">
+    <div class="card" style="margin-bottom: 4px;">
+        <div class="header-row" style="margin-bottom: 10px;">
             <div class="title-block">
                 <h2>Wraps Anywhere</h2>
                 <div id="tierStatusBadge" class="tier-badge free" onclick="toggleTestingTierMode()">Free Version</div>
             </div>
             <button class="info-toggle-btn" onclick="toggleWalkthroughModal(true)" title="App Instructions">i</button>
         </div>
+        
+        <label for="anglingStyle">ANGLING STYLE</label>
+        <select id="anglingStyle" onchange="handleAnglingStyleChange()">
+            <option value="carp">Carp & Specialist (Distance Sticks)</option>
+            <option value="match">Match & F1 (Precision Pole Shipping)</option>
+            <option value="predator">Predator & River (Yards/Feet Matrix)</option>
+            <option value="coarse">Coarse & Pleasure (Day Ticket Chill)</option>
+        </select>
+    </div>
 
+    <div class="card">
         <div class="nav-container">
             <button id="navFindBtn" class="nav-btn active-tab" onclick="switchNavMode('find')">🗺️ Find</button>
             <button id="navSavedBtn" class="nav-btn" onclick="switchNavMode('saved')">⭐ Saved</button>
@@ -387,16 +397,6 @@
             <div class="tactical-title">🎯 Premium Tactical Hot Spots</div>
             <select id="tacticalSpotsDropdown" onchange="loadSelectedTacticalSpotLine()"></select>
         </div>
-    </div>
-
-    <div class="card" style="padding: 14px;">
-        <label for="anglingStyle">ANGLING STYLE</label>
-        <select id="anglingStyle" onchange="handleAnglingStyleChange()">
-            <option value="carp">Carp & Specialist (Distance Sticks)</option>
-            <option value="match">Match & F1 (Precision Pole Shipping)</option>
-            <option value="predator">Predator & River (Yards/Feet Matrix)</option>
-            <option value="coarse">Coarse & Pleasure (Day Ticket Chill)</option>
-        </select>
     </div>
 
     <div class="card" style="padding: 14px;">
@@ -485,7 +485,6 @@
 
     let isPremiumUser = false;
 
-    // SEPARATED SECTOR TARGET DATA MATRIX ARRAYS
     const DISCIPLINE_PREMIER_DATABASES = {
         carp: [
             { name: "Linear Fisheries (Oxlease Lake)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire", vibe: "Massive head of 30lb and 40lb mirrors. Highly responsive to high-volume spod groups.", spots: [{ name: "Witney Point (Swim 9) -> Silt Channel", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Targets a natural bloodworm silt channel. Effective on strong South-Easterly wind channels." }, { name: "The Dugout -> Deep Gravel Hump", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Cast straight out onto a hard gravel plateau right off the road margin track." }] },
@@ -513,7 +512,7 @@
             { name: "Bury Hill Fisheries (The Old Estate Lake)", lat: 51.2185, lng: -0.3475, desc: "Surrey", vibe: "Scenic traditional estate water lines surrounded by ancient forest. Giant shoals of bronze bream.", spots: [{ name: "The Long Bank -> Far Overhanging Woods", distance_yds: 55, peg_lat: 51.2178, peg_lng: -0.3482, spot_lat: 51.2181, spot_lng: -0.3478, advice: "Launch open-ended groundbait feeders into the tree margins to capture massive cruising roach and bream panels." }] },
             { name: "Coombe Abbey Pool (Bream Bank)", lat: 52.4116, lng: -1.4172, desc: "Warwickshire", vibe: "Historic 80-acre massive estate layout offering incredible sport for casual day-ticket ledger sessions.", spots: [{ name: "Peg 24 -> Old River Channel Track", distance_yds: 65, peg_lat: 52.4110, peg_lng: -1.4180, spot_lat: 52.4114, spot_lng: -1.4174, advice: "Find the old deep river track. Heavy loose particle introduction pins roaming schools perfectly." }] },
             { name: "Larford Lakes (Arena Pool)", lat: 52.3275, lng: -2.2514, desc: "Worcestershire", vibe: "Highly productive, scenic holiday pleasure lake packed with hard-fighting tench, carp, and silver fish.", spots: [{ name: "Weeping Willow Swims -> Far Margin Drop", distance_yds: 40, peg_lat: 52.3269, peg_lng: -2.2522, spot_lat: 52.3272, spot_lng: -2.2517, advice: "Place sweetcorn or maggots right along the clay dropout ledge for consistent, all-day sport." }] },
-            { name: "Todd Manor (Little Fowler Runs Water)", lat: 50.9785, lng: -2.3115, desc: "Dorset", vibe: "Action-packed pleasure pool designed for non-stop action, easy catches, and true bankside relaxation.", spots: [{ name: "Peg 4 -> Center Clay Feeding Gully", distance_yds: 35, peg_lat: 50.9779, peg_lng: -2.3122, spot_lat: 50.9782, spot_lng: -2.3116, advice: "Deploy simple inline hybrid pellet configurations. Wafter hookbaits show exceptionally high conversion speeds." }] }
+            { name: "Todber Manor (Little Fowler Runs)", lat: 50.9785, lng: -2.3115, desc: "Dorset", vibe: "Action-packed pleasure pool designed for non-stop action, easy catches, and true bankside relaxation.", spots: [{ name: "Peg 4 -> Center Clay Feeding Gully", distance_yds: 35, peg_lat: 50.9779, peg_lng: -2.3122, spot_lat: 50.9782, spot_lng: -2.3116, advice: "Deploy simple inline hybrid pellet configurations. Wafter hookbaits show exceptionally high conversion speeds." }] }
         ]
     };
 
@@ -540,7 +539,6 @@
         populateTackleOptionsBox();
         clearActiveMapPins();
         
-        // Dynamically shift overlay contexts if the premier view overlay panel is currently visible
         if (currentNavMode === 'premier') {
             renderPremierFisheriesItems();
         } else {
@@ -643,7 +641,6 @@
             document.getElementById('resultNote').innerText = `Predator / Ledger location tracked.\nLine deployment requires precisely ${calculatedYards.toFixed(1)} yards of line release out to this specific deep structural feature.`;
         }
         else if (style === 'coarse') {
-            // Coarse Fishing calculation outputs metrics in yards/feet format for easy pleasure lines
             document.getElementById('resultValue').innerText = `${Math.floor(calculatedYards)} yds + ${(calculatedTotalFeet % 3).toFixed(1)} ft`;
             const wrapsEq = Math.floor(calculatedTotalFeet / 12);
             document.getElementById('resultNote').innerText = `Day Ticket / Pleasure Line casting range calculated.\nDistance tracks out to ${calculatedYards.toFixed(1)} yards (Approx. ${wrapsEq} standard wraps if using distance sticks for feeder clips).`;
@@ -672,7 +669,7 @@
         else if (targetMode === 'premier') { premierBtn.className = "nav-btn active-tab"; overlayTitle.innerText = "UK Premier Fisheries"; overlay.style.display = 'flex'; if (!isMapLocked) toggleSafetyLock(); renderPremierFisheriesItems(); }
     }
 
-    function handleMapInteraction(latlng) { if (activePlacementMode === 'peg') { pegLatLng = latlng; } else if (activePlacementMode === 'spot') { spotLatLng = latlng; } renderMapGraphicsLayers(); calculateWraps(); resetPlacementState(); }
+    function handleMapInteraction(latlng) { if (activePlacementMode === 'none') return; if (activePlacementMode === 'peg') { pegLatLng = latlng; } else if (activePlacementMode === 'spot') { spotLatLng = latlng; } renderMapGraphicsLayers(); calculateWraps(); resetPlacementState(); }
 
     function renderMapGraphicsLayers() {
         const pegColor = getComputedStyle(document.documentElement).getPropertyValue('--peg-color').trim(); const spotColor = getComputedStyle(document.documentElement).getPropertyValue('--spot-color').trim(); const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
@@ -724,7 +721,7 @@
 
     function renderSavedLocationItems() {
         const container = document.getElementById('locationListContainer'); container.innerHTML = '';
-        if (savedLocations.length === 0) { container.innerHTML = '<div class="no-locations-msg">No custom coordinate locations saved yet.</div>'; return; }
+        if (savedLocations.length === 0) { container.innerHTML = '<div class="no-locations-msg">No custom locations saved yet.</div>'; return; }
         savedLocations.forEach(loc => {
             const row = document.createElement('div'); row.className = 'location-item'; row.onclick = () => selectAndFlyToSavedLocation(loc.id);
             row.innerHTML = `<div class="location-info"><div class="location-name">${loc.name}</div></div><button class="delete-loc-btn" onclick="event.stopPropagation(); deleteSavedLocationItem('${loc.id}')">✕</button>`;
@@ -732,7 +729,6 @@
         });
     }
 
-    // DYNAMIC TARGET DISCIPLINE FILTER FOR PREMIER MATRIX OVERLAYS
     function renderPremierFisheriesItems() {
         const container = document.getElementById('locationListContainer'); container.innerHTML = '';
         const style = document.getElementById('anglingStyle').value;
