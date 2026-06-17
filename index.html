@@ -478,24 +478,226 @@
 
     const DISCIPLINE_PREMIER_DATABASES = {
         carp: [
-            { name: "Linear Fisheries (Oxlease Lake)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire", vibe: "Highly productive gravel pit holding massive 30lb+ blocks. Responds to heavy spod groups.", spots: [{ name: "Witney Point (Swim 9) -> Silt Channel", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Targets a natural bloodworm silt gully. Highly active on South-Easterly wind channels." }, { name: "The Dugout -> Gravel Ridge", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Cast straight out onto a hard gravel plateau right off the deep road bank." }] },
-            { name: "Linear Fisheries (Brasenose 1)", lat: 51.7165, lng: -1.4245, desc: "Oxfordshire", vibe: "The country's premium high-volume numbers pit. Deep waters averaging 14ft.", spots: [{ name: "First Bay -> Clay Patch", distance_yds: 85, peg_lat: 51.7155, peg_lng: -1.4255, spot_lat: 51.7161, spot_lng: -1.4248, advice: "Shallower 10ft clay shelf. Heavily responsive to finely crushed boilies and corn mixes." }] }
-        ],
-        coarse: [
-            { name: "Manor Farm Lakes (Pleasure Pool)", lat: 52.0732, lng: -0.2785, desc: "Bedfordshire", vibe: "Relaxing day ticket mixed fishery loaded with tench, bream, and crucians.", spots: [{ name: "Lily Pad Bay -> Marginal Shelf", distance_yds: 30, peg_lat: 52.0728, peg_lng: -0.2792, spot_lat: 52.0731, spot_lng: -0.2787, advice: "Cast a traditional method feeder right to the lily boundary. Keep feed sweet and inputs tight." }] },
-            { name: "Bury Hill Fisheries (The Old Lake)", lat: 51.2185, lng: -0.3475, desc: "Surrey", vibe: "Scenic traditional estate water lines. Giant shoals of bronze bream.", spots: [{ name: "The Long Bank -> Far Overhanging Woods", distance_yds: 55, peg_lat: 51.2178, peg_lng: -0.3482, spot_lat: 51.2181, spot_lng: -0.3478, advice: "Launch open-ended groundbait feeders into the tree margins to capture massive roaming bream columns." }] }
-        ],
-        match: [
-            { name: "Partridge Lakes (Covey 5)", lat: 53.4611, lng: -2.5186, desc: "Cheshire", vibe: "The modern home of UK competitive match layouts. Narrow channels with steep mud shelves.", spots: [{ name: "Peg 101 -> Far Mud Bank Grassline", distance_yds: 14.2, peg_lat: 53.4608, peg_lng: -2.5190, spot_lat: 53.4609, spot_lng: -2.5189, advice: "Ship a 13m pole setup straight to the far shelf. Clip a shallow rig to place pellets directly under grass lines." }] },
-            { name: "Tunnel Barn Farm (Extension Pool)", lat: 52.2985, lng: -1.6885, desc: "Warwickshire", vibe: "Thin custom match canals built for high-precision silverfish and winter F1 weights.", spots: [{ name: "Peg 7 -> Central Silt Track", distance_yds: 11, peg_lat: 52.2980, peg_lng: -1.6892, spot_lat: 52.2983, spot_lng: -1.6887, advice: "Precision setup. Feed micros sparingly via cad pots directly above fine-wire hooks." }] }
-        ],
-        predator: [
-            { name: "Loch Ken (Boat House Sector)", lat: 55.0485, lng: -4.0125, desc: "Dumfries & Galloway", vibe: "Expansive wild 9-mile loch housing true prehistoric monster northern pike past 30lbs.", spots: [{ name: "Boat House Bay -> Deep Drop-off Ledge", distance_yds: 45, peg_lat: 55.0480, peg_lng: -4.0130, spot_lat: 55.0483, spot_lng: -4.0122, advice: "Position deadbait herring or mackerel right at the base of the weed drop where deep water starts." }] },
-            { name: "River Thames (Clifton Hampden Weir)", lat: 51.6442, lng: -1.2115, desc: "Oxfordshire", vibe: "Powerful classic Thames weir section holding large specimen river chub, barbel, and pike.", spots: [{ name: "Weir Pool Tail -> Fast Crease Eddy", distance_yds: 35, peg_lat: 51.6445, peg_lng: -1.2120, spot_lat: 51.6440, spot_lng: -1.2112, advice: "Cast a heavy deadbait ledger clean into the foam seam where the fast run splits into slack water." }] }
-        ],
-        sea: [
-            { name: "Dungeness Beach (The Point Mark)", lat: 50.9145, lng: 0.9782, desc: "Kent", vibe: "Deep shingle beach head famous for massive winter cod migrations, summer bass, and giant rays.", spots: [{ name: "The Lighthouse Shingle -> Deep Low-Tide Channel", distance_yds: 75, peg_lat: 50.9138, peg_lng: 0.9772, spot_lat: 50.9145, spot_lng: 0.9785, advice: "Cast a 5-6oz breakout grip lead on a pulley pennel layout. Top tier ground for rays over clean sand seams." }] },
-            { name: "Chesil Beach (Abbotsbury Mark)", lat: 50.6482, lng: -2.6124, desc: "Dorset", vibe: "Iconic 18-mile steep shingle barrier shelf dropping instantly into intense deep water channels.", spots: [{ name: "The Main Shingle Crest -> Outer Breaker Trough", distance_yds: 90, peg_lat: 50.6475, peg_lng: -2.6135, spot_lat: 50.6484, spot_lng: -2.6120, advice: "Power cast behind the third breaker reef boundary. Exceptional codling and whiting territory after a heavy south-westerly swell." }] }
+            {
+                name: "Linear Fisheries (St John's Pool)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire",
+                vibe: "Europe's premier day-ticket specimen gravel pit. An 18-acre mature water holding historic English carp well into the 40lb and 50lb brackets.",
+                spots: [
+                    { name: "The Beach (Peg 1) -> Central Basin Corridor", distance_yds: 85, peg_lat: 51.7138, peg_lng: -1.4290, spot_lat: 51.7142, spot_lng: -1.4279, advice: "Heavy baiting approach. Spomb large volumes of hemp, sweetcorn, and 12mm crushed krill boilies. The fish patrol this central deep corridor heavily." },
+                    { name: "The Social (Peg 5) -> Central Gravel Plateau Base", distance_yds: 65, peg_lat: 51.7140, peg_lng: -1.4295, spot_lat: 51.7143, spot_lng: -1.4287, advice: "Naked Chod or Stiff Hinge rigs. Fish high-attraction pink or yellow pop-ups directly over the hard, clean gravel transitions." },
+                    { name: "The Point (Peg 12) -> Open Water Silt Bed Gully", distance_yds: 105, peg_lat: 51.7142, peg_lng: -1.4299, spot_lat: 51.7147, spot_lng: -1.4285, advice: "Long-range precision casting. Solid PVA bags packed with 2mm pellets and a balanced white wafter to minimize line signature in open water." },
+                    { name: "The Dugout (Peg 18) -> Nearside Margin Drop-off Shelf", distance_yds: 25, peg_lat: 51.7148, peg_lng: -1.4280, spot_lat: 51.7149, spot_lng: -1.4277, advice: "Stealth bankside baiting. Keep mainlines completely slack with a heavy fluorocarbon leader to pin everything flat to the marginal clay shelf." },
+                    { name: "The Shallows (Peg 24) -> Northern Reedy Bay Corner", distance_yds: 40, peg_lat: 51.7153, peg_lng: -1.4275, spot_lat: 51.7156, spot_lng: -1.4272, advice: "Highly explosive when a warm south-westerly wind blows directly into this corner. Use surface controllers or a light spinner rig with a wafter over weed." }
+                ]
+            },
+            {
+                name: "Linear Fisheries (Brasenose 1)", lat: 51.7165, lng: -1.4245, desc: "Oxfordshire",
+                vibe: "A massive 32-acre numbers water widely recognized for incredible hit rates. Averages 14ft deep and responds aggressively to heavy, consistent spodding.",
+                spots: [
+                    { name: "The First Bay -> Near Shelf Clay Patch", distance_yds: 85, peg_lat: 51.7155, peg_lng: -1.4255, spot_lat: 51.7161, spot_lng: -1.4248, advice: "A shallower 10ft clay shelf. Single high-attraction hookbaits or small neon pop-ups over a scattered bed of crushed boilies yield quick bites." },
+                    { name: "The Far Spit -> Central Open Water Silt Bed", distance_yds: 110, peg_lat: 51.7172, peg_lng: -1.4230, spot_lat: 51.7168, spot_lng: -1.4245, advice: "Long-range interception. Use solid bags filled with micro-pellets and a 10mm dumbbell wafter to pick off nomadic 30lb mirrors traversing the open basin." },
+                    { name: "The Road Bank (Peg 10) -> Mid-Channel Silt Seam", distance_yds: 90, peg_lat: 51.7160, peg_lng: -1.4250, spot_lat: 51.7165, spot_lng: -1.4240, advice: "Spomb heavily with hemp and corn. Deploy a spinner rig with a yellow wafter to lock large, competitive shoals right onto your deck." },
+                    { name: "The Grassy Bank (Peg 28) -> Sunken Gravel Bar", distance_yds: 70, peg_lat: 51.7170, peg_lng: -1.4240, spot_lat: 51.7173, spot_lng: -1.4248, advice: "Locate the hard gravel transition. A Ronnie rig with a critically balanced hookbait works perfectly here as temperatures rise in the morning." },
+                    { name: "The Swamp Corner -> Marginal Reed Line Backwater", distance_yds: 35, peg_lat: 51.7175, peg_lng: -1.4255, spot_lat: 51.7178, spot_lng: -1.4258, advice: "An excellent sanctuary point during heavy northerly gales. Use light leads and high-quality fruit-flavored boilies close to the margins." }
+                ]
+            },
+            {
+                name: "Linear Fisheries (Oxlease Lake)", lat: 51.7144, lng: -1.4282, desc: "Oxfordshire",
+                vibe: "A stunning 26-acre gravel pit holding an immense head of 30lb and 40lb mirrors. Renowned for its explosive response to big-bed particle baiting.",
+                spots: [
+                    { name: "Witney Point (Swim 9) -> Main Silt Channel Corridor", distance_yds: 75, peg_lat: 51.7142, peg_lng: -1.4295, spot_lat: 51.7145, spot_lng: -1.4284, advice: "Classic bloodworm silt gully. Highly dependent on tight spod grouping; ensure your distance stick wrapping is perfectly matched." },
+                    { name: "The Road Bank (Swim 22) -> Deep Gravel Bar Edge", distance_yds: 65, peg_lat: 51.7135, peg_lng: -1.4272, spot_lat: 51.7140, spot_lng: -1.4278, advice: "Gravel drop-off on the road bank side. Use Stiff Hinge Rigs with bright citrus pop-ups to intercept big residents shifting from the depths at dusk." },
+                    { name: "The Top Shallows -> Scirpus Reed Bed Seam", distance_yds: 45, peg_lat: 51.7155, peg_lng: -1.4285, spot_lat: 51.7158, spot_lng: -1.4289, advice: "Prime spring and summer sector. A light inline method feeder with a mini-wafter creates zero disturbance for patrolling fish." },
+                    { name: "The Gate Swim -> Central Clay Silt Basin", distance_yds: 95, peg_lat: 51.7138, peg_lng: -1.4278, spot_lat: 51.7144, spot_lng: -1.4285, advice: "Deploy a wide boilie scatter technique using 18mm hard baits to bypass smaller nuisance species and single out the 40lb+ residents." },
+                    { name: "The Willow Hole -> Marginal Tree Overhang Tunnel", distance_yds: 20, peg_lat: 51.7150, peg_lng: -1.4290, spot_lat: 51.7151, spot_lng: -1.4292, advice: "Pin your lines flat to the deck with a heavy fluorocarbon leader and fish a balanced nut-source dumbell right under the overhanging roots." }
+                ]
+            },
+            {
+                name: "Linear Fisheries (Manor Farm Lake)", lat: 51.7130, lng: -1.4320, desc: "Oxfordshire",
+                vibe: "A mature 14-acre gravel pit featuring intense underwater topography, ancient gravel bars, and deep silt troughs.",
+                spots: [
+                    { name: "The Car Park Bank -> Main Gravel Ridge Top", distance_yds: 80, peg_lat: 51.7122, peg_lng: -1.4325, spot_lat: 51.7127, spot_lng: -1.4318, advice: "Locate the firm gravel peak. Fish a Ronnie rig with a bright yellow pop-up over a tight Spomb mix of sweetcorn and micro pellets." },
+                    { name: "The Island Swim -> Sunken Island Saddle Channel", distance_yds: 55, peg_lat: 51.7132, peg_lng: -1.4315, spot_lat: 51.7135, spot_lng: -1.4310, advice: "The channel bottleneck between the two islands. Drop a Chod rig right on the slope transitions to intercept traveling 30lb+ commons." },
+                    { name: "The Deep Hole Peg -> Bottom Silt Gully Basin", distance_yds: 100, peg_lat: 51.7128, peg_lng: -1.4332, spot_lat: 51.7134, spot_lng: -1.4324, advice: "Excellent for cold weather sessions. Cast long into the deepest silt pocket using a solid PVA bag packed with high-oil fishmeal pellets." },
+                    { name: "The Reedy Corner -> Marginal Weed Bed Clearing", distance_yds: 30, peg_lat: 51.7138, peg_lng: -1.4328, spot_lat: 51.7140, spot_lng: -1.4331, advice: "A quiet stalker spot. Use a drop-off lead arrangement with a balanced piece of fake corn over a tiny handful of matching freebies." },
+                    { name: "The Bungalow Bank -> Clay Drop-off Run", distance_yds: 70, peg_lat: 51.7125, peg_lng: -1.4310, spot_lat: 51.7129, spot_lng: -1.4305, advice: "Clean clay margin drop. Establish a steady line of 15mm food-source fishmeal boilies and fish a matching wafter over the top." }
+                ]
+            },
+            {
+                name: "Bluebell Lakes (Kingfisher Lake)", lat: 52.4851, lng: -0.4435, desc: "Northamptonshire",
+                vibe: "One of the country's most legendary big-fish day-ticket waters. Crystal clear water with extreme gravel infrastructure hosting multiple 45lb+ residents.",
+                spots: [
+                    { name: "The Swan Swim -> Main Gravel Bar Saddle", distance_yds: 85, peg_lat: 52.4845, peg_lng: -0.4442, spot_lat: 52.4850, spot_lng: -0.4433, advice: "Water is exceptionally clear. Fluorocarbon leaders and hooklinks are critical. Fish a long, stiff hinge rig over sparse baiting configurations." },
+                    { name: "The Willow Peg -> Overhanging Tree Canopy Creep", distance_yds: 40, peg_lat: 52.4855, peg_lng: -0.4430, spot_lat: 52.4857, spot_lng: -0.4434, advice: "High-risk margin stalking setup. Step up to a heavy monofilament mainline, lock your drags, and present a solid bag tight to the roots." },
+                    { name: "The Deep Basin -> Base of the Western Silt Bar", distance_yds: 105, peg_lat: 52.4849, peg_lng: -0.4448, spot_lat: 52.4854, spot_lng: -0.4438, advice: "Extreme open-water casting. Requires absolute clip accuracy. Bait heavily with hemp and small pellets to trap massive nomadic commons." },
+                    { name: "The Shallows Plate -> Sunken Plateau Peak", distance_yds: 60, peg_lat: 52.4858, peg_lng: -0.4440, spot_lat: 52.4854, spot_lng: -0.4444, advice: "Sun-drenched reef peak. Present a washed-out pink pop-up on a Ronnie rig to lower the suspicion of cautious older fish." },
+                    { name: "The Meadow Corner -> Marsh Reed Margin Trench", distance_yds: 25, peg_lat: 52.4842, peg_lng: -0.4432, spot_lat: 52.4840, spot_lng: -0.4434, advice: "Quiet corner position. Use backleads to pin your line flat to the gravel floor, avoiding line-spooking reactions from cruising fish." }
+                ]
+            },
+            {
+                name: "Bluebell Lakes (Swan Lake)", lat: 52.4862, lng: -0.4410, desc: "Northamptonshire",
+                vibe: "A mature 12-acre sand pit. Famed for its deep, high-backed mirror carp and a premium head of massive, ancient English common carp.",
+                spots: [
+                    { name: "The Point Swim -> Central Deep Silt Trench", distance_yds: 95, peg_lat: 52.4858, peg_lng: -0.4415, spot_lat: 52.4865, spot_lng: -0.4405, advice: "Target the deep bloodworm silt bed. Introduce high-quality crushed fishmeal boilies via Spomb and use a helicopter rig to prevent plugging." },
+                    { name: "The Island Cut -> Narrow Structural Island Channel", distance_yds: 50, peg_lat: 52.4868, peg_lng: -0.4402, spot_lat: 52.4871, spot_lng: -0.4406, advice: "Zero casting error tolerated. Present a high-attraction white fruit pop-up on a Chod rig right under the island canopy lines." },
+                    { name: "The Grassy Bank -> Shallow Weed Bed Margin Seam", distance_yds: 35, peg_lat: 52.4864, peg_lng: -0.4420, spot_lat: 52.4866, spot_lng: -0.4423, advice: "Summer weed-pocket positioning. Present a high-density nut wafter via a short combi-rig inside an accurate, small mesh PVA bag." },
+                    { name: "The Back Bay -> Clay Plateau Drop", distance_yds: 75, peg_lat: 52.4870, peg_lng: -0.4415, spot_lat: 52.4875, spot_lng: -0.4410, advice: "Hard clay transition. Frequently cleared by feeding fish. Scatter 15mm whole boilies extensively to keep fish harvesting the spot." },
+                    { name: "The Bar Corner -> Tail End of the Main Gravel Bar", distance_yds: 65, peg_lat: 52.4855, peg_lng: -0.4408, spot_lat: 52.4859, spot_lng: -0.4404, advice: "The sloping toe of the main gravel bar. Deploy a stiff hinge rig with a washed-out yellow hookbait to intercept dawn patrollers." }
+                ]
+            },
+            {
+                name: "Farlows Lake (Lake 1)", lat: 51.5175, lng: -0.5052, desc: "Buckinghamshire",
+                vibe: "The historic crown jewel pit of the Colne Valley. A 50-acre expanse featuring intricate bar layouts and dark, ancient specimen mirrors.",
+                spots: [
+                    { name: "The Island Swim -> Overhanging Island Trees Line", distance_yds: 65, peg_lat: 51.5170, peg_lng: -0.5060, spot_lat: 51.5174, spot_lng: -0.5054, advice: "Skip heavy baiting. Drop a solid PVA bag packed with crumbed boilies and micro pellets right under the overhanging willow canopy." },
+                    { name: "Carp Alley -> Historic Cold Weather Deep Track", distance_yds: 45, peg_lat: 51.5182, peg_lng: -0.5048, spot_lat: 51.5179, spot_lng: -0.5052, advice: "A premier cold-weather sanctuary. A deep, wind-shielded gully. Introduce a highly soluble spod soup and fish a high-leakage fruit wafter." },
+                    { name: "The Smelly Peg -> Deep Silt Basin Hole", distance_yds: 90, peg_lat: 51.5172, peg_lng: -0.5040, spot_lat: 51.5178, spot_lng: -0.5045, advice: "Deep open silt basin. High natural food concentration. Scatter heavy 18mm marine halibut boilies and fish a matching single hookbait." },
+                    { name: "The Back Shallows -> Reedy Marginal Mudflat Shelf", distance_yds: 30, peg_lat: 51.5188, peg_lng: -0.5062, spot_lat: 51.5190, spot_lng: -0.5065, advice: "Shallow marginal shelf. Perfect for spring mornings. Slip a running feeder setup with a single dumbell close to the emergent reedlines." },
+                    { name: "The Factory Bank -> Main Silt-Gravel Transition Seam", distance_yds: 75, peg_lat: 51.5165, peg_lng: -0.5046, spot_lat: 51.5171, spot_lng: -0.5042, advice: "The exact line where the gravel slope transitions into soft silt. Use a Ronnie rig with a yellow wafter topped with a sweet plastic corn tipper." }
+                ]
+            },
+            {
+                name: "Sandhurst Lake", lat: 51.3415, lng: -0.7932, desc: "Berkshire",
+                vibe: "A historic Yateley asset. A shallow, highly secure 14-acre lake averaging 5ft in depth. Home to pristine, line-shy linear mirrors.",
+                spots: [
+                    { name: "The Pipes (Peg 31) -> Main Sandbar Ridge", distance_yds: 70, peg_lat: 51.3410, peg_lng: -0.7940, spot_lat: 51.3414, spot_lng: -0.7933, advice: "A clean sand ridge. Fish hate touching line signatures here; backleads are mandatory. Fish tiny yellow wafters over loose crumb." },
+                    { name: "Secrets (Peg 1) -> Deep Hedge Margin Channel", distance_yds: 60, peg_lat: 51.3422, peg_lng: -0.7930, spot_lat: 51.3418, spot_lng: -0.7935, advice: "An absolute hotspot on a strong northerly gale. Present matching 12mm fishmeal boilies on standard combi rigs locked straight down the track." },
+                    { name: "The Island Peg -> Sunken Root Structure Line", distance_yds: 45, peg_lat: 51.3415, peg_lng: -0.7945, spot_lat: 51.3418, spot_lng: -0.7941, advice: "High-risk spot. Step up to a 25lb coated hooklink, lock your clutch, and present a solid bag right on the fringe of the root structure." },
+                    { name: "The Runaway Swim -> Open Central Silt Pocket", distance_yds: 85, peg_lat: 51.3405, peg_lng: -0.7935, spot_lat: 51.3411, spot_lng: -0.7928, advice: "Soft central silt bed. Ideal for large summer bait spreads of hemp, corn, and oil-infused liquid foods to induce a competitive feeding response." },
+                    { name: "The Cabin Margin -> Soft Clay Drop Shelf", distance_yds: 20, peg_lat: 51.3420, peg_lng: -0.7925, spot_lat: 51.3421, spot_lng: -0.7928, advice: "Clay margin step immediately in front of the cabin bank. Maintain absolute stealth. Deploy a small PVA mesh bag of crumb with a dumbell." }
+                ]
+            },
+            {
+                name: "The Monument (Lake 1)", lat: 52.6841, lng: -2.3552, desc: "Shropshire",
+                vibe: "A premium, purpose-built day-ticket specimen arena engineered by RH Fisheries. Holds an incredible volume of hard-fighting 30lb+ commons.",
+                spots: [
+                    { name: "The Christmas Tree Peg -> Long-Range Gravel Ridge Peak", distance_yds: 70, peg_lat: 52.6836, peg_lng: -2.3559, spot_lat: 52.6840, spot_lng: -2.3551, advice: "The single most consistent gravel feature on the lake. Spomb instantly after every single run to pin the high-action shoals down." },
+                    { name: "The Deep Bowl -> Central Silt Storage Trench", distance_yds: 90, peg_lat: 52.6845, peg_lng: -2.3562, spot_lat: 52.6841, spot_lng: -2.3550, advice: "Deep central silt pocket. Prime target area during cold snaps. Fish dark, heavy fishmeal boilies on heavy-duty Ronnie setups." },
+                    { name: "The Margin Shelf -> Near Clay Dropout Track", distance_yds: 30, peg_lat: 52.6838, peg_lng: -2.3544, spot_lat: 52.6835, spot_lng: -2.3546, advice: "Nearside clay margins. Big fish clean these shelves at night. present a single large nut boilie on slack lines with no backleads." },
+                    { name: "The Spire Mark -> Sunken Clay Mound Drop", distance_yds: 75, peg_lat: 52.6848, peg_lng: -2.3555, spot_lat: 52.6843, spot_lng: -2.3558, advice: "The drop-off face of an underwater clay high-point. Use a helicopter rig with a highly visible white milk-protein wafter to grab attention." },
+                    { name: "The Double Swim -> Shared Shared Gravel Plateau Channel", distance_yds: 55, peg_lat: 52.6832, peg_lng: -2.3550, spot_lat: 52.6836, spot_lng: -2.3547, advice: "The transition channel between two large gravel bars. Outstanding consistency; present a balanced 12mm bait over a scattered pellet blend." }
+                ]
+            },
+            {
+                name: "Orchid Lakes", lat: 51.6571, lng: -1.1632, desc: "Oxfordshire",
+                vibe: "A highly mature, 17-acre heritage lake surrounded by ancient woodland. Famous for holding iconic, heavily scaled English mirror carp.",
+                spots: [
+                    { name: "The Log Cabin Swim -> Main Gravel Bar Edge Seam", distance_yds: 55, peg_lat: 51.6565, peg_lng: -1.1640, spot_lat: 51.6569, spot_lng: -1.1634, advice: "The classic gravel transition directly in front of the cabin bank. These fish love nut-based baits. Introduce loose items via a steady throwing stick." },
+                    { name: "The Deep Hole -> Central Silt Basin Gully", distance_yds: 70, peg_lat: 51.6575, peg_lng: -1.1625, spot_lat: 51.6571, spot_lng: -1.1631, advice: "The deepest silt pocket in the lake. Perfect for cold snaps. present a solid bag packed with fine crumb and a high-leakage hookbait." },
+                    { name: "The Alamo Peg -> Sunken Silt Plateau Slope", distance_yds: 65, peg_lat: 51.6578, peg_lng: -1.1638, spot_lat: 51.6573, spot_lng: -1.1635, advice: "The slope face of an underwater bar. A helicopter rig with a pale pink citrus pop-up works beautifully here on a south-easterly breeze." },
+                    { name: "The Reedy Corner -> Marginal Willow Roots Channel", distance_yds: 25, peg_lat: 51.6562, peg_lng: -1.1630, spot_lat: 51.6560, spot_lng: -1.1632, advice: "Stealth margin hunting under the old overhanging roots. Drop a single high-density bait on slack lines, keeping completely away from the bank." },
+                    { name: "The Island View -> Rear Island Channel Trough", distance_yds: 45, peg_lat: 51.6570, peg_lng: -1.1642, spot_lat: 51.6572, spot_lng: -1.1646, advice: "A narrow mud trough behind the island structure. Excellent common carp sector. present a method feeder with a bright red mini-wafter." }
+                ]
+            },
+            {
+                name: "Elphicks Fisheries (North Lake)", lat: 51.1118, lng: 0.4491, desc: "Kent",
+                vibe: "An immaculate, 6-acre Kent day-ticket venue managed strictly for high-end specimens. Holds multiple validated 50lb+ mirrors.",
+                spots: [
+                    { name: "Peg 1 The Shallows -> Overhanging Island Reed Line", distance_yds: 50, peg_lat: 51.1112, peg_lng: -0.4498, spot_lat: 51.1116, spot_lng: -0.4493, advice: "The island reed line interface. These large residents are highly cautious. Present a pale fishmeal wafter over a very sparse boilie scatter." },
+                    { name: "Peg 4 The Deep Basin -> Center Soft Silt Hole", distance_yds: 75, peg_lat: 51.1122, peg_lng: -0.4485, spot_lat: 51.1118, spot_lng: -0.4490, advice: "The deepest silt basin where big mirrors harvest red bloodworms. Introduce 18mm heavy squid boilies whole and fish a hard matching single." },
+                    { name: "Peg 11 The Lawn -> Nearside Clay Drop Shelf", distance_yds: 30, peg_lat: 51.1115, peg_lng: -0.4495, spot_lat: 51.1113, spot_lng: -0.4492, advice: "Clay margin step. Avoid walking heavily on the bankside platform. Present a pale orange balanced bait on slack lines for night runs." },
+                    { name: "Peg 15 The Bay -> Sunken Tree Root Seam", distance_yds: 40, peg_lat: 51.1125, peg_lng: -0.4490, spot_lat: 51.1122, spot_lng: -0.4493, advice: "Sunken snags area. Step up to a heavy braided hooklink and a thick-wire hook. Pin a solid bag right on the edge and lock your clutch down." },
+                    { name: "The Point (Peg 7) -> Main Silt-Gravel Plateau Channel", distance_yds: 65, peg_lat: 51.1119, peg_lng: -0.4480, spot_lat: 51.1117, spot_lng: -0.4487, advice: "Plateau margin transition. Use a hard Ronnie rig with a yellow pop-up over a Spomb bed of hemp, corn, and pellets to hold visiting shoals." }
+                ]
+            },
+            {
+                name: "Cromwell Lake", lat: 52.3212, lng: -0.1145, desc: "Cambridgeshire",
+                vibe: "A mature 18-acre Cambridgeshire gravel pit down to 18ft deep. Features an elite density of 30lb+ commons and multiple 40lb backup residents.",
+                spots: [
+                    { name: "The Road Bank (Peg 3) -> Deep Central Silt Gully", distance_yds: 95, peg_lat: 52.3205, peg_lng: -0.1152, spot_lat: 52.3212, spot_lng: -0.1141, advice: "Target the deep central silt bed. Establish a prominent base bed of particles and crumb via Spomb, fishing a solid PVA bag directly over the center." },
+                    { name: "The Crater Peg -> Submerged Gravel Crater Lip", distance_yds: 75, peg_lat: 52.3218, peg_lng: -0.1135, spot_lat: 52.3213, spot_lng: -0.1143, advice: "The underwater lip of a gravel crater feature. Fish a premium stiff hinge rig with a washed-out pink citrus pop-up for rapid winter bites." },
+                    { name: "The Island Corner -> Overhanging Island Willow Root", distance_yds: 55, peg_lat: 52.3222, peg_lng: -0.1150, spot_lat: 52.3218, spot_lng: -0.1147, advice: "Tight island cast. Drop a high-visual Chod rig precisely against the trailing island canopy lines to pull big fish out of summer cover." },
+                    { name: "The Shallows Bay -> Marginal Phragmites Reed Bed Seam", distance_yds: 25, peg_lat: 52.3198, peg_lng: -0.1140, spot_lat: 52.3196, spot_lng: -0.1143, advice: "Shallow marginal reed gap. Outstanding during early spring warm spells. present a method feeder with a single bright corn piece." },
+                    { name: "The Point (Peg 14) -> Deep Clay Shelf Slope", distance_yds: 65, peg_lat: 52.3210, peg_lng: -0.1160, spot_lat: 52.3214, spot_lng: -0.1153, advice: "Clay drop-off face. Use a throwing stick to introduce a clean spread of 15mm fishmeal boilies, fishing a matching wafter over the top." }
+                ]
+            },
+            {
+                name: "Berners Hall Fishery (The Reservoir)", lat: 51.7121, lng: 0.2854, desc: "Essex",
+                vibe: "A massive 24-acre commercial specimen reservoir. Features uniform clay flats and an absolute density of heavy 30lb+ and 40lb common carp.",
+                spots: [
+                    { name: "Peg 5 Main Dam -> Deep Concrete-Clay Channel Base", distance_yds: 105, peg_lat: 51.7115, peg_lng: 0.2845, spot_lat: 51.7122, spot_lng: 0.2852, advice: "Long-range delivery to the deep dam wall toe. Spomb relentlessly with hemp and pellet. Ensure your Ronnie rig lines are backleaded flat." },
+                    { name: "Peg 12 The Spit -> Central Open Water Clay Mound", distance_yds: 85, peg_lat: 51.7128, peg_lng: 0.2862, spot_lat: 51.7123, spot_lng: 0.2855, advice: "An underwater clay island feature. The primary highway for traveling fish. Establish a massive wide boilie scatter using heavy 18mm inputs." },
+                    { name: "Peg 18 The Bay -> Shallow Silt Corner Flat", distance_yds: 50, peg_lat: 51.7135, peg_lng: 0.2848, spot_lat: 51.7132, spot_lng: 0.2842, advice: "Shallow silt bay. Highly productive under a direct, warm south-westerly wind. Deploy helicopter rigs with highly visible white wafters." },
+                    { name: "Peg 24 The Corner -> Marginal Willow Silt Shelf", distance_yds: 35, peg_lat: 51.7110, peg_lng: 0.2865, spot_lat: 51.7108, spot_lng: 0.2861, advice: "A quiet corner margin spot. Perfect for evening bites. present a dark dumbell bait via a combi rig on completely slack fluorocarbon line." },
+                    { name: "Peg 9 Mid-Bank -> Clay Transition Gully Seam", distance_yds: 70, peg_lat: 51.7122, peg_lng: 0.2838, spot_lat: 51.7126, spot_lng: 0.2844, advice: "A subtle depression in the main clay floor. Spomb fine pellets and chopped boilies accurately. Present a short-subline solid PVA bag." }
+                ]
+            },
+            {
+                name: "Baden Hall (The Quarry)", lat: 52.8835, lng: -2.2365, desc: "Staffordshire",
+                vibe: "A premier midlands day-ticket pit. A 7-acre water featuring radical underwater gravel shelves and a premium head of heavy, dark mirror carp.",
+                spots: [
+                    { name: "The Road Bank (Peg 2) -> Base of the Major Gravel Cliff", distance_yds: 80, peg_lat: 52.8828, peg_lng: -2.2372, spot_lat: 52.8833, spot_lng: -2.2363, advice: "The base of an underwater gravel shelf drop-off. present a stiff hinge rig with a yellow pop-up, backing it up with a small, precise Spomb spread." },
+                    { name: "The Plateau Swim -> Submerged Gravel Ridge Top", distance_yds: 60, peg_lat: 52.8838, peg_lng: -2.2355, spot_lat: 52.8834, spot_lng: -2.2361, advice: "The peak of an underwater bar. Excellent morning area. Spomb micro pellets and crushed boilies tightly; present a Ronnie rig with a mini wafter." },
+                    { name: "The Island Point -> Overhanging Island Jungle Margin", distance_yds: 50, peg_lat: 52.8842, peg_lng: -2.2368, spot_lat: 52.8839, spot_lng: -2.2364, advice: "Overhanging tree lines on the island point. present a high-density solid bag tight to the cover, keeping your clutch completely locked down." },
+                    { name: "The Lodge Corner -> Deep Soft Silt Basin Pocket", distance_yds: 95, peg_lat: 52.8830, peg_lng: -2.2350, spot_lat: 52.8836, spot_lng: -2.2358, advice: "Deep central silt bed. Ideal for cold snaps. present a heavy fishmeal hookbait over a scattered bed of whole boilies introduced via catapult." },
+                    { name: "The Canyon Margin -> Near Silt-Clay Drop Shelf", distance_yds: 25, peg_lat: 52.8845, peg_lng: -2.2350, spot_lat: 52.8843, spot_lng: -2.2358, advice: "Nearside margin channel. Maintain absolute silence. Present a large food-source hookbait on a combi rig right at the base of the nearside clay shelf." }
+                ]
+            },
+            {
+                name: "Beaver Fisheries (Snipe Lake)", lat: 51.1612, lng: -0.0124, desc: "Surrey",
+                vibe: "An established Surrey day-ticket spec湖. Features complex marginal reedlines and distinct gravel bars housing mirrors past 40lbs.",
+                spots: [
+                    { name: "The Island Spit -> Gravel Run Drop", distance_yds: 65, peg_lat: 51.1605, peg_lng: -0.0128, spot_lat: 51.1609, spot_lng: -0.0121, advice: "The gravel transition between the two island projections. present a Ronnie rig with a balanced nut wafter over a scattering of whole 15mm boilies." },
+                    { name: "The Reeds Corner -> Margin Reedy Channel Trough", distance_yds: 25, peg_lat: 51.1618, peg_lng: -0.0115, spot_lat: 51.1620, spot_lng: -0.0118, advice: "Stealth channel fishing close to the near reeds. Keep lines fully slack with backleads to prevent spooking cruising specimens." },
+                    { name: "The Open Center -> Clay Silt Basin Plate", distance_yds: 80, peg_lat: 51.1610, peg_lng: -0.0130, spot_lat: 51.1614, spot_lng: -0.0122, advice: "Central open flat. Perfect for establishing a large summer bed of hemp, sweetcorn, and marine pellets to anchor roaming shoals." },
+                    { name: "The Willows Bank -> Overhanging Willow Fringe Drop", distance_yds: 45, peg_lat: 51.1622, peg_lng: -0.0128, spot_lat: 51.1619, spot_lng: -0.0125, advice: "Cast tight to the trailing willow branches. present a high-visual white pop-up on a Chod rig to intercept fish taking cover from heat." },
+                    { name: "The Lodge Point -> Deep Water Entry Run", distance_yds: 55, peg_lat: 51.1598, peg_lng: -0.0120, spot_lat: 51.1602, spot_lng: -0.0124, advice: "The deep water entrance track. High activity at dawn. Present a solid PVA bag packed with crumbed boilies right into the channel center." }
+                ]
+            },
+            {
+                name: "Horcott Lakes (Scout Lake)", lat: 51.6985, lng: -1.7825, desc: "Gloucestershire",
+                vibe: "A pristine Cotswold pit with crystal clear water and dense weed structures. Famed for its heavily scaled linear mirrors up to 40lb+.",
+                spots: [
+                    { name: "Peg 1 Main Lawn -> Shallow Bar Top Channel", distance_yds: 75, peg_lat: 51.6980, peg_lng: -1.7832, spot_lat: 51.6985, spot_lng: -1.7822, advice: "Clear water constraints. Full fluorocarbon arrangements are essential. Present a washed-out pink pop-up over a sparse particle bed." },
+                    { name: "The Shallows Corner -> Marginal Weedbed Clearing", distance_yds: 35, peg_lat: 51.6992, peg_lng: -1.7815, spot_lat: 51.6995, spot_lng: -1.7818, advice: "A natural opening inside a heavy weed bed. Use a drop-off inline lead setup with a balanced nut dumbell to guarantee a clean line presentation." },
+                    { name: "The Point Swim -> Deep Open Water Silt Trench", distance_yds: 95, peg_lat: 51.6982, peg_lng: -1.7840, spot_lat: 51.6988, spot_lng: -1.7830, advice: "Deep central silt bed. Scatter 18mm hard food-source fishmeal boilies widely using a throwing stick to target the biggest mirrors." },
+                    { name: "The Lagoon Gate -> Narrow Island Cutting Bottleneck", distance_yds: 50, peg_lat: 51.6990, peg_lng: -1.7830, spot_lat: 51.6993, spot_lng: -1.7826, advice: "High interception zone. present a low-signature Chod rig with a pale yellow hookbait directly against the island shelf transitions." },
+                    { name: "The Road Margin -> Nearside Under-Your-Feet Clay Shelf", distance_yds: 20, peg_lat: 51.6975, peg_lng: -1.7820, spot_lat: 51.6976, spot_lng: -1.7823, advice: "Quiet nearside tracking. Keep completely away from the water edge. present a single large boilie on a slack mainline directly under the fringe." }
+                ]
+            },
+            {
+                name: "Norton Disney (Turners Lake)", lat: 53.1245, lng: -0.6842, desc: "Lincolnshire",
+                vibe: "An elite asset under the Embryo portfolio. An 8-acre gravel format designed for high action, holding an incredible stock of heavy 30lb+ commons.",
+                spots: [
+                    { name: "The Point (Peg 6) -> Open Central Silt Run", distance_yds: 85, peg_lat: 53.1238, peg_lng: -0.6850, spot_lat: 53.1244, spot_lng: -0.6840, advice: "Central silt basin. Spomb heavily with hemp, corn, and crumbed boilies to create an active feeding cloud. Fish a short solid PVA bag over top." },
+                    { name: "Peg 2 The Shallows -> Sunken Gravel Plateau Ridge", distance_yds: 60, peg_lat: 53.1248, peg_lng: -0.6860, spot_lat: 53.1244, spot_lng: -0.6853, advice: "Gravel reef top. Outstanding morning spot. Present high-attraction neon pop-ups on hard Ronnie rigs locked onto the firm bottom structure." },
+                    { name: "Peg 14 The Reeds -> Overhanging Island Bush Margin", distance_yds: 55, peg_lat: 53.1252, peg_lng: -0.6835, spot_lat: 53.1248, spot_lng: -0.6839, advice: "Cast tight to the island bush lines. present a highly buoyant pop-up on a Chod rig to bypass any light trailing weed on the island shelf." },
+                    { name: "Peg 19 The Corner -> Nearside Clay Drop Channel", distance_yds: 30, peg_lat: 53.1240, peg_lng: -0.6825, spot_lat: 53.1238, spot_lng: -0.6828, advice: "Nearside clay margins. Use a heavy fluorocarbon leader to pin everything flat to the floor and present a matching balanced hookbait on a combi rig." },
+                    { name: "Peg 9 Mid-Bank -> Silt-Gravel Hard Clay Transition Line", distance_yds: 70, peg_lat: 53.1232, peg_lng: -0.6845, spot_lat: 53.1237, spot_lng: -0.6841, advice: "The hard clay seam at the base of the gravel bar drop. Establish a precise line of 15mm boilies and fish a single dumbell wafter over top." }
+                ]
+            },
+            {
+                name: "Stanwick Lakes (Elsons Lake)", lat: 52.3265, lng: -0.6125, desc: "Northamptonshire",
+                vibe: "A mature 6-acre spec湖 featuring intense snag cover and complex old river channels. Famous for its elite, intelligent 40lb+ commons.",
+                spots: [
+                    { name: "The Willows -> Dense Root Cluster Overhang", distance_yds: 40, peg_lat: 52.3260, peg_lng: -0.6132, spot_lat: 52.3263, spot_lng: -0.6127, advice: "High-risk sniper position. Step up to a 25lb hooklink and a heavy-wire hook. Pin a solid bag right on the edge and lock your clutch down." },
+                    { name: "The Deep Track -> Center River Gully Seam", distance_yds: 75, peg_lat: 52.3272, peg_lng: -0.6115, spot_lat: 52.3268, spot_lng: -0.6122, advice: "The deep central gully line. Scatter whole 18mm fishmeal boilies over a wide area using a throwing stick to target the largest mirror carp." },
+                    { name: "The Car Park Bank -> Shallow Clay Step Plateau", distance_yds: 50, peg_lat: 52.3255, peg_lng: -0.6128, spot_lat: 52.3259, spot_lng: -0.6124, advice: "Clay platform transition. present a Ronnie rig with a bright yellow wafter over a Spomb bed of hemp, corn, and small pellets." },
+                    { name: "The Reedy Corner -> Marginal Silt Channel Run", distance_yds: 25, peg_lat: 52.3268, peg_lng: -0.6140, spot_lat: 52.3266, spot_lng: -0.6137, advice: "Quiet corner tracking. Keep completely away from the water edge. present a single large boilie on a slack mainline directly under the fringe." },
+                    { name: "The Island View -> Rear Island Channel Trough", distance_yds: 60, peg_lat: 52.3262, peg_lng: -0.6110, spot_lat: 52.3265, spot_lng: -0.6114, advice: "A narrow mud trough behind the island structure. Excellent common carp sector. present a method feeder with a bright red mini-wafter." }
+                ]
+            },
+            {
+                name: "Wyreside Lakes (Foxes Lake)", lat: 53.9652, lng: -2.7641, desc: "Lancashire",
+                vibe: "The premier northern day-ticket specimen lake. Deep gravel drops and steep margins housing highly resilient, powerful common carp.",
+                spots: [
+                    { name: "The Meadow Peg -> Base of the Deep Slope", distance_yds: 55, peg_lat: 53.9648, peg_lng: -2.7648, spot_lat: 53.9651, spot_lng: -2.7639, advice: "The flat transition at the base of the main gravel slope. Spomb fishmeal pellets and crumb accurately; present a Ronnie rig with a mini wafter." },
+                    { name: "The Lawn Swim -> Main Gravel Bar Edge Seam", distance_yds: 70, peg_lat: 53.9655, peg_lng: -2.7630, spot_lat: 53.9652, spot_lng: -2.7638, advice: "Classic gravel bar edge. These fish love nut-based baits. Introduce loose items via a steady throwing stick to hold cruising groups." },
+                    { name: "The Deep Hole -> Central Silt Basin Gully", distance_yds: 90, peg_lat: 53.9660, peg_lng: -2.7650, spot_lat: 53.9655, spot_lng: -2.7643, advice: "The deepest silt pocket in the lake. Perfect for winter snaps. present a solid bag packed with fine crumb and a high-leakage hookbait." },
+                    { name: "The Shallows Point -> Sunken Plateau Peak", distance_yds: 45, peg_lat: 53.9642, peg_lng: -2.7635, spot_lat: 53.9645, spot_lng: -2.7639, advice: "Sun-drenched reef peak. Present a washed-out pink pop-up on a Ronnie rig to lower the suspicion of cautious older fish." },
+                    { name: "The Reedy Corner -> Marginal Willow Roots Channel", distance_yds: 20, peg_lat: 53.9650, peg_lng: -2.7655, spot_lat: 53.9649, spot_lng: -2.7653, advice: "Stealth margin hunting under the old overhanging roots. Drop a single high-density bait on slack lines, keeping completely away from the bank." }
+                ]
+            },
+            {
+                name: "Todber Manor (Paddock Lake)", lat: 50.9792, lng: -2.3132, desc: "Dorset",
+                vibe: "The South West's flagship fast-action runs water. Holds an incredible stock of heavy 30lb+ and 40lb commons that feed aggressively.",
+                spots: [
+                    { name: "Peg 1 The Cabin -> Open Water Clay Gully", distance_yds: 65, peg_lat: 50.9785, peg_lng: -2.3140, spot_lat: 50.9790, spot_lng: -2.3130, advice: "Open clay channel. Establish a prominent base bed of particles and crumb via Spomb, fishing a solid PVA bag directly over the center." },
+                    { name: "The Point Peg -> Submerged Gravel Ridge Top", distance_yds: 55, peg_lat: 50.9798, peg_lng: -2.3125, spot_lat: 50.9794, spot_lng: -2.3131, advice: "Gravel bar edge. These fish love nut-based baits. Introduce loose items via a steady throwing stick to intercept patrolling lines." },
+                    { name: "The Willows Bank -> Overhanging Willow Fringe Drop", distance_yds: 40, peg_lat: 50.9802, peg_lng: -2.3138, spot_lat: 50.9799, spot_lng: -2.3134, advice: "Cast tight to the island bush lines. present a highly buoyant pop-up on a Chod rig to bypass any light trailing weed on the shelf." },
+                    { name: "The Shallows Corner -> Marginal Weedbed Clearing", distance_yds: 30, peg_lat: 50.9788, peg_lng: -2.3120, spot_lat: 50.9790, spot_lng: -2.3123, advice: "Shallow marginal shelf. Perfect for spring mornings. Slip a running feeder setup with a single dumbell close to the emergent reedlines." },
+                    { name: "The Far Margin -> Deep Silt Basin Plate", distance_yds: 80, peg_lat: 50.9795, peg_lng: -2.3150, spot_lat: 50.9792, spot_lng: -2.3141, advice: "Deep open silt basin. High natural food concentration. Scatter heavy 18mm marine halibut boilies and fish a matching single hookbait." }
+                ]
+            }
         ]
     };
 
